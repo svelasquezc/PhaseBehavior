@@ -1,8 +1,15 @@
-#ifndef PRECISION_TYPES_HPP
-#define PRECISION_TYPES_HPP
+#ifndef TYPES_HPP
+#define TYPES_HPP
 
+// Namespace defining custom types related to numerical precision
 namespace TypesDefinition {
-    using NumericPrecision = long double;
+    /**
+     * @brief Alias for the numerical precision type.
+     *
+     * This type represents the level of numerical precision used
+     * throughout the codebase.
+     */
+    using NumericalPrecision = long double;
 }
 
-#endif /* PRECISION_TYPES_HPP */
+#endif /* TYPES_HPP */

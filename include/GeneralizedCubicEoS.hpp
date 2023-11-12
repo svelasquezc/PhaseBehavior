@@ -6,7 +6,7 @@
 
 template<typename DerivedEoS>
 class GeneralizedCubicEoS {
-    using NP_t = TypesDefinition::NumericPrecision;
+    using NP_t = TypesDefinition::NumericalPrecision;
 
     
     
