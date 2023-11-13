@@ -11,14 +11,12 @@ class Component {
 private:
     using NP_t = TypesDefinition::NumericalPrecision;
 
-    std::string name_;              /**< Name of the chemical component. */
+    std::string mutable name_;      /**< Name of the chemical component. */
     NP_t criticalPressure_;         /**< Critical pressure property. */
     NP_t criticalTemperature_;      /**< Critical temperature property. */
     NP_t criticalVolume_;           /**< Critical volume property. */
     NP_t molarWeight_;              /**< Molar weight property. */
     NP_t accentricFactor_;          /**< Accentric factor property. */
-    NP_t attractionParameter_;      /**< Attraction parameter property. */
-    NP_t covolumeParameter_;        /**< Covolume parameter property. */
 
 public:
     /**
@@ -37,9 +35,7 @@ public:
           criticalVolume_(criticalVolume),
           criticalTemperature_(criticalTemperature),
           molarWeight_(molarWeight),
-          accentricFactor_(accentricFactor),
-          attractionParameter_(0.45724 * criticalTemperature_ / criticalPressure_),
-          covolumeParameter_(0.07780 * criticalTemperature_ / criticalPressure_)
+          accentricFactor_(accentricFactor)
     {}
 
     /**
@@ -91,43 +87,11 @@ public:
     }
 
     /**
-     * @brief Getter for the attraction parameter of the component.
-     * @return Attraction parameter property.
-     */
-    NP_t attractionParameter() const {
-        return attractionParameter_;
-    }
-
-    /**
-     * @brief Getter for the covolume parameter of the component.
-     * @return Covolume parameter property.
-     */
-    NP_t covolumeParameter() const {
-        return covolumeParameter_;
-    }
-
-    /**
-     * @brief Setter for the attraction parameter of the component.
-     * @param attractionParameter The new attraction parameter value.
-     */
-    void attractionParameter(const NP_t& attractionParameterV) {
-        attractionParameter_ = attractionParameterV;
-    }
-
-    /**
-     * @brief Setter for the covolume parameter of the component.
-     * @param covolumeParameter The new covolume parameter value.
-     */
-    void covolumeParameter(const NP_t& covolumeParameterV) {
-        covolumeParameter_ = covolumeParameterV;
-    }
-
-    /**
      * @brief Calculates the reduced pressure of the component.
      * @param absolutePressure The absolute pressure.
      * @return Reduced pressure.
      */
-    NP_t reducedPressure(const NP_t& absolutePressure) const {
+    NP_t reducedPressure(NP_t const& absolutePressure) const {
         return absolutePressure / criticalPressure_;
     }
 
@@ -136,7 +100,7 @@ public:
      * @param absoluteTemperature The absolute temperature.
      * @return Reduced temperature.
      */
-    NP_t reducedTemperature(const NP_t& absoluteTemperature) const {
+    NP_t reducedTemperature(NP_t const& absoluteTemperature) const {
         return absoluteTemperature / criticalTemperature_;
     }
 };

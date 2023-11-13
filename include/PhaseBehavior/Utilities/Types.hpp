@@ -9,7 +9,7 @@ namespace TypesDefinition {
      * This type represents the level of numerical precision used
      * throughout the codebase.
      */
-    using NumericalPrecision = long double;
+    using NumericalPrecision = double;
 }
 
 #endif /* TYPES_HPP */
