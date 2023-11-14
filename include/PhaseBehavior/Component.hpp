@@ -38,6 +38,16 @@ public:
           accentricFactor_(accentricFactor)
     {}
 
+    /// Default copy constructor
+    Component(Component& rhs) = default;
+    /// Default move constructor
+    Component(Component&& rhs) = default;
+    
+    /// Default copy assignment
+    Component& operator=(Component& rhs) = default;
+    /// Default move assignment
+    Component& operator=(Component&& rhs) = default;
+
     /**
      * @brief Getter for the name of the component.
      * @return Name of the chemical component.
@@ -103,6 +113,9 @@ public:
     NP_t reducedTemperature(NP_t const& absoluteTemperature) const {
         return absoluteTemperature / criticalTemperature_;
     }
+
+    /// Default destructor
+    ~Component() = default;
 };
 
 #endif /* COMPONENT_HPP */
