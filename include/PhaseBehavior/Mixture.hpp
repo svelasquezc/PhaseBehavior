@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <type_traits>
+#include <utility>
 #include "Component.hpp"
 
 class Mixture {
@@ -22,6 +23,12 @@ private:
 
         friend class Mixture;
     public:
+        template <typename PairType>
+        MixtureComponent(PairType&& componentWithComposition): 
+        pureComponent_ (std::make_shared<Component>(std::move(std::get<Component>(componentWithComposition)))),
+        molarComposition_ (std::move(std::get<NP_t>(componentWithComposition)))
+        {}
+
         MixtureComponent(Component&& pureComponent, NP_t&& molarComposition):
         pureComponent_(std::make_shared<Component>(std::forward<Component>(pureComponent))),
         molarComposition_(std::move(molarComposition)){}
@@ -40,22 +47,33 @@ private:
     std::vector<MixtureComponent> components_;
 
 public:
+
+    Mixture() = delete;
+    Mixture(Mixture&) = delete;
+    Mixture(Mixture&&) = delete;
+
+    template< 
+        typename Container, 
+        typename = typename std::enable_if_t<
+        std::is_constructible<MixtureComponent, typename Container::value_type>::value
+        >
+        >
+    Mixture(Container& inputComponents): 
+    numberOfComponents_(inputComponents.size())
+    {
+        std::copy(inputComponents.begin(), inputComponents.end(), 
+          std::back_inserter(components_));
+    }
+
     template<
         typename... MixtureComponents,
-        typename = std::enable_if_t<
-            std::conjunction_v<std::is_same<MixtureComponent, MixtureComponents>...>
+        typename = typename std::enable_if_t<
+            std::conjunction_v<std::is_constructible<MixtureComponent, MixtureComponents>...>
             >
         >
     Mixture(MixtureComponents&&... args): 
     numberOfComponents_(sizeof...(args)),
-    components_({std::forward<Args>(args)...}){}
-    
-    template<typename Pair,
-    typename = std::enable_if_t<std::is_constructible<MixtureComponent, Pair>::type>
-    >
-    Mixture(std::vector<Pair>& inputComponents): 
-    numberOfComponents_(inputComponents.size()),
-    components_(inputComponents){}
+    components_({std::forward<MixtureComponents>(args)...}){}
 };
 
 #endif /* MIXTURE_HPP */
