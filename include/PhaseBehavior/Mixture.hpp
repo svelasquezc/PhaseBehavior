@@ -5,7 +5,12 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <numeric>
+#include <cmath>
+#include <cassert>
+#include <limits>
 #include "Component.hpp"
+
 
 class Mixture {
 private: 
@@ -37,6 +42,7 @@ private:
         MixtureComponent(MixtureComponent&& rhs) = default;
 
 
+
     };
 
     unsigned int mutable numberOfComponents_;
@@ -45,6 +51,9 @@ private:
     NP_t covolumeParameter_;
 
     std::vector<MixtureComponent> components_;
+
+    using MixtureIterator = decltype(components_)::iterator;
+    using ConstMixtureIterator = decltype(components_)::const_iterator;
 
 public:
 
@@ -63,6 +72,10 @@ public:
     {
         std::copy(inputComponents.begin(), inputComponents.end(), 
           std::back_inserter(components_));
+        assert(std::accumulate(components_.begin(),components_.end(), 0,
+        [](auto previous, auto second){
+            return previous + second.composition();
+        }) - 1 <= std::numeric_limits<NP_t>::epsilon() && "The sum of the compositions must be equal to 1");
     }
 
     template<
@@ -73,7 +86,12 @@ public:
         >
     Mixture(MixtureComponents&&... args): 
     numberOfComponents_(sizeof...(args)),
-    components_({std::forward<MixtureComponents>(args)...}){}
+    components_({std::forward<MixtureComponents>(args)...}){
+        //TypeChecker<MixtureComponents...>();
+    }
+
+    ConstMixtureIterator begin() const {return components_.begin();}
+    ConstMixtureIterator end() const {return components_.end();}
 };
 
 #endif /* MIXTURE_HPP */

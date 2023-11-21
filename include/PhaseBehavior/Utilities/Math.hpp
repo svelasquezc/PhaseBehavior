@@ -4,6 +4,8 @@
 #include <vector>
 #include <cmath>
 
+#include "Types.hpp"
+
 namespace Math {
 
     // Namespace containing mathematical constants
@@ -13,7 +15,8 @@ namespace Math {
          *
          * This constant represents the mathematical constant pi.
          */
-        constexpr double pi() { return std::atan(1) * 4; };
+        template<typename PT>
+        constexpr PT pi() { return std::atan(1) * 4; };
     };
 
     /**

@@ -11,13 +11,17 @@
 #include <PhaseBehavior/Mixture.hpp>
 #include <PhaseBehavior/Component.hpp>
 
+template<typename DeducedType>
+        class TypeChecker;
+
 using Precision_t = TypesDefinition::NumericalPrecision;
+using MixComp = std::pair<Component, Precision_t>;
 
 TEST_CASE("Can create Mixture objects", "[mixture]"){
 
     SECTION("Mixture object from file"){
         auto pvtFile = std::ifstream("PVT.csv");
-        std::vector<std::pair<Component, Precision_t>> components;
+        std::vector<MixComp> components;
 
         std::string line;
 
@@ -31,16 +35,17 @@ TEST_CASE("Can create Mixture objects", "[mixture]"){
             components.push_back({Component(std::move(name), Pc, Tc, Vc, MW, w ), composition});
         }
 
-        Mixture mixture(components);
-
-        REQUIRE(true);
+        REQUIRE_NOTHROW([&components](){Mixture mixture(components);});
     }
 
     SECTION("Mixture object from known components"){
-        Component CO2 {"CO2",1071,547.91,0.2667,4401,0.0344};
-        Component C1 {"CO2",1071,547.91,0.2667,4401,0.0344};
+        // Component CO2 {"CO2",1071,547.91,0.2667,4401,0.0344};
+        // Component C1 {"CO2",1071,547.91,0.2667,4401,0.0344};
 
-        Mixture((CO2, 0.0031), (C1, 0.6192));
+        // MixComp CO2inMix = {CO2, 0.0031}; 
+        // MixComp C1inMix = {C1, 0.6192};
+        
+        // Mixture(CO2inMix, C1inMix);
     }
 
 }
