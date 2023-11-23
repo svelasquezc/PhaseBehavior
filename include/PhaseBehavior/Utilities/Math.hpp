@@ -53,8 +53,8 @@ namespace Math {
             PT theta = std::acos(R / std::sqrt(Q3));
             return {
                 -(2 * std::sqrt(Q) * std::cos(theta / 3)) - a / 3,
-                -(2 * std::sqrt(Q) * std::cos((theta - 2 * constants::pi()) / 3)) - a / 3,
-                -(2 * std::sqrt(Q) * std::cos((theta + 2 * constants::pi()) / 3)) - a / 3
+                -(2 * std::sqrt(Q) * std::cos((theta - 2 * constants::pi<PT>()) / 3)) - a / 3,
+                -(2 * std::sqrt(Q) * std::cos((theta + 2 * constants::pi<PT>()) / 3)) - a / 3
                 
             };
         }
