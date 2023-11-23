@@ -84,6 +84,8 @@ public:
     Mixture(ContainerType& inputComponents): 
     numberOfComponents_(inputComponents.size())
     {
+        assert(numberOfComponents_ > 1 && "There should be more than one component in a mixture");
+
         for(auto&& pair : inputComponents){
             //TypeChecker<decltype(pair)> tc;
             components_.emplace_back(std::forward<Component>(pair.first), std::forward<NP_t>(pair.second));
@@ -110,6 +112,11 @@ public:
         (components_.emplace_back(
             std::forward<std::common_type_t<std::decay_t<MixtureComponents>...>>(args)
             ),...);
+
+        assert(std::accumulate(components_.begin(),components_.end(), 0,
+        [](auto previous, auto second){
+            return previous + second.composition();
+        }) - 1 <= std::numeric_limits<NP_t>::epsilon() && "The sum of the compositions must be equal to 1");
     }
 
     ConstMixtureIterator operator[] (std::string const& name){
