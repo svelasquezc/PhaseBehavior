@@ -1,8 +1,10 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
+#include "Math.hpp"
+
 // Namespace defining custom types related to numerical precision
-namespace TypesDefinition {
+namespace PhaseBehavior::Types {
     /**
      * @brief Alias for the numerical precision type.
      *
@@ -10,6 +12,7 @@ namespace TypesDefinition {
      * throughout the codebase.
      */
     using NumericalPrecision = double;
+    using ConstexprConstant = decltype(Math::constants::pi<NumericalPrecision>);   
 }
 
 #endif /* TYPES_HPP */

@@ -10,25 +10,19 @@
 
 namespace PhaseBehavior {
 
-    using NP_t = TypesDefinition::NumericalPrecision;
-    using ConstexprConstantType = decltype(Math::constants::pi<Precision_t>);
+    using NP_t = Types::NumericalPrecision;
 
     namespace EoS {
 
         template<
-            ConstexprConstantType EoSParameter1,
-            ConstexprConstantType EoSParameter2,
-            ConstexprConstantType attractionParameter,
-            ConstexprConstantType covolumeParameter,
-            typename DerivedEoS
+            Types::ConstexprConstant EoSParameter1,
+            Types::ConstexprConstant EoSParameter2,
+            typename MixingRule
             >
         class GeneralizedCubicEoS {
             private:
             constexpr static NP_t m1 = EoSParameter1();
             constexpr static NP_t m2 = EoSParameter2();
-            constexpr static NP_t omegaA = attractionParameter();
-            constexpr static NP_t omegaB = covolumeParameter();
-            DerivedEoS& self() { return static_cast<DerivedEoS&>(*this); };
             public:
             
             std::vector<NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature){

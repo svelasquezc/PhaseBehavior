@@ -4,9 +4,7 @@
 #include <vector>
 #include <cmath>
 
-#include "Types.hpp"
-
-namespace Math {
+namespace PhaseBehavior::Math {
 
     // Namespace containing mathematical constants
     namespace constants{
