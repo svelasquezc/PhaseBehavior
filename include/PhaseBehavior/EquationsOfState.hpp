@@ -6,6 +6,7 @@
 #include "GeneralizedCubicEoS.hpp" 
 #include "Utilities/Types.hpp"
 #include "Component.hpp"
+#include "MixingRules.hpp"
 
 namespace PhaseBehavior::EoS {
     using NP_t = Types::NumericalPrecision;
@@ -14,7 +15,7 @@ namespace PhaseBehavior::EoS {
 
         template<typename EoS>
         class ComponentAttraction {
-            protected:
+            public:
             constexpr static NP_t componentAttraction(Component const& component, NP_t const& pressure, NP_t const& temperature){
                 return std::pow(1+ EoS::mParameter(component.accentricFactor())*(1 -
                     std::sqrt(component.reducedTemperature(temperature))),2)*(
@@ -34,11 +35,11 @@ namespace PhaseBehavior::EoS {
             constexpr NP_t omegaB () {return 0.077796074;}
         }
 
-        class PengRobinson : protected PRSRK::ComponentAttraction<PengRobinson>,
+        class PengRobinson : public PRSRK::ComponentAttraction<PengRobinson>,
         public GeneralizedCubicEoS<
         constants::m1,
         constants::m2,
-        PengRobinson
+        MixingRules::NonRandomMixingRule<constants::omegaA, constants::omegaB, PengRobinson>
         >
         {
         public:
@@ -50,6 +51,28 @@ namespace PhaseBehavior::EoS {
                 }
                 return 0.379642 + 1.48503*accentricFactor 
                 - 0.164423*std::pow(accentricFactor,2) + 0.016666*std::pow(accentricFactor,3);
+            }
+        };
+    }
+
+    namespace SRK{
+        namespace constants {
+            constexpr NP_t m1 () {return 0;}
+            constexpr NP_t m2 () {return 1;}
+            constexpr NP_t omegaA () {return 0.4274802;}
+            constexpr NP_t omegaB () {return 0.08664035;}
+        }
+        class SoaveRedlichKwong : protected PRSRK::ComponentAttraction<SoaveRedlichKwong>,
+        public GeneralizedCubicEoS<
+        constants::m1,
+        constants::m2,
+        MixingRules::NonRandomMixingRule<constants::omegaA, constants::omegaB, SoaveRedlichKwong>
+        >
+        {
+        public:
+
+            constexpr static NP_t mParameter(NP_t accentricFactor){
+                return 0.48 + 1.574*accentricFactor - 0.176*std::pow(accentricFactor,2);
             }
         };
     }

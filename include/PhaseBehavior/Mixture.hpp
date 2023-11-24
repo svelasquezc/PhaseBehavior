@@ -58,6 +58,10 @@ namespace PhaseBehavior {
             bool operator< (MixtureComponent const& rhs) const {
                 return pure().name().compare(rhs.pure().name()) < 0;
             }
+
+            bool operator== (MixtureComponent const& rhs) const {
+                return pure().name().compare(rhs.pure().name()) == 0;
+            }
         };
 
         unsigned int mutable numberOfComponents_;
@@ -92,7 +96,6 @@ namespace PhaseBehavior {
             assert(numberOfComponents_ > 1 && "There should be more than one component in a mixture");
 
             for(auto&& pair : inputComponents){
-                //TypeChecker<decltype(pair)> tc;
                 components_.emplace_back(std::forward<Component>(pair.first), std::forward<NP_t>(pair.second));
             }
 
@@ -142,16 +145,16 @@ namespace PhaseBehavior {
             auto mixComp2 = (*this)[componentName2];
             assert(mixComp1!=this->end() && (componentName1 + " is not a component of the mixture").c_str());
             assert(mixComp2!=this->end() && (componentName2 + " is not a component of the mixture").c_str());
-            interactionCoefficients_[{*mixComp1, *mixComp2}] = value;
+            interactionCoefficients_[{*mixComp1, *mixComp2}] =  value;
         }
 
         void interactionCoefficient(MixtureComponent const& component1, MixtureComponent const& component2, NP_t value){
             interactionCoefficients_[{component1, component2}] = value;
         }
 
-        NP_t interactionCoefficient(MixtureComponent const& component1, MixtureComponent const& component2){
+        NP_t interactionCoefficient(MixtureComponent const& component1, MixtureComponent const& component2) const{
             try{
-                return interactionCoefficients_[{component1, component2}];
+                return interactionCoefficients_.at({component1, component2});
             }catch(std::out_of_range e){
                 return 0.0;
             }
@@ -163,7 +166,7 @@ namespace PhaseBehavior {
             assert(mixComp1!=this->end() && (componentName1 + " is not a component of the mixture").c_str());
             assert(mixComp2!=this->end() && (componentName2 + " is not a component of the mixture").c_str());
             try{
-                return interactionCoefficients_[{*mixComp1, *mixComp2}];
+                return interactionCoefficients_.at({*mixComp1, *mixComp2});
             }catch(std::out_of_range e){
                 return 0.0;
             }

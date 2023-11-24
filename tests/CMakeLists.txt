@@ -20,3 +20,16 @@ target_link_libraries(testcubicroots PRIVATE PhaseBehavior Catch2::Catch2WithMai
 add_test(NAME testcubicrootstest COMMAND testcubicroots) # Command can be a target
 
 add_subdirectory(TestMixture)
+
+# Tests need to be added as executables first
+add_executable(TestPR TestCreatePengRobinson.cpp)
+
+# C++17 syntax
+target_compile_features(TestPR PRIVATE cxx_std_17)
+
+# Should be linked to the main library, as well as the Catch2 testing library
+target_link_libraries(TestPR PRIVATE PhaseBehavior Catch2::Catch2WithMain)
+
+# If you register a test, then ctest and make test will run it.
+# You can also run examples and check the output, as well.
+add_test(NAME TestPR COMMAND TestPR) # Command can be a target

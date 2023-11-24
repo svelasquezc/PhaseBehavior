@@ -4,6 +4,7 @@
 #include <tuple>
 #include <map>
 #include <cmath>
+#include <functional>
 #include "Utilities/Types.hpp"
 #include "Component.hpp"
 #include "Mixture.hpp"
@@ -20,7 +21,7 @@ namespace PhaseBehavior::EoS::MixingRules{
     >
     class NonRandomMixingRule{
     private:
-        using MapType = std::map<Component const&, NP_t>;
+        using MapType = std::map<std::reference_wrapper<Component const>, NP_t, std::less<const Component>>;
 
         MapType componentAParameter, componentBParameter;
     public:
