@@ -57,6 +57,12 @@ namespace PhaseBehavior::Math {
             };
         }
     }
+
+    template<typename PT>
+    constexpr PT roundUp(PT const& value, unsigned int const& decimal_places) {
+        const PT multiplier = std::pow(10.0, decimal_places);
+        return std::ceil(value * multiplier) / multiplier;
+    }
 };
 
 #endif /* MATH_UTILITIES_HPP */
