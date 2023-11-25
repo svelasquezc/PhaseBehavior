@@ -115,7 +115,8 @@ namespace PhaseBehavior {
             return absoluteTemperature / criticalTemperature_;
         }
 
-        bool operator<(Component const& rhs){
+        bool operator<(Component const& rhs) const
+        {
             return name_.compare(rhs.name_) < 0;
         }
 

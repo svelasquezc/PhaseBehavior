@@ -29,8 +29,8 @@ namespace PhaseBehavior::EoS {
 
         namespace constants {
             
-            constexpr NP_t m1 () {return 1 + std::sqrt(2);}
-            constexpr NP_t m2 () {return 1 - std::sqrt(2);}
+            constexpr NP_t m1 () {return static_cast<NP_t>(1) + std::sqrt(static_cast<NP_t>(2));}
+            constexpr NP_t m2 () {return static_cast<NP_t>(1) - std::sqrt(static_cast<NP_t>(2));}
             constexpr NP_t omegaA () {return 0.457235529;}
             constexpr NP_t omegaB () {return 0.077796074;}
         }

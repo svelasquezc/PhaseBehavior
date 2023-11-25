@@ -14,7 +14,7 @@ namespace PhaseBehavior::Math {
          * This constant represents the mathematical constant pi.
          */
         template<typename PT>
-        constexpr PT pi() { return std::atan(1) * 4; };
+        constexpr PT pi() { return std::atan(static_cast<PT>(1)) * static_cast<PT>(4); };
     };
 
     /**

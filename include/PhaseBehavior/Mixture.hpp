@@ -31,6 +31,9 @@ namespace PhaseBehavior {
             MixtureComponent(MixtureComponent& rhs) = default;
             MixtureComponent(MixtureComponent&& rhs) = default;
 
+            MixtureComponent& operator= (MixtureComponent const&) = default;
+            MixtureComponent& operator= (MixtureComponent&&) = default;
+
             template <typename PairType,
             typename = typename std::enable_if_t<!std::is_same_v<PairType, MixtureComponent>>>
             explicit MixtureComponent(PairType&& componentWithComposition)
@@ -81,8 +84,11 @@ namespace PhaseBehavior {
     public:
 
         Mixture() = delete;
-        Mixture(Mixture&) = delete;
-        Mixture(Mixture&&) = delete;
+        Mixture(Mixture const&) = default;
+        Mixture(Mixture&&) = default;
+
+        Mixture& operator= (Mixture const&) = default;
+        Mixture& operator= (Mixture&&) = default;
 
         template< 
             typename ContainerType,

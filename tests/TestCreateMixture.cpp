@@ -11,10 +11,11 @@
 
 #include <PhaseBehavior/Utilities/Types.hpp>
 #include <PhaseBehavior/Mixture.hpp>
+#include <PhaseBehavior/Utilities/Input.hpp>
 #include <PhaseBehavior/Component.hpp>
 
 template<typename DeducedType>
-        class TypeChecker;
+class TypeChecker;
 
 using Precision_t = PhaseBehavior::Types::NumericalPrecision;
 using MixComp = std::pair<PhaseBehavior::Component, Precision_t>;
@@ -23,44 +24,7 @@ TEST_CASE("Can create Mixture objects", "[mixture]"){
 
     SECTION("Mixture object from file"){
         
-        std::vector<MixComp> components;
-
-        {
-            auto pvtFile = std::ifstream("PVT.csv");
-            std::string line;
-
-            // Get rid of the header line
-            std::getline(pvtFile, line);
-            while (std::getline(pvtFile, line)){
-                std::istringstream ss(line);
-                std::string name;
-                Precision_t composition, Pc, Tc, w, MW, Vc;
-                ss >> name >> composition >> Pc >> Tc >> w >> MW >> Vc;
-                components.push_back({PhaseBehavior::Component(std::move(name), Pc, Tc, Vc, MW, w ), composition});
-            }
-            pvtFile.close();
-        }
-        PhaseBehavior::Mixture mixture(components);
-        {
-            auto interactionCoefficientsFile = std::ifstream("InteractionCoefficients.csv");
-            std::string line;
-
-            std::getline(interactionCoefficientsFile, line);
-
-            for (const auto& mixComponent1 : mixture){
-                std::getline(interactionCoefficientsFile, line);
-                std::istringstream ss(line);
-                std::string name;
-                ss >> name;
-                for (const auto& mixComponent2 : mixture){
-                    Precision_t interactionCoefficientValue = 0.0;
-                    ss >> interactionCoefficientValue;
-                    if (std::abs(interactionCoefficientValue) > 0.0){
-                        mixture.interactionCoefficient(mixComponent1, mixComponent2, interactionCoefficientValue);
-                    }
-                }
-            }
-        }
+        auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
 
         CHECK(Catch::Approx(mixture.interactionCoefficient("CO2", "C1"))==0.105);
         CHECK(Catch::Approx(mixture.interactionCoefficient("CO2", "C2"))==0.13);
