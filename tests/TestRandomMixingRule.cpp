@@ -9,7 +9,7 @@
 #include <PhaseBehavior/EquationsOfState.hpp>
 
 
-using PRMixingRule = PhaseBehavior::EoS::MixingRules::NonRandomMixingRule<
+using PRMixingRule = PhaseBehavior::EoS::MixingRules::RandomMixingRule<
 PhaseBehavior::EoS::PR::constants::omegaA, 
 PhaseBehavior::EoS::PR::constants::omegaB, 
 PhaseBehavior::EoS::PR::PengRobinson

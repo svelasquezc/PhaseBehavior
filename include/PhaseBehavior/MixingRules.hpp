@@ -19,7 +19,7 @@ namespace PhaseBehavior::EoS::MixingRules{
     Types::ConstexprConstant covolumeParameter,
     typename EoS
     >
-    class NonRandomMixingRule{
+    class RandomMixingRule{
     private:
         using MapType = std::map<std::reference_wrapper<Component const>, NP_t, std::less<const Component>>;
 

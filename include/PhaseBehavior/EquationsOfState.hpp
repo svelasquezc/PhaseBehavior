@@ -39,7 +39,7 @@ namespace PhaseBehavior::EoS {
         public GeneralizedCubicEoS<
         constants::m1,
         constants::m2,
-        MixingRules::NonRandomMixingRule<constants::omegaA, constants::omegaB, PengRobinson>
+        MixingRules::RandomMixingRule<constants::omegaA, constants::omegaB, PengRobinson>
         >
         {
         public:
@@ -66,7 +66,7 @@ namespace PhaseBehavior::EoS {
         public GeneralizedCubicEoS<
         constants::m1,
         constants::m2,
-        MixingRules::NonRandomMixingRule<constants::omegaA, constants::omegaB, SoaveRedlichKwong>
+        MixingRules::RandomMixingRule<constants::omegaA, constants::omegaB, SoaveRedlichKwong>
         >
         {
         public:
