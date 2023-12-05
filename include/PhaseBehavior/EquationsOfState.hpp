@@ -62,7 +62,7 @@ namespace PhaseBehavior::EoS {
             constexpr NP_t omegaA () {return 0.4274802;}
             constexpr NP_t omegaB () {return 0.08664035;}
         }
-        class SoaveRedlichKwong : protected PRSRK::ComponentAttraction<SoaveRedlichKwong>,
+        class SoaveRedlichKwong : public PRSRK::ComponentAttraction<SoaveRedlichKwong>,
         public GeneralizedCubicEoS<
         constants::m1,
         constants::m2,
