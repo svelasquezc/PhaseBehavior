@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <cmath>
+#include <limits>
+#include <optional>
 
 namespace PhaseBehavior::Math {
 
@@ -63,6 +65,47 @@ namespace PhaseBehavior::Math {
         const PT multiplier = std::pow(10.0, decimal_places);
         return std::round(value * multiplier) / multiplier;
     }
+
+    template<typename PT, typename FunctionLike, typename Predicate>
+    constexpr auto NewtonRaphson(const PT& initialGuess, const FunctionLike& goalFunction, const Predicate& divergenceCriterium){
+        PT newValue = initialGuess;
+        PT oldValue = 0;
+        PT scaledEpsilon = std::abs(initialGuess)*std::numeric_limits<PT>::epsilon();
+
+        // Relative error convergence criterium
+        while (std::abs(newValue - oldValue) > 1e-10){
+            // Centered first-order derivative
+            PT goalDerivativeValue = (goalFunction(newValue + scaledEpsilon) - goalFunction(newValue - scaledEpsilon))/(2*scaledEpsilon);
+            oldValue = newValue;
+            newValue = oldValue - (goalFunction(oldValue)/goalDerivativeValue);
+
+            if (divergenceCriterium(newValue)) return std::optional<PT>();
+        }
+        return std::make_optional(newValue);
+    };
+
+    template<typename PT, typename FunctionLike>
+    constexpr PT bisection(PT lowerLimit, PT upperLimit, const FunctionLike& goalFunction){
+        PT oldValue = lowerLimit;
+        PT newValue = upperLimit;
+
+        // Relative error convergence criterium
+        while (std::abs(newValue - oldValue) > 1e-10){
+            
+            oldValue = newValue;
+            newValue = 0.5*(lowerLimit + upperLimit);
+            PT functionValue = goalFunction(newValue);
+
+            if (functionValue>0){
+                upperLimit = newValue;
+            }else if(functionValue<0){
+                lowerLimit = newValue;
+            }else {
+                return newValue;
+            }
+        }
+        return newValue;
+    };
 };
 
 #endif /* MATH_UTILITIES_HPP */

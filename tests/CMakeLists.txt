@@ -70,3 +70,29 @@ target_link_libraries(TestSRK PRIVATE PhaseBehavior Catch2::Catch2WithMain)
 # If you register a test, then ctest and make test will run it.
 # You can also run examples and check the output, as well.
 add_test(NAME TestSRK COMMAND TestSRK) # Command can be a target
+
+# Tests need to be added as executables first
+add_executable(TestNR TestNewtonRaphson.cpp)
+
+# C++17 syntax
+target_compile_features(TestNR PRIVATE cxx_std_17)
+
+# Should be linked to the main library, as well as the Catch2 testing library
+target_link_libraries(TestNR PRIVATE PhaseBehavior Catch2::Catch2WithMain)
+
+# If you register a test, then ctest and make test will run it.
+# You can also run examples and check the output, as well.
+add_test(NAME TestNR COMMAND TestNR) # Command can be a target
+
+# Tests need to be added as executables first
+add_executable(TestBisection TestBisection.cpp)
+
+# C++17 syntax
+target_compile_features(TestBisection PRIVATE cxx_std_17)
+
+# Should be linked to the main library, as well as the Catch2 testing library
+target_link_libraries(TestBisection PRIVATE PhaseBehavior Catch2::Catch2WithMain)
+
+# If you register a test, then ctest and make test will run it.
+# You can also run examples and check the output, as well.
+add_test(NAME TestBisection COMMAND TestBisection) # Command can be a target

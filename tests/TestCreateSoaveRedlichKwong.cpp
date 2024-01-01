@@ -5,7 +5,7 @@
 #include <PhaseBehavior/Utilities/Math.hpp>
 #include <PhaseBehavior/EquationsOfState.hpp>
 
-TEST_CASE("Can create and evaluate an EoS", "[PengRobinson]"){
+TEST_CASE("Can create and evaluate an EoS", "[SoaveRedlichKwong]"){
     auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
 
     PhaseBehavior::EoS::SRK::SoaveRedlichKwong srk;

@@ -99,7 +99,7 @@ namespace PhaseBehavior {
         Mixture(ContainerType& inputComponents): 
         numberOfComponents_(inputComponents.size())
         {
-            assert(numberOfComponents_ > 1 && "There should be more than one component in a mixture");
+            assert(numberOfComponents_ >= 1 && "There should be one or more components in a mixture");
 
             for(auto&& pair : inputComponents){
                 components_.emplace_back(std::forward<Component>(pair.first), std::forward<NP_t>(pair.second));
@@ -121,7 +121,7 @@ namespace PhaseBehavior {
         Mixture(MixtureComponents&&... args): 
         numberOfComponents_(sizeof...(args))
         {
-            static_assert(sizeof...(args) > 1, "There should be more than one component in a mixture");  
+            static_assert(sizeof...(args) >= 1, "There should be one or more components in a mixture");  
             //TypeChecker<decltype(args)...> tc;
             (components_.emplace_back(
                 std::forward<std::common_type_t<std::decay_t<MixtureComponents>...>>(args)
@@ -142,6 +142,9 @@ namespace PhaseBehavior {
         auto operator[] (std::size_t componentIndex) -> decltype(components_[componentIndex]){
             return components_[componentIndex];
         }
+
+        MixtureIterator begin() {return components_.begin();}
+        MixtureIterator end() {return components_.end();}
 
         ConstMixtureIterator begin() const {return components_.begin();}
         ConstMixtureIterator end() const {return components_.end();}
