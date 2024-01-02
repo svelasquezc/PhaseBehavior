@@ -12,6 +12,7 @@
 #include <map>
 #include <algorithm>
 #include <exception>
+#include <optional>
 #include "Component.hpp"
 
 namespace PhaseBehavior {
@@ -24,8 +25,7 @@ namespace PhaseBehavior {
         class MixtureComponent {
         private:
             std::shared_ptr<Component> mutable pureComponent_;
-            NP_t mutable molarComposition_;
-
+            std::map<std::string, NP_t> molarComposition_;
         public:
 
             MixtureComponent(MixtureComponent& rhs) = default;
@@ -39,23 +39,37 @@ namespace PhaseBehavior {
             explicit MixtureComponent(PairType&& componentWithComposition)
             {
                 pureComponent_ = std::make_shared<Component>(std::forward<Component>(std::get<0>(componentWithComposition)));
-                molarComposition_  = std::forward<NP_t>(std::get<1>(componentWithComposition));
+                molarComposition_["global"]  = std::forward<NP_t>(std::get<1>(componentWithComposition));
             }
 
             MixtureComponent(Component&& pureComponent, NP_t&& molarComposition):
-            pureComponent_(std::make_shared<Component>(std::forward<Component>(pureComponent))),
-            molarComposition_(std::move(molarComposition)){}
+            pureComponent_(std::make_shared<Component>(std::forward<Component>(pureComponent)))
+            {
+                molarComposition_["global"] = std::move(molarComposition);
+            }
 
             void composition(NP_t const& molarComposition){
-                molarComposition_ = molarComposition;
+                molarComposition_["global"] = molarComposition;
             }
 
             const NP_t composition() const {
-                return molarComposition_;
+                return molarComposition_.at("global");
+            }
+
+            const NP_t composition(const std::string& phaseName) const {
+                return molarComposition_.at(phaseName);
+            }
+
+            void composition (std::string const& phaseName,  NP_t const& value){
+                molarComposition_[phaseName] = value;
             }
 
             const decltype(*pureComponent_) pure () const{
                 return *pureComponent_;
+            }
+
+            NP_t equilibriumCoefficient(const NP_t& pressure, const NP_t& temperature) const {
+                return pure().equilibriumCoefficient(pressure, temperature);
             }
 
             bool operator< (MixtureComponent const& rhs) const {
@@ -65,6 +79,7 @@ namespace PhaseBehavior {
             bool operator== (MixtureComponent const& rhs) const {
                 return pure().name().compare(rhs.pure().name()) == 0;
             }
+
         };
 
         unsigned int mutable numberOfComponents_;
@@ -80,6 +95,8 @@ namespace PhaseBehavior {
 
         using MixtureIterator = decltype(components_)::iterator;
         using ConstMixtureIterator = decltype(components_)::const_iterator;
+
+        std::map<std::string, NP_t> phaseMolarFraction_;
 
     public:
 
@@ -122,7 +139,7 @@ namespace PhaseBehavior {
         numberOfComponents_(sizeof...(args))
         {
             static_assert(sizeof...(args) >= 1, "There should be one or more components in a mixture");  
-            //TypeChecker<decltype(args)...> tc;
+            
             (components_.emplace_back(
                 std::forward<std::common_type_t<std::decay_t<MixtureComponents>...>>(args)
                 ),...);
@@ -179,6 +196,14 @@ namespace PhaseBehavior {
             }catch(std::out_of_range e){
                 return 0.0;
             }
+        }
+
+        NP_t molarFraction(std::string const& phaseName) const {
+            return phaseMolarFraction_.at(phaseName);
+        }
+
+        void molarFraction(std::string const& phaseName, NP_t const& value) {
+            phaseMolarFraction_[phaseName] = value;
         }
     };
 }

@@ -25,7 +25,7 @@ namespace PhaseBehavior::EoS::MixingRules{
 
         MapType componentAParameter, componentBParameter;
     public:
-        std::tuple<NP_t, NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature){
+        std::tuple<NP_t, NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature, std::string const& phaseName = "global"){
 
             for(auto const& mixComponent : mixture){
 
@@ -46,11 +46,11 @@ namespace PhaseBehavior::EoS::MixingRules{
                     auto binaryCoefficient = (1 - mixture.interactionCoefficient(mixComponentI, mixComponentJ))*
                     std::sqrt(componentAParameter[mixComponentI.pure()]*componentAParameter[mixComponentJ.pure()]);
 
-                    mixtureAttraction += mixComponentI.composition()*mixComponentJ.composition()*binaryCoefficient;
+                    mixtureAttraction += mixComponentI.composition(phaseName)*mixComponentJ.composition(phaseName)*binaryCoefficient;
 
                 }
 
-                mixtureCovolume += mixComponentI.composition()*componentBParameter[mixComponentI.pure()];
+                mixtureCovolume += mixComponentI.composition(phaseName)*componentBParameter[mixComponentI.pure()];
             }
 
             return {mixtureAttraction, mixtureCovolume};

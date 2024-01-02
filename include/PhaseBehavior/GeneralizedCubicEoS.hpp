@@ -26,10 +26,11 @@ namespace PhaseBehavior {
             constexpr static NP_t m1 = EoSParameter1();
             constexpr static NP_t m2 = EoSParameter2();
             MixingRule mixingRule;
+            NP_t selectedCompressibility_ = 0;
             public:
             
-            std::vector<NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature){
-                auto [mixtureAttraction, mixtureCovolume] = mixingRule(mixture, pressure, temperature);
+            std::vector<NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature, std::string phaseName = "global"){
+                auto [mixtureAttraction, mixtureCovolume] = mixingRule(mixture, pressure, temperature, phaseName);
 
                 NP_t cuadraticTerm = (m1 + m2 - 1)*mixtureCovolume - 1;
                 NP_t linearTerm = mixtureAttraction + m1*m2*std::pow(mixtureCovolume,2) - (m1 + m2)*mixtureCovolume*(mixtureCovolume + 1);
@@ -38,6 +39,7 @@ namespace PhaseBehavior {
                 auto roots = Math::cubicRootsFind(cuadraticTerm, linearTerm, constantTerm);
 
                 if (roots.size()==1){
+                    selectedCompressibility_ = roots[0];
                     return {roots[0]};
                 }
 
@@ -49,9 +51,22 @@ namespace PhaseBehavior {
                     if (root<zMin) zMin = root; 
                 }
 
+                // Root selection process
+                if(zMin < mixtureCovolume) {
+                    selectedCompressibility_ = zMax;
+                }else{
+                    NP_t gibbsEnergyDerivativeWrtT = (zMax - zMin) + std::log((zMin - mixtureCovolume)/(zMax - mixtureCovolume)) 
+                                                - (mixtureAttraction/(mixtureCovolume*(m2-m1)))*std::log(
+                                                    ((zMin + m1*mixtureCovolume)*(zMax + m2*mixtureCovolume))/((zMin + m2*mixtureCovolume)*(zMax + m1*mixtureCovolume))
+                                                    );
+                    selectedCompressibility_ = gibbsEnergyDerivativeWrtT > 0 ? zMin : zMax;
+                }
                 return {zMax, zMin};
             }
 
+            NP_t selectedCompressibility() const {
+                return selectedCompressibility_;
+            }
         };
     }
 }

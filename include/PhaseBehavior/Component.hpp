@@ -115,6 +115,10 @@ namespace PhaseBehavior {
             return absoluteTemperature / criticalTemperature_;
         }
 
+        NP_t equilibriumCoefficient(NP_t const& absolutePressure, NP_t const& absoluteTemperature) const {
+            return std::exp(5.37*(1+accentricFactor_)*(1-(1/reducedTemperature(absoluteTemperature))))/reducedPressure(absolutePressure);
+        }
+
         bool operator<(Component const& rhs) const
         {
             return name_.compare(rhs.name_) < 0;
