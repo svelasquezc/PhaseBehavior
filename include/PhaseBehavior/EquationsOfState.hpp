@@ -1,5 +1,5 @@
-#ifndef PENG_ROBINSON_EOS
-#define PENG_ROBINSON_EOS
+#ifndef PENG_ROBINSON_EOS_HPP
+#define PENG_ROBINSON_EOS_HPP
 
 #include <cmath>
 
@@ -78,4 +78,4 @@ namespace PhaseBehavior::EoS {
     }
 }
 
-#endif /* PENG_ROBINSON_EOS */
+#endif /* PENG_ROBINSON_EOS_HPP */

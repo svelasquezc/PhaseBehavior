@@ -1,5 +1,5 @@
-#ifndef PHASE_EQUILIBRIUM
-#define PHASE_EQUILIBRIUM
+#ifndef PHASE_EQUILIBRIUM_HPP
+#define PHASE_EQUILIBRIUM_HPP
 
 #include <algorithm>
 #include <iostream>
@@ -106,4 +106,4 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
     }
 }
 
-#endif /* PHASE_EQUILIBRIUM */
+#endif /* PHASE_EQUILIBRIUM_HPP */
