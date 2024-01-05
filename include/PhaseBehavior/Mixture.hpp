@@ -26,6 +26,8 @@ namespace PhaseBehavior {
         private:
             std::shared_ptr<Component> mutable pureComponent_;
             std::map<std::string, NP_t> molarComposition_;
+            std::map<std::string, NP_t> fugacityCoefficient_;
+            NP_t equilibriumCoefficient_;
         public:
 
             MixtureComponent(MixtureComponent& rhs) = default;
@@ -56,20 +58,36 @@ namespace PhaseBehavior {
                 return molarComposition_.at("global");
             }
 
-            const NP_t composition(const std::string& phaseName) const {
+            const NP_t composition(std::string const& phaseName) const {
                 return molarComposition_.at(phaseName);
             }
 
-            void composition (std::string const& phaseName,  NP_t const& value){
-                molarComposition_[phaseName] = value;
+            void composition (std::string const& phaseName,  NP_t const& composition){
+                molarComposition_[phaseName] = composition;
+            }
+
+            const NP_t fugacityCoefficient(std::string const& phaseName) const {
+                return fugacityCoefficient_.at(phaseName);
+            }
+
+            void fugacityCoefficient (std::string const& phaseName,  NP_t const& fugacityCoefficient){
+                fugacityCoefficient_[phaseName] = fugacityCoefficient;
+            }
+
+            const NP_t fugacity(std::string const& phaseName, NP_t const& absolutePressure) const{
+                return composition(phaseName)*fugacityCoefficient(phaseName)*absolutePressure;
             }
 
             const decltype(*pureComponent_) pure () const{
                 return *pureComponent_;
             }
 
-            NP_t equilibriumCoefficient(const NP_t& pressure, const NP_t& temperature) const {
-                return pure().equilibriumCoefficient(pressure, temperature);
+            NP_t equilibriumCoefficient() const {
+                return equilibriumCoefficient_;
+            }
+
+            void equilibriumCoefficient(NP_t const& equilibriumCoefficient){
+                equilibriumCoefficient_ = equilibriumCoefficient;
             }
 
             bool operator< (MixtureComponent const& rhs) const {
@@ -84,9 +102,6 @@ namespace PhaseBehavior {
 
         unsigned int mutable numberOfComponents_;
 
-        NP_t attractionParameter_;
-        NP_t covolumeParameter_;
-
         std::vector<MixtureComponent> components_;
 
         using InteractionCoefficientsType = std::map<std::pair<MixtureComponent const&,MixtureComponent const&>, NP_t>;
@@ -97,6 +112,7 @@ namespace PhaseBehavior {
         using ConstMixtureIterator = decltype(components_)::const_iterator;
 
         std::map<std::string, NP_t> phaseMolarFraction_;
+        std::map<std::string, NP_t> phaseCompressibility_;
 
     public:
 
@@ -202,8 +218,22 @@ namespace PhaseBehavior {
             return phaseMolarFraction_.at(phaseName);
         }
 
-        void molarFraction(std::string const& phaseName, NP_t const& value) {
-            phaseMolarFraction_[phaseName] = value;
+        void molarFraction(std::string const& phaseName, NP_t const& molarFraction) {
+            phaseMolarFraction_[phaseName] = molarFraction;
+        }
+
+        NP_t compressibility(std::string const& phaseName) const {
+            return phaseCompressibility_.at(phaseName);
+        }
+
+        void compressibility(std::string const& phaseName, NP_t const& compressibility) {
+            phaseCompressibility_[phaseName] = compressibility;
+        }
+
+        void initializeEquilibriumCoefficients(NP_t const& pressure, NP_t const& temperature){
+            for (auto& mixComp : components_){
+                mixComp.equilibriumCoefficient(mixComp.pure().equilibriumCoefficient(pressure, temperature));
+            }
         }
     };
 }

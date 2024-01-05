@@ -11,7 +11,7 @@ namespace PhaseBehavior::Types {
      * This type represents the level of numerical precision used
      * throughout the codebase.
      */
-    using NumericalPrecision = long double;
+    using NumericalPrecision = double;
     using ConstexprConstant = decltype(Math::constants::pi<NumericalPrecision>);   
 }
 

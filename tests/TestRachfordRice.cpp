@@ -28,7 +28,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
 
         // 500 psia and 50 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 500 /*psia*/, 50 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(500 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.7252);
 
             auto [vaporA,vaporB] = mixingRule(mixture, 500 /*psia*/, 50 + 460 /*R*/, "vapor");
@@ -46,7 +47,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 400 psia and 50 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 400 /*psia*/, 50 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(400 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.7533);
             auto [vaporA,vaporB] = mixingRule(mixture, 400 /*psia*/, 50 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1480); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0360);
@@ -59,7 +61,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 300 psia and 50 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 300 /*psia*/, 50 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(300 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.7840);
             auto [vaporA,vaporB] = mixingRule(mixture, 300 /*psia*/, 50 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1165); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0275);
@@ -72,7 +75,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 500 psia and 100 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 500 /*psia*/, 100 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(500 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.7954);
             auto [vaporA,vaporB] = mixingRule(mixture, 500 /*psia*/, 100 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1590); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0425);
@@ -85,7 +89,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 400 psia and 100 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 400 /*psia*/, 100 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(400 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.8170);
             auto [vaporA,vaporB] = mixingRule(mixture, 400 /*psia*/, 100 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1320); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0345);
@@ -98,7 +103,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 300 psia and 100 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 300 /*psia*/, 100 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(300 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.8400);
             auto [vaporA,vaporB] = mixingRule(mixture, 300 /*psia*/, 100 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1034); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0264);
@@ -127,7 +133,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
 
         // 500 psia and 50 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 500 /*psia*/, 50 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(500 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.7252);
 
             auto [vaporA,vaporB] = mixingRule(mixture, 500 /*psia*/, 50 + 460 /*R*/, "vapor");
@@ -145,7 +152,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 400 psia and 50 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 400 /*psia*/, 50 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(400 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.7533);
             auto [vaporA,vaporB] = mixingRule(mixture, 400 /*psia*/, 50 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1345); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0401);
@@ -158,7 +166,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 300 psia and 50 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 300 /*psia*/, 50 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(300 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.7840);
             auto [vaporA,vaporB] = mixingRule(mixture, 300 /*psia*/, 50 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1061); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0306);
@@ -171,7 +180,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 500 psia and 100 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 500 /*psia*/, 100 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(500 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.7954);
             auto [vaporA,vaporB] = mixingRule(mixture, 500 /*psia*/, 100 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1432); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0473);
@@ -184,7 +194,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 400 psia and 100 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 400 /*psia*/, 100 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(400 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.8170);
             auto [vaporA,vaporB] = mixingRule(mixture, 400 /*psia*/, 100 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.1192); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0384);
@@ -197,7 +208,8 @@ TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "
         }
         // 300 psia and 100 F
         {
-            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture, 300 /*psia*/, 100 + 460 /*R*/);
+            mixture.initializeEquilibriumCoefficients(300 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::rachfordVLE(mixture);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(mixture.molarFraction("vapor"),4))==0.8400);
             auto [vaporA,vaporB] = mixingRule(mixture, 300 /*psia*/, 100 + 460 /*R*/, "vapor");
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporA,4))==0.0936); CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporB,4))==0.0294);

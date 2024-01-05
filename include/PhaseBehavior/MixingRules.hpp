@@ -21,18 +21,23 @@ namespace PhaseBehavior::EoS::MixingRules{
     >
     class RandomMixingRule{
     private:
+        
         using MapType = std::map<std::reference_wrapper<Component const>, NP_t, std::less<const Component>>;
+        using BinaryAttractionType = std::map<std::pair<Component const&, Component const&>, NP_t>;
 
-        MapType componentAParameter, componentBParameter;
+        MapType componentAttraction_, componentCovolume_;
+
+        BinaryAttractionType binaryAttraction_;
+
     public:
         std::tuple<NP_t, NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature, std::string const& phaseName = "global"){
 
             for(auto const& mixComponent : mixture){
 
-                componentAParameter[mixComponent.pure()] = attractionParameter()*
+                componentAttraction_[mixComponent.pure()] = attractionParameter()*
                 EoS::componentAttraction(mixComponent.pure(), pressure, temperature);
 
-                componentBParameter[mixComponent.pure()] = covolumeParameter()*
+                componentCovolume_[mixComponent.pure()] = covolumeParameter()*
                 mixComponent.pure().reducedPressure(pressure)/mixComponent.pure().reducedTemperature(temperature);
 
             }
@@ -43,19 +48,32 @@ namespace PhaseBehavior::EoS::MixingRules{
             for(auto const& mixComponentI : mixture){
                 for(auto const& mixComponentJ: mixture){
 
-                    auto binaryCoefficient = (1 - mixture.interactionCoefficient(mixComponentI, mixComponentJ))*
-                    std::sqrt(componentAParameter[mixComponentI.pure()]*componentAParameter[mixComponentJ.pure()]);
+                    auto binaryAttractionValue = (1 - mixture.interactionCoefficient(mixComponentI, mixComponentJ))*
+                    std::sqrt(componentAttraction_[mixComponentI.pure()]*componentAttraction_[mixComponentJ.pure()]);
 
-                    mixtureAttraction += mixComponentI.composition(phaseName)*mixComponentJ.composition(phaseName)*binaryCoefficient;
+                    binaryAttraction_[{mixComponentI.pure(), mixComponentJ.pure()}] = binaryAttractionValue;
+
+                    mixtureAttraction += mixComponentI.composition(phaseName)*mixComponentJ.composition(phaseName)*binaryAttractionValue;
 
                 }
 
-                mixtureCovolume += mixComponentI.composition(phaseName)*componentBParameter[mixComponentI.pure()];
+                mixtureCovolume += mixComponentI.composition(phaseName)*componentCovolume_[mixComponentI.pure()];
             }
 
             return {mixtureAttraction, mixtureCovolume};
         }
-    
+
+        NP_t componentAttraction(Component const& component) const{
+            return componentAttraction_.at(component);
+        }
+
+        NP_t componentCovolume(Component const& component) const{
+            return componentCovolume_.at(component);
+        }
+
+        NP_t binaryAttraction(Component const& componentI, Component const& componentJ) const{
+            return binaryAttraction_.at({componentI, componentJ});
+        }
     };
 }
 

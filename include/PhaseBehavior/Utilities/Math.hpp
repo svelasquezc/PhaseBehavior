@@ -66,18 +66,34 @@ namespace PhaseBehavior::Math {
         return std::round(value * multiplier) / multiplier;
     }
 
-    template<typename PT, typename FunctionLike, typename Predicate>
-    constexpr auto NewtonRaphson(const PT& initialGuess, const FunctionLike& goalFunction, const Predicate& divergenceCriterium){
+    template<typename PT, typename Predicate, typename FunctionLike>
+    constexpr auto NewtonRaphson(const PT& initialGuess, const Predicate& divergenceCriterium, const FunctionLike& goalFunction){
         PT newValue = initialGuess;
         PT oldValue = 0;
-        PT scaledEpsilon = std::abs(initialGuess)*std::numeric_limits<PT>::epsilon();
+        PT scaledEpsilon = std::abs(initialGuess)*std::sqrt(std::numeric_limits<PT>::epsilon());
 
         // Relative error convergence criterium
         while (std::abs(newValue - oldValue) > 1e-10){
             // Centered first-order derivative
-            PT goalDerivativeValue = (goalFunction(newValue + scaledEpsilon) - goalFunction(newValue - scaledEpsilon))/(2*scaledEpsilon);
+            PT goalDerivativeValue = (goalFunction(newValue + scaledEpsilon) - goalFunction(newValue))/(scaledEpsilon);
             oldValue = newValue;
             newValue = oldValue - (goalFunction(oldValue)/goalDerivativeValue);
+
+            if (divergenceCriterium(newValue)) return std::optional<PT>();
+        }
+        return std::make_optional(newValue);
+    };
+
+    template<typename PT, typename Predicate, typename FunctionLike, typename DerivativeLike>
+    constexpr auto NewtonRaphson(const PT& initialGuess, const Predicate& divergenceCriterium, const FunctionLike& goalFunction, const DerivativeLike& derivative){
+        PT newValue = initialGuess;
+        PT oldValue = 0;
+
+        // Relative error convergence criterium
+        while (std::abs(newValue - oldValue) > 1e-10){
+            // Centered first-order derivative
+            oldValue = newValue;
+            newValue = oldValue - (goalFunction(oldValue)/derivative(oldValue));
 
             if (divergenceCriterium(newValue)) return std::optional<PT>();
         }

@@ -18,7 +18,7 @@ TEST_CASE("can find a root of a cubic polynomial", "[NewtonRaphson]"){
             return std::abs(x)>10;
         };
 
-        auto root = PhaseBehavior::Math::NewtonRaphson<PhaseBehavior::Types::NumericalPrecision>(5, cubicPolynomial, divergenceCriterium);
+        auto root = PhaseBehavior::Math::NewtonRaphson<PhaseBehavior::Types::NumericalPrecision>(5, divergenceCriterium, cubicPolynomial);
 
         REQUIRE(root == Catch::Approx(5.7357));
     }
