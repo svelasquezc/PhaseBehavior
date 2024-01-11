@@ -10,7 +10,7 @@
 #include <PhaseBehavior/PhaseEquilibrium.hpp>
 
 
-TEST_CASE("Can obtain the compressibility, A, and B, for a two phase mixture", "[RachfordVLE]"){
+TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSubstitution]"){
 
     SECTION("Using PR for 500 psia and 50 F"){
 

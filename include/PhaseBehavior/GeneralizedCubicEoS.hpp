@@ -84,6 +84,10 @@ namespace PhaseBehavior {
                     mixtureComponent.fugacityCoefficient(phaseName, std::exp(naturalLogOfFugacityCoeff));
                 }
             }
+
+            NP_t componentCovolume(Component const& component){
+                return mixingRule.componentCovolume(component);
+            }
         };
     }
 }

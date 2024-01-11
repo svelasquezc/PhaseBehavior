@@ -6,7 +6,7 @@
 #include<PhaseBehavior/Utilities/Types.hpp>
 #include <PhaseBehavior/Utilities/Math.hpp>
 
-TEST_CASE("can find a root of a cubic polynomial", "[NewtonRaphson]"){
+TEST_CASE("can find a root of a cubic polynomial", "[Bisection]"){
 
     SECTION("Finds only one real root in a polynomial (two imaginary roots)"){
 

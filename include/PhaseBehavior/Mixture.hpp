@@ -235,6 +235,24 @@ namespace PhaseBehavior {
                 mixComp.equilibriumCoefficient(mixComp.pure().equilibriumCoefficient(pressure, temperature));
             }
         }
+
+        NP_t pseudoCriticalPressure() const {
+            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [](auto previous, auto& element){
+                return previous + element.composition("liquid")*element.pure().criticalPressure();
+            });
+        }
+
+        NP_t pseudoCriticalTemperature() const {
+            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [](auto previous, auto& element){
+                return previous + element.composition("liquid")*element.pure().criticalTemperature();
+            });
+        }
+
+        NP_t pseudoCriticalVolume() const {
+            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [](auto previous, auto& element){
+                return previous + element.composition("liquid")*element.pure().criticalVolume();
+            });
+        }
     };
 }
 
