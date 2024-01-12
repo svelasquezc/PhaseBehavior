@@ -75,7 +75,7 @@ namespace PhaseBehavior::Math {
         // Relative error convergence criterium
         while (std::abs(newValue - oldValue) > 1e-10){
             // Centered first-order derivative
-            PT goalDerivativeValue = (goalFunction(newValue + scaledEpsilon) - goalFunction(newValue))/(scaledEpsilon);
+            PT goalDerivativeValue = (goalFunction(newValue + scaledEpsilon) - goalFunction(newValue - scaledEpsilon))/(2*scaledEpsilon);
             oldValue = newValue;
             newValue = oldValue - (goalFunction(oldValue)/goalDerivativeValue);
 

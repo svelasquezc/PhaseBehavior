@@ -85,8 +85,14 @@ namespace PhaseBehavior {
                 }
             }
 
-            NP_t componentCovolume(Component const& component){
-                return mixingRule.componentCovolume(component);
+            NP_t volumeShift(Mixture const& mixture, std::string const& phaseName) const{
+                NP_t volumeShift = 0;
+                for (auto const& mixtureComponent : mixture){
+                    const auto B_i = mixingRule.componentShiftCovolume(mixtureComponent.pure());
+                    volumeShift += mixtureComponent.composition(phaseName)*mixtureComponent.pure().shift()*B_i;
+                }
+
+                return volumeShift;
             }
         };
     }

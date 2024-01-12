@@ -25,7 +25,7 @@ namespace PhaseBehavior::EoS::MixingRules{
         using MapType = std::map<std::reference_wrapper<Component const>, NP_t, std::less<const Component>>;
         using BinaryAttractionType = std::map<std::pair<Component const&, Component const&>, NP_t>;
 
-        MapType componentAttraction_, componentCovolume_;
+        MapType componentAttraction_, componentCovolume_, shiftCovolume_;
 
         BinaryAttractionType binaryAttraction_;
 
@@ -40,6 +40,7 @@ namespace PhaseBehavior::EoS::MixingRules{
                 componentCovolume_[mixComponent.pure()] = covolumeParameter()*
                 mixComponent.pure().reducedPressure(pressure)/mixComponent.pure().reducedTemperature(temperature);
 
+                shiftCovolume_[mixComponent.pure()] = covolumeParameter()*mixComponent.pure().criticalTemperature()/mixComponent.pure().criticalPressure();
             }
 
             NP_t mixtureAttraction = 0;
@@ -69,6 +70,10 @@ namespace PhaseBehavior::EoS::MixingRules{
 
         NP_t componentCovolume(Component const& component) const{
             return componentCovolume_.at(component);
+        }
+
+        NP_t componentShiftCovolume(Component const& component) const{
+            return shiftCovolume_.at(component);
         }
 
         NP_t binaryAttraction(Component const& componentI, Component const& componentJ) const{

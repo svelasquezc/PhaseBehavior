@@ -74,7 +74,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
     }
 
     template<typename EoS>
-    void SuccesiveSubstitution(Mixture& mixture, NP_t const& pressure, NP_t const& temperature){
+    std::tuple<EoS, EoS> SuccesiveSubstitution(Mixture& mixture, NP_t const& pressure, NP_t const& temperature){
 
         mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Correlation
 
@@ -103,6 +103,8 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
                 return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
             });
         }
+
+        return {vaporEoS, liquidEoS};
     }
 }
 

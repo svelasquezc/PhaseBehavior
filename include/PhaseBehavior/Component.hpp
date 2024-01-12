@@ -18,6 +18,7 @@ namespace PhaseBehavior {
         NP_t criticalVolume_;           /**< Critical volume property. */
         NP_t molarWeight_;              /**< Molar weight property. */
         NP_t accentricFactor_;          /**< Accentric factor property. */
+        NP_t shift_;                    /**< shift value property. */
 
     public:
         /**
@@ -30,13 +31,14 @@ namespace PhaseBehavior {
          * @param accentricFactor Accentric factor value.
          */
         Component(std::string name, NP_t criticalPressure, NP_t criticalTemperature,
-                NP_t criticalVolume, NP_t molarWeight, NP_t accentricFactor)
+                NP_t criticalVolume, NP_t molarWeight, NP_t accentricFactor, NP_t shift=0)
             : name_(std::move(name)),
             criticalPressure_(criticalPressure),
             criticalVolume_(criticalVolume),
             criticalTemperature_(criticalTemperature),
             molarWeight_(molarWeight),
-            accentricFactor_(accentricFactor)
+            accentricFactor_(accentricFactor),
+            shift_(shift)
         {}
 
         /// Default copy constructor
@@ -113,6 +115,14 @@ namespace PhaseBehavior {
          */
         NP_t reducedTemperature(NP_t const& absoluteTemperature) const {
             return absoluteTemperature / criticalTemperature_;
+        }
+
+        /**
+         * @brief Getter for shift (EoS Dependent) value of the component.
+         * @return Accentric factor property.
+         */
+        NP_t shift() const {
+            return shift_;
         }
 
         NP_t equilibriumCoefficient(NP_t const& absolutePressure, NP_t const& absoluteTemperature) const {

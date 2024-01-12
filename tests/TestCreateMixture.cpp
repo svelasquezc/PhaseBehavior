@@ -37,6 +37,21 @@ TEST_CASE("Can create Mixture objects", "[mixture]"){
 
     }
 
+    SECTION("Mixture object from file having Shift"){
+        
+        auto mixture = PhaseBehavior::Input::createMixtureFromFile<true>("PVTPR.csv", "InteractionCoefficients.csv");
+
+        CHECK(Catch::Approx(mixture.interactionCoefficient("CO2", "C1"))==0.105);
+        CHECK(Catch::Approx(mixture.interactionCoefficient("CO2", "C2"))==0.13);
+        CHECK(Catch::Approx(mixture.interactionCoefficient("CO2", "C3"))==0.125);
+        CHECK(Catch::Approx(mixture.interactionCoefficient("CO2", "i-C4"))==0.12);
+        CHECK(Catch::Approx(mixture.interactionCoefficient("CO2", "n-C4"))==0.115);
+        CHECK(Catch::Approx(mixture.interactionCoefficient("CO2", "C7+"))==0.115);
+        CHECK(Catch::Approx(mixture.interactionCoefficient("C1", "C2"))==0.0);
+        CHECK(Catch::Approx(mixture.interactionCoefficient("n-C6", "i-C4"))==0.0);
+
+    }
+
     SECTION("Mixture object from known components"){
         PhaseBehavior::Component CO2 {"CO2",1071,547.91,0.2667,4401,0.0344};
         PhaseBehavior::Component C1 {"C1",1071,547.91,0.2667,4401,0.0344};
