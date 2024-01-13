@@ -54,11 +54,11 @@ namespace PhaseBehavior {
                 molarComposition_["global"] = molarComposition;
             }
 
-            const NP_t composition() const {
+            const NP_t composition() const noexcept{
                 return molarComposition_.at("global");
             }
 
-            const NP_t composition(std::string const& phaseName) const {
+            const NP_t composition(std::string const& phaseName) const noexcept {
                 return molarComposition_.at(phaseName);
             }
 
@@ -66,7 +66,7 @@ namespace PhaseBehavior {
                 molarComposition_[phaseName] = composition;
             }
 
-            const NP_t fugacityCoefficient(std::string const& phaseName) const {
+            const NP_t fugacityCoefficient(std::string const& phaseName) const noexcept{
                 return fugacityCoefficient_.at(phaseName);
             }
 
@@ -74,7 +74,7 @@ namespace PhaseBehavior {
                 fugacityCoefficient_[phaseName] = fugacityCoefficient;
             }
 
-            const NP_t fugacity(std::string const& phaseName, NP_t const& absolutePressure) const{
+            const NP_t fugacity(std::string const& phaseName, NP_t const& absolutePressure) const noexcept{
                 return composition(phaseName)*fugacityCoefficient(phaseName)*absolutePressure;
             }
 

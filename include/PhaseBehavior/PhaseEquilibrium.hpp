@@ -2,7 +2,7 @@
 #define PHASE_EQUILIBRIUM_HPP
 
 #include <algorithm>
-#include <iostream>
+#include <tuple>
 
 #include "Utilities/Math.hpp"
 #include "Mixture.hpp"
@@ -49,7 +49,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         if (hasRoot){
             NP_t initialGuess = (lowerLimit + upperLimit)/2.0;
         
-            auto possibleFng = Math::NewtonRaphson<NP_t>(initialGuess,divergence,objectiveFunction, derivativeFunction);
+            auto possibleFng = Math::NewtonRaphson<NP_t>(initialGuess, divergence, objectiveFunction, derivativeFunction);
 
             NP_t vaporMolarFraction;
             if (possibleFng){
@@ -74,9 +74,9 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
     }
 
     template<typename EoS>
-    std::tuple<EoS, EoS> SuccesiveSubstitution(Mixture& mixture, NP_t const& pressure, NP_t const& temperature){
+    std::tuple<EoS, EoS> succesiveSubstitution(Mixture& mixture, NP_t const& pressure, NP_t const& temperature, bool restartKi=true){
 
-        mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Correlation
+        if(restartKi) mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Correlation
 
         EoS vaporEoS, liquidEoS;
 
@@ -106,6 +106,93 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
 
         return {vaporEoS, liquidEoS};
     }
+
+    enum class PhaseStabilityTestResult {
+        TrivialSolution,
+        LessThanOne,
+        GreaterThanOne
+    };
+
+    enum class PhaseStabilityResult {
+        Stable,
+        Unstable
+    };
+
+    template<typename EoS>
+    PhaseStabilityResult phaseStability(Mixture& mixture, NP_t const& pressure, NP_t const& temperature) noexcept{
+
+        constexpr auto liquidMolesCalculation = [](NP_t composition, NP_t equilibriumCoefficient){
+            return composition/equilibriumCoefficient;
+        };
+
+        constexpr auto vaporMolesCalculation = [](NP_t composition, NP_t equilibriumCoefficient){
+            return composition*equilibriumCoefficient;
+        };
+
+        constexpr auto liquidCorrectionFunction = [](NP_t globalFugacity, NP_t liquidFugacity, NP_t totalMoles){
+            return (liquidFugacity/globalFugacity)*totalMoles;
+        };
+
+        constexpr auto vaporCorrectionFunction = [](NP_t globalFugacity, NP_t vaporFugacity, NP_t totalMoles){
+            return (globalFugacity/vaporFugacity)/totalMoles;
+        };
+
+        EoS eos;
+
+        eos(mixture, pressure, temperature);
+        eos.fugacities(mixture, "global");
+
+        auto test = [&mixture, &pressure, &temperature](std::string const& phaseName, EoS& eos, auto const& molesCalculation, auto const& correctionFunction){
+
+            mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Correlation
+
+            NP_t correctionSquaredValues = 10; 
+
+            while(correctionSquaredValues >= 1e-10){
+                auto totalMoles = std::accumulate(mixture.begin(), mixture.end(), static_cast<NP_t>(0),
+                [&phaseName, &molesCalculation](auto previous, auto const& element){
+                    return previous + molesCalculation(element.composition(), element.equilibriumCoefficient());
+                });
+
+                for (auto& mixComp : mixture){
+                    auto moles = molesCalculation(mixComp.composition(), mixComp.equilibriumCoefficient());
+                    mixComp.composition(phaseName, moles/totalMoles);
+                }
+
+                eos(mixture, pressure, temperature, phaseName);
+                mixture.compressibility(phaseName, eos.selectedCompressibility());
+                eos.fugacities(mixture, phaseName);
+
+                correctionSquaredValues = 0;
+                for (auto& mixComp : mixture){
+                    auto correction = correctionFunction(mixComp.fugacity("global", pressure), mixComp.fugacity(phaseName, pressure), totalMoles);
+                    auto newEquilibriumCoefficient = mixComp.equilibriumCoefficient()*correction;
+                    mixComp.equilibriumCoefficient(newEquilibriumCoefficient);
+                    correctionSquaredValues += std::pow(correction - 1, 2.0);
+                }
+
+                auto sumOfLogsOfKiSquared = std::accumulate(mixture.begin(), mixture.end(), static_cast<NP_t>(0),
+                [](auto previous, auto const& element){
+                    return previous + std::pow(std::log(element.equilibriumCoefficient()),2.0);
+                });
+
+                if (sumOfLogsOfKiSquared < 1e-4) return PhaseStabilityTestResult::TrivialSolution;
+            }
+            auto totalMoles = std::accumulate(mixture.begin(), mixture.end(), static_cast<NP_t>(0),
+                [&phaseName, &molesCalculation](auto previous, auto const& element){
+                    return previous + molesCalculation(element.composition(), element.equilibriumCoefficient());
+                });
+
+            return totalMoles > 1 ? PhaseStabilityTestResult::GreaterThanOne : PhaseStabilityTestResult::LessThanOne;
+        };
+
+        auto vaporTestResult = test("vapor", eos, vaporMolesCalculation, vaporCorrectionFunction);
+        if(vaporTestResult == PhaseStabilityTestResult::GreaterThanOne) return PhaseStabilityResult::Unstable;
+        auto liquidTestResult = test("liquid", eos, liquidMolesCalculation, liquidCorrectionFunction);
+        if (liquidTestResult == PhaseStabilityTestResult::GreaterThanOne) return PhaseStabilityResult::Unstable;
+        return PhaseStabilityResult::Stable;
+    }
+
 }
 
 #endif /* PHASE_EQUILIBRIUM_HPP */

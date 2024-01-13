@@ -16,7 +16,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -55,7 +55,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -94,7 +94,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -133,7 +133,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -172,7 +172,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -211,7 +211,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -250,7 +250,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTSRK.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -289,7 +289,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTSRK.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -328,7 +328,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTSRK.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -367,7 +367,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTSRK.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -406,7 +406,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTSRK.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
@@ -445,7 +445,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTSRK.csv", "InteractionCoefficients.csv");
 
-        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
+        auto [vaporEoS, liquidEoS] = PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
 
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);

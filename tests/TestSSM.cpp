@@ -17,7 +17,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
 
         {
-            PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
 
             auto Z_liq = mixture.compressibility("liquid");
             auto Z_vap = mixture.compressibility("vapor");
@@ -44,7 +44,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
     
-        PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
+        PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
 
         auto Z_liq = mixture.compressibility("liquid");
         auto Z_vap = mixture.compressibility("vapor");
@@ -71,7 +71,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
 
         {
-            PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
 
             auto Z_liq = mixture.compressibility("liquid");
             auto Z_vap = mixture.compressibility("vapor");
@@ -98,7 +98,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
     
-        PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
+        PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
 
         auto Z_liq = mixture.compressibility("liquid");
         auto Z_vap = mixture.compressibility("vapor");
@@ -125,7 +125,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
 
         {
-            PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
 
             auto Z_liq = mixture.compressibility("liquid");
             auto Z_vap = mixture.compressibility("vapor");
@@ -152,7 +152,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
     
-        PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
+        PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
 
         auto Z_liq = mixture.compressibility("liquid");
         auto Z_vap = mixture.compressibility("vapor");
@@ -179,7 +179,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
 
         {
-            PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
 
             auto Z_liq = mixture.compressibility("liquid");
             auto Z_vap = mixture.compressibility("vapor");
@@ -206,7 +206,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
     
-        PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
+        PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
 
         auto Z_liq = mixture.compressibility("liquid");
         auto Z_vap = mixture.compressibility("vapor");
@@ -233,7 +233,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
 
         {
-            PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
 
             auto Z_liq = mixture.compressibility("liquid");
             auto Z_vap = mixture.compressibility("vapor");
@@ -260,7 +260,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
     
-        PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
+        PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
 
         auto Z_liq = mixture.compressibility("liquid");
         auto Z_vap = mixture.compressibility("vapor");
@@ -287,7 +287,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
 
         {
-            PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
+            PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
 
             auto Z_liq = mixture.compressibility("liquid");
             auto Z_vap = mixture.compressibility("vapor");
@@ -314,7 +314,7 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
 
         auto mixture = PhaseBehavior::Input::createMixtureFromFile("PVT.csv", "InteractionCoefficients.csv");
     
-        PhaseBehavior::VaporLiquidEquilibrium::SuccesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
+        PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
 
         auto Z_liq = mixture.compressibility("liquid");
         auto Z_vap = mixture.compressibility("vapor");
