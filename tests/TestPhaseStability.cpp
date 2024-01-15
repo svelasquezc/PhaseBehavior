@@ -11,49 +11,55 @@
 TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
     SECTION("Using PR at 3000 psi and 250 F"){
-        constexpr bool hasShift = true;
+        {
+            constexpr bool hasShift = true;
 
-        auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
+            auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
 
-        auto stabilityResult = PhaseBehavior::VaporLiquidEquilibrium::phaseStability<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 3000 /*psia*/, 250 + 460 /*R*/);
+            auto stabilityResult = PhaseBehavior::VaporLiquidEquilibrium::phaseStability<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 3000 /*psia*/, 250 + 460 /*R*/);
 
-        REQUIRE(stabilityResult==PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Stable);
+            REQUIRE(stabilityResult==PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Stable);
 
-        PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 3000 /*psia*/, 250 + 460 /*R*/, false);
+            for (auto& mixtureComponent : mixture){
+                mixtureComponent.composition("vapor", mixtureComponent.composition());
+            }
 
-        auto fng = mixture.molarFraction("vapor");
-        fng = 1;
-        auto Z_vap = mixture.compressibility("vapor");
+            auto fng = 1;
 
-        
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==1.0000);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.7486);
+            auto Z_vap = mixture.compressibility("global");
 
-        PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==33.49);
+            CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==1.0000);
+            CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.7486);
+
+            PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
+            CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==33.49);
+        }
     }
 
     SECTION("Using PR at 2900 psi and 250 F"){
-        constexpr bool hasShift = true;
+        {
+            constexpr bool hasShift = true;
 
-        auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
+            auto mixture = PhaseBehavior::Input::createMixtureFromFile<hasShift>("PVTPR.csv", "InteractionCoefficients.csv");
 
-        auto stabilityResult = PhaseBehavior::VaporLiquidEquilibrium::phaseStability<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 2900 /*psia*/, 250 + 460 /*R*/);
+            auto stabilityResult = PhaseBehavior::VaporLiquidEquilibrium::phaseStability<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 2900 /*psia*/, 250 + 460 /*R*/);
 
-        REQUIRE(stabilityResult==PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Stable);
+            REQUIRE(stabilityResult==PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Stable);
 
-        PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 2900 /*psia*/, 250 + 460 /*R*/, false);
+            for (auto& mixtureComponent : mixture){
+                mixtureComponent.composition("vapor", mixtureComponent.composition());
+            }
 
-        auto fng = mixture.molarFraction("vapor");
-        fng = 1;
-        
-        auto Z_vap = mixture.compressibility("vapor");
+            auto fng = 1;
+            
+            auto Z_vap = mixture.compressibility("global");
 
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==1.0000);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.7393);
+            CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==1.0000);
+            CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.7393);
 
-        PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==33.49);
+            PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
+            CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==33.49);
+        }
     }
 
     SECTION("Using PR at 2800 psi and 250 F"){
@@ -66,12 +72,13 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
 
         REQUIRE(stabilityResult==PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Stable);
 
-        //PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 2800 /*psia*/, 250 + 460 /*R*/, false);
+        for (auto& mixtureComponent : mixture){
+            mixtureComponent.composition("vapor", mixtureComponent.composition());
+        }
 
-        auto fng = mixture.molarFraction("vapor");
-        fng = 1;
+        auto fng = 1;
 
-        auto Z_vap = mixture.compressibility("vapor");
+        auto Z_vap = mixture.compressibility("global");
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==1.0000);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.7303);
@@ -105,7 +112,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==31.37);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==42.31);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==42.31);
         
     }
 
@@ -133,7 +140,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==30.04);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==45.19);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==45.19);
         
     }
 
@@ -161,7 +168,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==29.11);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==47.72);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==47.72);
         
     }
 
@@ -189,7 +196,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==28.40);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==50.09);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==50.09);
         
     }
 
@@ -217,7 +224,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==27.83);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==52.38);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==52.38);
         
     }
 
@@ -245,7 +252,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==27.36);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==54.64);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==54.64);
         
     }
 
@@ -273,7 +280,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==26.96);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==56.88);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==56.88);
         
     }
 
@@ -301,7 +308,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==26.63);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==59.13);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==59.13);
         
     }
 
@@ -329,7 +336,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==26.34);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==61.42);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==61.42);
         
     }
 
@@ -357,7 +364,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==26.10);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==63.75);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==63.75);
         
     }
 
@@ -385,7 +392,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==25.90);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==66.13);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==66.13);
         
     }
 
@@ -413,7 +420,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vapor(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquid(mixture);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==25.73);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vapor.molecularWeight(),2))==68.59);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquid.molecularWeight(),2))==68.59);
         
     }
 }

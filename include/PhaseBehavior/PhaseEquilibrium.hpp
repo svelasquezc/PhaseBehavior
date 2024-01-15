@@ -140,6 +140,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         EoS eos;
 
         eos(mixture, pressure, temperature);
+        mixture.compressibility("global", eos.selectedCompressibility());
         eos.fugacities(mixture, "global");
 
         auto test = [&mixture, &pressure, &temperature](std::string const& phaseName, EoS& eos, auto const& molesCalculation, auto const& correctionFunction){
