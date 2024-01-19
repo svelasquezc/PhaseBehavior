@@ -8,6 +8,15 @@ target_include_directories(PhaseBehavior INTERFACE ../include)
 # All users of this library will need at least C++17
 target_compile_features(PhaseBehavior INTERFACE cxx_std_17)
 
+# Tests need to be added as executables first
+add_executable(PhaseEnvelope main.cpp)
+
+# C++17 syntax
+target_compile_features(PhaseEnvelope PRIVATE cxx_std_17)
+
+# Should be linked to the main library, as well as the Catch2 testing library
+target_link_libraries(PhaseEnvelope PRIVATE PhaseBehavior)
+
 # IDEs should put the headers in a nice place
 source_group(
   TREE "${PROJECT_SOURCE_DIR}/include"

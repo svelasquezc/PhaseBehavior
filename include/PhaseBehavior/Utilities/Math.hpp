@@ -66,6 +66,24 @@ namespace PhaseBehavior::Math {
         return std::round(value * multiplier) / multiplier;
     }
 
+    template<typename PT, typename FunctionLike>
+    constexpr auto NewtonRaphson(const PT& initialGuess, const FunctionLike& goalFunction){
+        PT newValue = initialGuess;
+        PT oldValue = 0;
+        PT scaledEpsilon = std::abs(initialGuess)*std::sqrt(std::numeric_limits<PT>::epsilon());
+
+        // Relative error convergence criterium
+        for (std::size_t i = 0; i<500; ++i){
+            // Centered first-order derivative
+            PT goalDerivativeValue = (goalFunction(newValue + scaledEpsilon) - goalFunction(newValue - scaledEpsilon))/(2*scaledEpsilon);
+            oldValue = newValue;
+            newValue = oldValue - (goalFunction(oldValue)/goalDerivativeValue);
+
+            if (std::abs(newValue - oldValue) < 1e-10) return std::make_optional(newValue); 
+        }
+        return std::optional<PT>();
+    };
+
     template<typename PT, typename Predicate, typename FunctionLike>
     constexpr auto NewtonRaphson(const PT& initialGuess, const Predicate& divergenceCriterium, const FunctionLike& goalFunction){
         PT newValue = initialGuess;

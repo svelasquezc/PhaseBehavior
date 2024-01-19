@@ -15,11 +15,31 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     # Let's nicely support folders in IDEs
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-    # Testing only available if this is the main app
-    # Note this needs to be done in the main CMakeLists
-    # since it calls enable_testing, which must be in the
-    # main CMakeLists.
-    include(CTest)
+    # FetchContent added in CMake 3.11, downloads during the configure step
+    # FetchContent_MakeAvailable was added in CMake 3.14; simpler usage
+    include(FetchContent)
+
+    find_package(Eigen3 NO_MODULE)
+    if (NOT TARGET Eigen3::Eigen)
+
+        
+        FetchContent_Declare(
+        Eigen
+        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+        GIT_TAG 3.4.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE)
+        set(EIGEN_BUILD_DOC OFF)
+        # note: To disable eigen tests,
+        # you should put this code in a add_subdirectory to avoid to change
+        # BUILD_TESTING for your own project too since variables are directory
+        # scoped
+        set(BUILD_TESTING OFF)
+        set(EIGEN_BUILD_PKGCONFIG OFF)
+        set( OFF)
+        FetchContent_MakeAvailable(Eigen)
+
+    endif (NOT TARGET Eigen3::Eigen)
 
     # Docs only available if this is the main app
     find_package(Doxygen)
@@ -29,12 +49,13 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
         message(STATUS "Doxygen not found, not building docs")
     endif()
 
+    # Testing only available if this is the main app
+    # Note this needs to be done in the main CMakeLists
+    # since it calls enable_testing, which must be in the
+    # main CMakeLists.
+    include(CTest)
 
 endif()
-
-# FetchContent added in CMake 3.11, downloads during the configure step
-# FetchContent_MakeAvailable was added in CMake 3.14; simpler usage
-include(FetchContent)
 
 add_subdirectory(src)
 
