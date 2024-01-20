@@ -3,11 +3,18 @@
 
 #include <Eigen/Dense>
 
-namespace PhaseBehavior::Numerics{
-    template<typename Container>
-    class NewtonRaphson{
-        public:
 
+
+namespace PhaseBehavior::Numerics{
+    template<typename ContainerType>
+    class NewtonRaphson{
+        private:
+            Eigen::MatrixXd jacobian_;
+            Eigen::VectorXd residualVector_, solutionVector_;
+        public:
+            NewtonRaphson(ContainerType initialGuess ){
+
+            }
     };
 }
 
