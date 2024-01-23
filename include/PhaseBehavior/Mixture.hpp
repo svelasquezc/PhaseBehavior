@@ -176,6 +176,8 @@ namespace PhaseBehavior {
             return components_[componentIndex];
         }
 
+        auto size() const {return components_.size();}
+
         MixtureIterator begin() {return components_.begin();}
         MixtureIterator end() {return components_.end();}
 

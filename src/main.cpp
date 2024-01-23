@@ -11,8 +11,8 @@ int main(){
     auto mixture = PhaseBehavior::Input::createMixtureFromFile<true>("PVTPR.csv", "InteractionCoefficients.csv");
 
 
-    auto temperatureResult = PhaseBehavior::phaseEnvelope<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 0);
+    auto temperatureResult = PhaseBehavior::PhaseEnvelope<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 0);
 
-    std::cout << "Temperature: "<< temperatureResult <<std::endl;
+
     return 0;
 }

@@ -8,6 +8,9 @@ target_include_directories(PhaseBehavior INTERFACE ../include)
 # All users of this library will need at least C++17
 target_compile_features(PhaseBehavior INTERFACE cxx_std_17)
 
+#
+target_link_libraries(PhaseBehavior INTERFACE Eigen3::Eigen)
+
 # Tests need to be added as executables first
 add_executable(PhaseEnvelope main.cpp)
 
