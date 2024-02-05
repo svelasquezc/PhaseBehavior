@@ -2,12 +2,14 @@
 #define PHASE_ENVELOPE_HPP
 
 #include <tuple>
+#include <vector>
 
 #include <Eigen/Sparse>
 
 #include "Utilities/Types.hpp"
 #include "Utilities/Math.hpp"
 #include "Mixture.hpp"
+#include "PhaseEquilibrium.hpp"
 
 using NP_t = PhaseBehavior::Types::NumericalPrecision;
 using PhaseBehavior::Types::FixedQueue;
@@ -31,30 +33,18 @@ namespace PhaseBehavior{
         NP_t currentTemperature_ = -460;
         FixedQueue<Eigen::VectorXd, 2> solutions_;
         static constexpr NP_t machineEpsilon = std::sqrt(std::numeric_limits<NP_t>::epsilon());
+
+        struct EnvelopePoint {
+            NP_t pressure;
+            NP_t bubbleTemperature;
+            NP_t dewTemperature;
+        };
+
+        using EnvelopePoints = std::vector<EnvelopePoint>;
+
     public:
 
-        PhaseEnvelope(Mixture& mixture, NP_t const& vaporMolarFraction): mixture_(mixture), vaporMolarFraction_(vaporMolarFraction){
-
-            NP_t standardConditionsPressure = 14.7; //psia
-            NP_t standardConditionsTemperature = 77 + 460; //Rankine
-            
-            currentPressure_ = standardConditionsPressure;
-
-            auto objectiveFunction = [&mixture, &vaporMolarFraction, pressure=currentPressure_](NP_t const& temperature){
-                NP_t sum = 0;
-                mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Coeff
-                for (const auto& mixComp : mixture){
-                    const auto Ki = mixComp.equilibriumCoefficient();
-                    sum += mixComp.composition()*(Ki-1.0)/(1.0+vaporMolarFraction*(Ki-1.0));
-                }
-                return sum;
-            };
-
-            auto convergenceResult = Math::NewtonRaphson<NP_t>(standardConditionsTemperature, objectiveFunction);
-
-            if (convergenceResult){
-                currentTemperature_ = convergenceResult.value();
-            }
+        PhaseEnvelope(Mixture& mixture): mixture_(mixture){
 
             size_ = mixture.size() + 1;
 
@@ -202,8 +192,66 @@ namespace PhaseBehavior{
 
             return {0,0};
         }
+
+        EnvelopePoints bruteForce(NP_t const maxPressure, std::size_t const& numberOfPoints){
+
+            using VaporLiquidEquilibrium::phaseStability;
+            using VaporLiquidEquilibrium::PhaseStabilityResult;
+
+            NP_t standardConditionsPressure = 14.7; //psia
+            NP_t standardConditionsTemperature = 77 + 460; //Rankine
+            
+            currentPressure_ = standardConditionsPressure;
+
+            auto deltaP = (maxPressure - currentPressure_)/numberOfPoints;
+
+            EnvelopePoints envelope;
+
+            auto objectiveBubblePoint = [&mixture = mixture_, vaporMolarFraction=0, pressure=currentPressure_](NP_t const& temperature){
+                NP_t sum = 0;
+                mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Coeff
+                for (const auto& mixComp : mixture){
+                    const auto Ki = mixComp.equilibriumCoefficient();
+                    sum += mixComp.composition()*(Ki-1.0)/(1.0+vaporMolarFraction*(Ki-1.0));
+                }
+                return sum;
+            };
+
+            auto objectiveDewPoint = [&mixture = mixture_, vaporMolarFraction=1, pressure=currentPressure_](NP_t const& temperature){
+                NP_t sum = 0;
+                mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Coeff
+                for (const auto& mixComp : mixture){
+                    const auto Ki = mixComp.equilibriumCoefficient();
+                    sum += mixComp.composition()*(Ki-1.0)/(1.0+vaporMolarFraction*(Ki-1.0));
+                }
+                return sum;
+            };
+
+            auto bubbleConvergence = Math::NewtonRaphson<NP_t>(standardConditionsTemperature, objectiveBubblePoint);
+            auto dewConvergence = Math::NewtonRaphson<NP_t>(standardConditionsTemperature, objectiveDewPoint);
+            NP_t dewTemperature = 0;
+            NP_t bubbleTemperature = 0;
+
+            if (bubbleConvergence){
+                bubbleTemperature = bubbleConvergence.value();
+            }
+            if (dewConvergence){
+                dewTemperature = dewConvergence.value();
+            }            
+
+            while (std::abs(bubbleTemperature - dewTemperature) > 1){
+                auto average = (bubbleTemperature + dewTemperature)/2;
+                bubbleTemperature = average;
+                dewTemperature = average;
+                while(phaseStability<EoS>(mixture_, currentPressure_, bubbleTemperature) == PhaseStabilityResult::Unstable) bubbleTemperature -= 1;
+                while(phaseStability<EoS>(mixture_, currentPressure_, dewTemperature) == PhaseStabilityResult::Unstable) dewTemperature += 1;
+                envelope.push_back({currentPressure_, bubbleTemperature, dewTemperature});
+                currentPressure_ += deltaP;
+            }
+            return envelope;
+        }
     };
-    
+
 }
 
 #endif /* PHASE_ENVELOPE_HPP */

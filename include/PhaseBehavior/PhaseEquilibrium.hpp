@@ -114,8 +114,8 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
     };
 
     enum class PhaseStabilityResult {
-        Stable,
-        Unstable
+        Stable = true,
+        Unstable = false
     };
 
     template<typename EoS>
