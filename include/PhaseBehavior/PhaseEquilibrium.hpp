@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <tuple>
 
+#include <Eigen/Dense>
+
 #include "Utilities/Math.hpp"
 #include "Mixture.hpp"
 
@@ -74,14 +76,18 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
     }
 
     template<typename EoS>
-    std::tuple<EoS, EoS> succesiveSubstitution(Mixture& mixture, NP_t const& pressure, NP_t const& temperature, bool restartKi=true){
+    std::tuple<EoS, EoS> succesiveSubstitution(Mixture& mixture, NP_t const& pressure, NP_t const& temperature, bool restartKi=true, bool useNewton=false, NP_t switchValue=1e-14){
+
+        static constexpr NP_t machineEpsilon = std::sqrt(std::numeric_limits<NP_t>::epsilon());
 
         if(restartKi) mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Correlation
 
         EoS vaporEoS, liquidEoS;
+        if (!useNewton) switchValue=1e-14;
+
 
         NP_t fugacitiesSquaredSum = 10;
-        while(fugacitiesSquaredSum >= 1e-14){
+        while(fugacitiesSquaredSum >= switchValue){
 
             rachfordVLE(mixture);
 
@@ -102,6 +108,91 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
             [&pressure](auto previous, auto second){
                 return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
             });
+        }
+
+        if (useNewton){
+            Eigen::MatrixXd jacobian(mixture.size(), mixture.size());
+            Eigen::VectorXd residual, solutionDelta;
+
+            residual.resize(mixture.size());
+            solutionDelta.resize(mixture.size());
+            jacobian.setZero();
+            residual.setZero();
+            solutionDelta.setZero();
+
+            //**************************************************** NEWTON PROCEDURE ************************************************************
+            while (fugacitiesSquaredSum >= 1e-14){
+
+                //************************************************ RESIDUAL CALCULATION ********************************************************
+                rachfordVLE(mixture);
+
+                vaporEoS(mixture, pressure, temperature, "vapor");
+                mixture.compressibility("vapor", vaporEoS.selectedCompressibility());
+                vaporEoS.fugacities(mixture, "vapor");
+
+                liquidEoS(mixture, pressure, temperature, "liquid");
+                mixture.compressibility("liquid", liquidEoS.selectedCompressibility());
+                liquidEoS.fugacities(mixture, "liquid");
+
+                for (std::size_t i = 0; i < mixture.size(); ++i){
+
+                    residual[i] = (std::log(mixture[i].composition("vapor")) + std::log(mixture[i].fugacityCoefficient("vapor"))) -
+                                            (std::log(mixture[i].composition("liquid")) + std::log(mixture[i].fugacityCoefficient("liquid")));
+                }
+
+                //******************************************************************************************************************************
+
+                //************************************************ JACOBIAN CALCULATION ********************************************************
+                //************************************************ Component Derivatives *******************************************************
+                for (std::size_t j = 0; j < mixture.size(); ++j){
+
+                    auto originalki = mixture[j].equilibriumCoefficient();
+                    auto scaledEpsilon = std::log(originalki)*machineEpsilon;
+                    auto newKi = std::exp(std::log(originalki) + scaledEpsilon);
+                    mixture[j].equilibriumCoefficient(newKi);
+
+                    rachfordVLE(mixture);
+
+                    vaporEoS(mixture, pressure, temperature, "vapor");
+                    mixture.compressibility("vapor", vaporEoS.selectedCompressibility());
+                    vaporEoS.fugacities(mixture, "vapor");
+
+                    liquidEoS(mixture, pressure, temperature, "liquid");
+                    mixture.compressibility("liquid", liquidEoS.selectedCompressibility());
+                    liquidEoS.fugacities(mixture, "liquid");
+                    
+                    for (std::size_t i = 0; i < mixture.size(); ++i){
+                        auto modifiedResidual = (std::log(mixture[i].composition("vapor")) + std::log(mixture[i].fugacityCoefficient("vapor"))) -
+                                            (std::log(mixture[i].composition("liquid")) + std::log(mixture[i].fugacityCoefficient("liquid")));
+                        jacobian(i,j) = (modifiedResidual - residual[i])/scaledEpsilon;
+                    }
+                    mixture[j].equilibriumCoefficient(originalki);
+                }
+                //******************************************************************************************************************************
+                
+                solutionDelta = jacobian.colPivHouseholderQr().solve(-residual);
+
+                for (std::size_t j = 0; j < mixture.size(); ++j){
+                    auto originalki = mixture[j].equilibriumCoefficient();
+                    auto newKi = std::exp(std::log(originalki) + solutionDelta[j]);
+                    mixture[j].equilibriumCoefficient(newKi);
+                }
+
+                rachfordVLE(mixture);
+
+                vaporEoS(mixture, pressure, temperature, "vapor");
+                mixture.compressibility("vapor", vaporEoS.selectedCompressibility());
+                vaporEoS.fugacities(mixture, "vapor");
+
+                liquidEoS(mixture, pressure, temperature, "liquid");
+                mixture.compressibility("liquid", liquidEoS.selectedCompressibility());
+                liquidEoS.fugacities(mixture, "liquid");
+
+                fugacitiesSquaredSum = std::accumulate(mixture.begin(),mixture.end(), static_cast<NP_t>(0.0),
+                [&pressure](auto previous, auto second){
+                    return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
+                });
+            }
         }
 
         return {vaporEoS, liquidEoS};
