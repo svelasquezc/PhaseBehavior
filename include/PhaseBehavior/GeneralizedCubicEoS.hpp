@@ -91,6 +91,10 @@ namespace PhaseBehavior::EoS {
 
             return volumeShift;
         }
+
+        NP_t mixtureCovolume() const {
+            return mixtureCovolume_;
+        }
     };
 }
 

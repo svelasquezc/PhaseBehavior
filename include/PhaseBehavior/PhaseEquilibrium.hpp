@@ -285,6 +285,11 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         return PhaseStabilityResult::Stable;
     }
 
+    template<typename EoS>
+    void isothermalTwoPhaseFlash(Mixture& mixture, NP_t const& pressure, NP_t const& temperature){
+        if(phaseStability<EoS>(mixture, pressure, temperature) == PhaseStabilityResult::Unstable)
+        succesiveSubstitution<EoS>(mixture, pressure, temperature, false, true, 1e-4);
+    }
 }
 
 #endif /* PHASE_EQUILIBRIUM_HPP */

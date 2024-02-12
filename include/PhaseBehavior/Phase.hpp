@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <string>
+#include <memory>
 
 #include "Utilities/Types.hpp"
 #include "Utilities/Constants.hpp"
@@ -11,6 +12,7 @@
 using NP_t = PhaseBehavior::Types::NumericalPrecision;
 
 namespace PhaseBehavior::Phase{
+
     class FluidPhase {
     protected:
         std::string phaseName_;
@@ -20,10 +22,10 @@ namespace PhaseBehavior::Phase{
         NP_t viscosity_;
         NP_t molarVolume_;
     public:
-        void molecularWeight(Mixture const& mixture){
+        void molecularWeight(Mixture const& mixture, std::string const& compositionType){
             molecularWeight_ = std::accumulate(mixture.begin(), mixture.end(),
-             static_cast<NP_t>(0.0), [phaseName_=this->phaseName_](auto previous, auto& element){
-                return previous + element.composition(phaseName_)*element.pure().molarWeight();
+             static_cast<NP_t>(0.0), [phaseName_=this->phaseName_, &compositionType](auto previous, auto& element){
+                return previous + element.composition(compositionType)*element.pure().molarWeight();
              });
         }
 
@@ -36,8 +38,9 @@ namespace PhaseBehavior::Phase{
         virtual NP_t viscosity(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature) = 0;
 
         template<typename EoS>
-        NP_t molarVolume(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos){
-            molarVolume_ = Constants::universalGasesConstant*(temperature*compressibility/pressure - eos.volumeShift(mixture, phaseName_));
+        NP_t molarVolume(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos, std::string compositionType = ""){
+            if(compositionType == "") compositionType = phaseName_;
+            molarVolume_ = Constants::universalGasesConstant*(temperature*compressibility/pressure - eos.volumeShift(mixture, compositionType));
             return molarVolume_;
         }
 
@@ -77,9 +80,10 @@ namespace PhaseBehavior::Phase{
     class VaporLikePhase : public Traits::phase_traits<VaporLikePhase> {
         public:
 
-        VaporLikePhase(Mixture const& mixture){
+        VaporLikePhase(Mixture const& mixture, std::string compositionType = ""){
             phaseName_ = "vapor";
-            molecularWeight(mixture);
+            if (compositionType == "") compositionType = phaseName_;
+            molecularWeight(mixture, compositionType);
         }
 
         NP_t viscosity(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature){
@@ -99,9 +103,10 @@ namespace PhaseBehavior::Phase{
 
         public:
 
-        LiquidLikePhase(Mixture const& mixture){
+        LiquidLikePhase(Mixture const& mixture, std::string compositionType = ""){
             phaseName_ = "liquid";
-            molecularWeight(mixture);
+            if (compositionType == "") compositionType = phaseName_;
+            molecularWeight(mixture, compositionType);
         }
         
         NP_t viscosity(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature){
@@ -145,6 +150,18 @@ namespace PhaseBehavior::Phase{
         NP_t viscosity(){
             return FluidPhase::viscosity();
         }
+    };
+
+    template<typename EoS>
+    std::unique_ptr<FluidPhase> singlePhaseIdentification(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos){
+        std::unique_ptr<FluidPhase> liquidLike = std::make_unique<LiquidLikePhase>(mixture, "global");
+        std::unique_ptr<FluidPhase> vaporLike = std::make_unique<VaporLikePhase>(mixture, "global");
+
+        auto molarVolume = liquidLike->molarVolume(mixture, compressibility, pressure, temperature, eos, "global");
+        vaporLike->molarVolume(mixture, compressibility, pressure, temperature, eos, "global");
+        auto mixtureCovolume = eos.mixtureCovolume();
+        if(molarVolume/mixtureCovolume < 1.75) return liquidLike;
+        return vaporLike;
     };
 };
 
