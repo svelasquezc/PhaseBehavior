@@ -36,17 +36,18 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.162);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.067);
 
+        vaporPhase.viscosity(mixture, Z_vap, 500, 50 + 460);
+        liquidPhase.viscosity(mixture, Z_liq, 500, 50 + 460);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.011);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.218);
+
         vaporPhase.molarVolume(mixture, Z_vap, 500, 50+460, vaporEoS);
         liquidPhase.molarVolume(mixture, Z_liq, 500, 50+460, liquidEoS);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.146);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.008);
 
-        vaporPhase.viscosity(mixture, Z_vap, 500, 50 + 460);
-        liquidPhase.viscosity(mixture, Z_liq, 500, 50 + 460);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.011);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.218);
     }
 
     SECTION("Using PR at 400 psi and 50 F"){
@@ -75,17 +76,18 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.706);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.745);
 
+        vaporPhase.viscosity (mixture, Z_vap, 400, 50 + 460);
+        liquidPhase.viscosity(mixture, Z_liq, 400, 50 + 460);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.011);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.237);
+
         vaporPhase.molarVolume (mixture, Z_vap, 400, 50+460, vaporEoS);
         liquidPhase.molarVolume(mixture, Z_liq, 400, 50+460, liquidEoS);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.696);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.855);
 
-        vaporPhase.viscosity (mixture, Z_vap, 400, 50 + 460);
-        liquidPhase.viscosity(mixture, Z_liq, 400, 50 + 460);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.011);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.237);
     }
 
     SECTION("Using PR at 300 psi and 50 F"){
@@ -114,17 +116,17 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.269);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.467);
 
-        vaporPhase.molarVolume (mixture, Z_vap, 300, 50+460, vaporEoS);
-        liquidPhase.molarVolume(mixture, Z_liq, 300, 50+460, liquidEoS);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.263);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.797);
-
         vaporPhase.viscosity (mixture, Z_vap, 300, 50 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 300, 50 + 460);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.011);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.259);
+
+        vaporPhase.molarVolume (mixture, Z_vap, 300, 50+460, vaporEoS);
+        liquidPhase.molarVolume(mixture, Z_liq, 300, 50+460, liquidEoS);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.263);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.797);
     }
 
     SECTION("Using PR at 500 psi and 100 F"){
@@ -153,17 +155,17 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.062);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==37.920);
 
-        vaporPhase.molarVolume (mixture, Z_vap, 500, 100+460, vaporEoS);
-        liquidPhase.molarVolume(mixture, Z_liq, 500, 100+460, liquidEoS);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.048);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.311);
-
         vaporPhase.viscosity (mixture, Z_vap, 500, 100 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 500, 100 + 460);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.200);
+
+        vaporPhase.molarVolume (mixture, Z_vap, 500, 100+460, vaporEoS);
+        liquidPhase.molarVolume(mixture, Z_liq, 500, 100+460, liquidEoS);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.048);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.311);
     }
 
     SECTION("Using PR at 400 psi and 100 F"){
@@ -192,17 +194,18 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.634);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.537);
 
+        vaporPhase.viscosity (mixture, Z_vap, 400, 100 + 460);
+        liquidPhase.viscosity(mixture, Z_liq, 400, 100 + 460);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.215);
+
         vaporPhase.molarVolume (mixture, Z_vap, 400, 100+460, vaporEoS);
         liquidPhase.molarVolume(mixture, Z_liq, 400, 100+460, liquidEoS);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.626);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.113);
 
-        vaporPhase.viscosity (mixture, Z_vap, 400, 100 + 460);
-        liquidPhase.viscosity(mixture, Z_liq, 400, 100 + 460);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.215);
     }
 
     SECTION("Using PR at 300 psi and 100 F"){
@@ -231,17 +234,17 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.219);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.187);
 
+        vaporPhase.viscosity (mixture, Z_vap, 300, 100+460);
+        liquidPhase.viscosity(mixture, Z_liq, 300, 100+460);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.232);
+
         vaporPhase.molarVolume (mixture, Z_vap, 300, 100+460, vaporEoS);
         liquidPhase.molarVolume(mixture, Z_liq, 300, 100+460, liquidEoS);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.214);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.998);
-
-        vaporPhase.viscosity (mixture, Z_vap, 300, 100 + 460);
-        liquidPhase.viscosity(mixture, Z_liq, 300, 100 + 460);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.232);
     }
 
     SECTION("Using SRK at 500 psi and 50 F"){
@@ -270,17 +273,17 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.108);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==33.853);
 
-        vaporPhase.molarVolume(mixture, Z_vap, 500, 50+460, vaporEoS);
-        liquidPhase.molarVolume(mixture, Z_liq, 500, 50+460, liquidEoS);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.113);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.527);
-
         vaporPhase.viscosity(mixture, Z_vap, 500, 50 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 500, 50 + 460);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.011);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.114);
+
+        vaporPhase.molarVolume(mixture, Z_vap, 500, 50+460, vaporEoS);
+        liquidPhase.molarVolume(mixture, Z_liq, 500, 50+460, liquidEoS);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.113);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.527);
     }
 
     SECTION("Using SRK at 400 psi and 50 F"){
@@ -309,17 +312,17 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.672);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==34.448);
 
-        vaporPhase.molarVolume (mixture, Z_vap, 400, 50+460, vaporEoS);
-        liquidPhase.molarVolume(mixture, Z_liq, 400, 50+460, liquidEoS);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.675);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.446);
-
         vaporPhase.viscosity (mixture, Z_vap, 400, 50 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 400, 50 + 460);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.011);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.121);
+
+        vaporPhase.molarVolume (mixture, Z_vap, 400, 50+460, vaporEoS);
+        liquidPhase.molarVolume(mixture, Z_liq, 400, 50+460, liquidEoS);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.675);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.446);
     }
 
     SECTION("Using SRK at 300 psi and 50 F"){
@@ -348,17 +351,17 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.249);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==35.087);
 
-        vaporPhase.molarVolume (mixture, Z_vap, 300, 50+460, vaporEoS);
-        liquidPhase.molarVolume(mixture, Z_liq, 300, 50+460, liquidEoS);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.251);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==40.477);
-
         vaporPhase.viscosity (mixture, Z_vap, 300, 50 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 300, 50 + 460);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.011);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.128);
+
+        vaporPhase.molarVolume (mixture, Z_vap, 300, 50+460, vaporEoS);
+        liquidPhase.molarVolume(mixture, Z_liq, 300, 50+460, liquidEoS);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.251);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==40.477);
     }
 
     SECTION("Using SRK at 500 psi and 100 F"){
@@ -387,17 +390,17 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.014);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==33.692);
 
-        vaporPhase.molarVolume (mixture, Z_vap, 500, 100+460, vaporEoS);
-        liquidPhase.molarVolume(mixture, Z_liq, 500, 100+460, liquidEoS);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.018);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.733);
-
         vaporPhase.viscosity (mixture, Z_vap, 500, 100 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 500, 100 + 460);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.108);
+
+        vaporPhase.molarVolume (mixture, Z_vap, 500, 100+460, vaporEoS);
+        liquidPhase.molarVolume(mixture, Z_liq, 500, 100+460, liquidEoS);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==2.018);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==38.733);
     }
 
     SECTION("Using SRK at 400 psi and 100 F"){
@@ -426,17 +429,17 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.603);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==34.237);
 
-        vaporPhase.molarVolume (mixture, Z_vap, 400, 100+460, vaporEoS);
-        liquidPhase.molarVolume(mixture, Z_liq, 400, 100+460, liquidEoS);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.606);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.610);
-
         vaporPhase.viscosity (mixture, Z_vap, 400, 100 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 400, 100 + 460);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.114);
+
+        vaporPhase.molarVolume (mixture, Z_vap, 400, 100+460, vaporEoS);
+        liquidPhase.molarVolume(mixture, Z_liq, 400, 100+460, liquidEoS);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.606);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==39.610);
     }
 
     SECTION("Using SRK at 300 psi and 100 F"){
@@ -465,16 +468,16 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.201);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==34.815);
 
-        vaporPhase.molarVolume (mixture, Z_vap, 300, 100+460, vaporEoS);
-        liquidPhase.molarVolume(mixture, Z_liq, 300, 100+460, liquidEoS);
-
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.203);
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==40.587);
-
         vaporPhase.viscosity (mixture, Z_vap, 300, 100 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 300, 100 + 460);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.119);
+
+        vaporPhase.molarVolume (mixture, Z_vap, 300, 100+460, vaporEoS);
+        liquidPhase.molarVolume(mixture, Z_liq, 300, 100+460, liquidEoS);
+
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.density(),3))==1.203);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.density(),3))==40.587);
     }
 }

@@ -87,15 +87,15 @@ namespace PhaseBehavior::Phase{
         }
 
         NP_t viscosity(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature){
-            NP_t x_v = 3.5 + 986/temperature + 0.01*molecularWeight_;
+            NP_t x_v = 3.5 + (986.0/temperature) + 0.01*molecularWeight_;
             NP_t y_v = 2.4 - 0.2*x_v;
-            NP_t k_v = (9.4+0.02*molecularWeight_)*std::pow(temperature, 1.5)/(209 + temperature + 19*molecularWeight_);
-            viscosity_ = 1e-4*k_v*std::exp(x_v*std::pow(density_/62.4, y_v));
+            NP_t k_v = (9.4+0.02*molecularWeight_)*std::pow(temperature, 1.5)/(209.0 + temperature + 19.0*molecularWeight_);
+            viscosity_ = k_v*std::exp(x_v*std::pow((density_/62.4), y_v))/10000.0;            ;
             return viscosity_;
         }
 
         NP_t viscosity(){
-            return FluidPhase::viscosity();
+            return viscosity_;
         }
     };
 
@@ -125,7 +125,7 @@ namespace PhaseBehavior::Phase{
                 
             };
 
-            auto reducedDensity = density_*mixture.pseudoCriticalVolume()/molecularWeight_;
+            auto reducedDensity = density_*mixture.pseudoCriticalVolume("liquid")/molecularWeight_;
 
             NP_t numerator = 0;
             NP_t denominator = 0;
@@ -138,7 +138,7 @@ namespace PhaseBehavior::Phase{
             
             auto mixtureReferenceViscosity = numerator/denominator;
 
-            auto mixtureViscosityParameter = 5.4402*std::pow(mixture.pseudoCriticalTemperature(),1.0/6.0)/(std::sqrt(molecularWeight())*std::pow(mixture.pseudoCriticalPressure(),2.0/3.0));
+            auto mixtureViscosityParameter = 5.4402*std::pow(mixture.pseudoCriticalTemperature("liquid"),1.0/6.0)/(std::sqrt(molecularWeight())*std::pow(mixture.pseudoCriticalPressure("liquid"),2.0/3.0));
 
             // LBC Correlation
             viscosity_ = mixtureReferenceViscosity + (std::pow(0.1023 + 0.023364*reducedDensity + 0.058533*std::pow(reducedDensity,2.0) - 
@@ -148,7 +148,7 @@ namespace PhaseBehavior::Phase{
         }
 
         NP_t viscosity(){
-            return FluidPhase::viscosity();
+            return viscosity_;
         }
     };
 

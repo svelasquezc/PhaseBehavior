@@ -238,21 +238,21 @@ namespace PhaseBehavior {
             }
         }
 
-        NP_t pseudoCriticalPressure() const {
-            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [](auto previous, auto& element){
-                return previous + element.composition("liquid")*element.pure().criticalPressure();
+        NP_t pseudoCriticalPressure(std::string composititionType = "global") const {
+            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [&composititionType](auto previous, auto& element){
+                return previous + element.composition(composititionType)*element.pure().criticalPressure();
             });
         }
 
-        NP_t pseudoCriticalTemperature() const {
-            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [](auto previous, auto& element){
-                return previous + element.composition("liquid")*element.pure().criticalTemperature();
+        NP_t pseudoCriticalTemperature(std::string composititionType = "global") const {
+            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [&composititionType](auto previous, auto& element){
+                return previous + element.composition(composititionType)*element.pure().criticalTemperature();
             });
         }
 
-        NP_t pseudoCriticalVolume() const {
-            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [](auto previous, auto& element){
-                return previous + element.composition("liquid")*element.pure().criticalVolume();
+        NP_t pseudoCriticalVolume(std::string composititionType = "global") const {
+            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [&composititionType](auto previous, auto& element){
+                return previous + element.composition(composititionType)*element.pure().criticalVolume()*element.pure().molarWeight();
             });
         }
     };

@@ -65,6 +65,11 @@
         "__config": "cpp",
         "__locale": "cpp",
         "filesystem": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "complex": "cpp",
+        "list": "cpp",
+        "unordered_set": "cpp",
+        "hash_map": "cpp",
+        "valarray": "cpp"
     }
 }
