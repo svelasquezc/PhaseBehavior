@@ -172,7 +172,11 @@ namespace PhaseBehavior {
             });
         } 
 
-        auto operator[] (std::size_t componentIndex) -> decltype(components_[componentIndex]){
+        MixtureComponent& operator[] (std::size_t componentIndex){
+            return components_[componentIndex];
+        }
+
+        const MixtureComponent& operator[] (std::size_t componentIndex) const{
             return components_[componentIndex];
         }
 

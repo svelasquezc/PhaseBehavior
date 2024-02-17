@@ -86,6 +86,15 @@ namespace PhaseBehavior::Phase{
             molecularWeight(mixture, compositionType);
         }
 
+        template<typename EoS>
+        VaporLikePhase(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos){
+            phaseName_ = "vapor";
+            molecularWeight(mixture, phaseName_);
+            molarVolume(mixture, compressibility, pressure, temperature, eos, phaseName_);
+            density();
+            viscosity(mixture, compressibility, pressure, temperature);
+        }
+
         NP_t viscosity(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature){
             NP_t x_v = 3.5 + (986.0/temperature) + 0.01*molecularWeight_;
             NP_t y_v = 2.4 - 0.2*x_v;
@@ -107,6 +116,15 @@ namespace PhaseBehavior::Phase{
             phaseName_ = "liquid";
             if (compositionType == "") compositionType = phaseName_;
             molecularWeight(mixture, compositionType);
+        }
+
+        template<typename EoS>
+        LiquidLikePhase(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos){
+            phaseName_ = "liquid";
+            molecularWeight(mixture, phaseName_);
+            molarVolume(mixture, compressibility, pressure, temperature, eos, phaseName_);
+            density();
+            viscosity(mixture, compressibility, pressure, temperature);
         }
         
         NP_t viscosity(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature){

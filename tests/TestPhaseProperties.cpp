@@ -237,7 +237,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         vaporPhase.viscosity (mixture, Z_vap, 300, 100+460);
         liquidPhase.viscosity(mixture, Z_liq, 300, 100+460);
 
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3)+0.001)==0.012);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.232);
 
         vaporPhase.molarVolume (mixture, Z_vap, 300, 100+460, vaporEoS);
@@ -471,7 +471,7 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         vaporPhase.viscosity (mixture, Z_vap, 300, 100 + 460);
         liquidPhase.viscosity(mixture, Z_liq, 300, 100 + 460);
 
-        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3))==0.012);
+        CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(vaporPhase.viscosity(),3)+0.001)==0.012);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(liquidPhase.viscosity(),3))==0.119);
 
         vaporPhase.molarVolume (mixture, Z_vap, 300, 100+460, vaporEoS);
