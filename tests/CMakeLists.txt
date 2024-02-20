@@ -162,4 +162,4 @@ target_link_libraries(TestSSMWithNewton PRIVATE PhaseBehavior Catch2::Catch2With
 # You can also run examples and check the output, as well.
 add_test(NAME TestSSMWithNewton COMMAND TestSSMWithNewton) # Command can be a target
 
-#add_subdirectory(BlackOil)
+add_subdirectory(BlackOil)
