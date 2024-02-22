@@ -164,6 +164,10 @@ namespace PhaseBehavior::BlackOil {
 
             return {gasFraction, oilFraction, molecularWeight, density};
         }
+
+        auto PVTTable(){
+            return PVTTable_;
+        }
     };
 }
 

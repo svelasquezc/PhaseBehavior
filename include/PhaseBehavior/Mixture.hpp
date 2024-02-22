@@ -37,7 +37,7 @@ namespace PhaseBehavior {
             MixtureComponent& operator= (MixtureComponent&&) = default;
 
             template <typename PairType,
-            typename = typename std::enable_if_t<!std::is_same_v<PairType, MixtureComponent>>>
+            typename = typename std::enable_if_t<!std::is_same_v<std::decay_t<PairType>, MixtureComponent>>>
             explicit MixtureComponent(PairType&& componentWithComposition)
             {
                 pureComponent_ = std::make_shared<Component>(std::forward<Component>(std::get<0>(componentWithComposition)));
