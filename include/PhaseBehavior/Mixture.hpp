@@ -30,16 +30,21 @@ namespace PhaseBehavior {
             NP_t equilibriumCoefficient_;
         public:
 
-            MixtureComponent(MixtureComponent& rhs) = default;
+            MixtureComponent(MixtureComponent const& rhs) = default;
             MixtureComponent(MixtureComponent&& rhs) = default;
 
             MixtureComponent& operator= (MixtureComponent const&) = default;
             MixtureComponent& operator= (MixtureComponent&&) = default;
 
             template <typename PairType,
-            typename = typename std::enable_if_t<!std::is_same_v<std::decay_t<PairType>, MixtureComponent>>>
+            typename = typename std::enable_if_t<
+            !std::is_same_v<std::decay_t<PairType>, MixtureComponent>
+            &&
+            !std::is_same_v<std::decay_t<PairType>, Mixture>
+            >>
             explicit MixtureComponent(PairType&& componentWithComposition)
             {
+
                 pureComponent_ = std::make_shared<Component>(std::forward<Component>(std::get<0>(componentWithComposition)));
                 molarComposition_["global"]  = std::forward<NP_t>(std::get<1>(componentWithComposition));
             }
@@ -104,7 +109,7 @@ namespace PhaseBehavior {
 
         std::vector<MixtureComponent> components_;
 
-        using InteractionCoefficientsType = std::map<std::pair<MixtureComponent const&,MixtureComponent const&>, NP_t>;
+        using InteractionCoefficientsType = std::map<std::pair<std::string,std::string>, NP_t>;
 
         InteractionCoefficientsType interactionCoefficients_;
 
@@ -117,7 +122,16 @@ namespace PhaseBehavior {
     public:
 
         Mixture() = delete;
-        Mixture(Mixture const&) = default;
+        Mixture(Mixture const& rhs){
+            numberOfComponents_ = rhs.numberOfComponents_;
+            components_.reserve(numberOfComponents_);
+            for (const auto& mixComp : rhs.components_){
+                MixtureComponent copyMixComp (mixComp);
+                components_.emplace_back(copyMixComp);
+            }
+            interactionCoefficients_ = rhs.interactionCoefficients_;
+        }
+
         Mixture(Mixture&&) = default;
 
         Mixture& operator= (Mixture const&) = default;
@@ -126,7 +140,9 @@ namespace PhaseBehavior {
         template< 
             typename ContainerType,
             typename = typename std::enable_if_t<
-            std::is_constructible_v<MixtureComponent, typename ContainerType::value_type>
+            std::is_constructible_v<MixtureComponent, typename ContainerType::value_type> 
+            && 
+            !std::is_same_v<std::decay_t<ContainerType>, Mixture>
             >
             >
         Mixture(ContainerType& inputComponents): 
@@ -193,16 +209,16 @@ namespace PhaseBehavior {
             auto mixComp2 = (*this)[componentName2];
             assert(mixComp1!=this->end() && (componentName1 + " is not a component of the mixture").c_str());
             assert(mixComp2!=this->end() && (componentName2 + " is not a component of the mixture").c_str());
-            interactionCoefficients_[{*mixComp1, *mixComp2}] =  value;
+            interactionCoefficients_[{componentName1, componentName2}] =  value;
         }
 
         void interactionCoefficient(MixtureComponent const& component1, MixtureComponent const& component2, NP_t value){
-            interactionCoefficients_[{component1, component2}] = value;
+            interactionCoefficients_[{component1.pure().name(), component2.pure().name()}] = value;
         }
 
         NP_t interactionCoefficient(MixtureComponent const& component1, MixtureComponent const& component2) const{
             try{
-                return interactionCoefficients_.at({component1, component2});
+                return interactionCoefficients_.at({component1.pure().name(), component2.pure().name()});
             }catch(std::out_of_range e){
                 return 0.0;
             }
@@ -214,7 +230,7 @@ namespace PhaseBehavior {
             assert(mixComp1!=this->end() && (componentName1 + " is not a component of the mixture").c_str());
             assert(mixComp2!=this->end() && (componentName2 + " is not a component of the mixture").c_str());
             try{
-                return interactionCoefficients_.at({*mixComp1, *mixComp2});
+                return interactionCoefficients_.at({componentName1, componentName2});
             }catch(std::out_of_range e){
                 return 0.0;
             }
