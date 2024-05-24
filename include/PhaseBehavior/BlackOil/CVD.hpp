@@ -2,6 +2,7 @@
 #define CVD_HPP
 
 #include <tuple>
+#include <iostream>
 
 #include "../Utilities/Types.hpp"
 #include "../Utilities/Constants.hpp"
@@ -47,7 +48,13 @@ namespace PhaseBehavior::BlackOil {
             EoS eos;
 
             NP_t dewPressure = reservoirPressure;
-            while(phaseStability<EoS>(mixture, dewPressure, reservoirTemperature) == PhaseStabilityResult::Stable) dewPressure-=1; //psia 
+            while(phaseStability<EoS>(mixture, dewPressure, reservoirTemperature) == PhaseStabilityResult::Stable){
+                std::cout << "Dew Pressure: " << dewPressure;    
+                dewPressure-=100; //psia
+            }
+                 
+
+            std::cout << "Dew Pressure: " << dewPressure;
 
             NP_t initialGasEquivalentVolume = 1e6;
             auto totalMoles = Constants::standardConditionsPressure * initialGasEquivalentVolume/
@@ -118,12 +125,16 @@ namespace PhaseBehavior::BlackOil {
                 auto volatilizedOil = stockTankOilInGasVolume/standardConditionsGasInGasVolume;
                 auto dissolvedGas = standardConditionsGasInOilVolume/stockTankOilInOilVolume;
                 if (static_cast<int>(pressure) % 50 == 0){
+                    std::cout << "pressure: " << pressure << std::endl << "oilVolumetricFactor: " << oilVolumetricFactor << std::endl 
+                    << "gasVolumetricFactor: " << gasVolumetricFactor << std::endl << "dissolvedGas: " << dissolvedGas << std::endl << "volatilizedOil: " <<  volatilizedOil << std::endl;
                     PVTTable_.push_back({pressure, oilVolumetricFactor, gasVolumetricFactor, dissolvedGas, volatilizedOil});
                 }
+                auto pastTotalMoles = totalMoles;
+                totalMoles -= excessGasMoles;
+                
                 for (auto& mixtureComponent : mixture){
-                    mixtureComponent.composition((mixtureComponent.composition()*totalMoles - mixtureComponent.composition("vapor")*excessGasMoles)/totalMoles);
+                    mixtureComponent.composition((mixtureComponent.composition()*pastTotalMoles - mixtureComponent.composition("vapor")*excessGasMoles)/totalMoles);
                 }
-                totalMoles = totalMoles - excessGasMoles;
                 pressure -= 1;
             }
         }

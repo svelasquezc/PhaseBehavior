@@ -122,15 +122,7 @@ namespace PhaseBehavior {
     public:
 
         Mixture() = delete;
-        Mixture(Mixture const& rhs){
-            numberOfComponents_ = rhs.numberOfComponents_;
-            components_.reserve(numberOfComponents_);
-            for (const auto& mixComp : rhs.components_){
-                MixtureComponent copyMixComp (mixComp);
-                components_.emplace_back(copyMixComp);
-            }
-            interactionCoefficients_ = rhs.interactionCoefficients_;
-        }
+        Mixture(Mixture const&) = default;
 
         Mixture(Mixture&&) = default;
 
