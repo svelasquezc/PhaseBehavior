@@ -108,7 +108,7 @@ namespace PhaseBehavior::Math {
         PT oldValue = 0;
 
         // Relative error convergence criterium
-        while (std::abs(newValue - oldValue) > 1e-10){
+        while (std::abs(newValue - oldValue) > 1e-12){
             // Centered first-order derivative
             oldValue = newValue;
             newValue = oldValue - (goalFunction(oldValue)/derivative(oldValue));
@@ -119,26 +119,27 @@ namespace PhaseBehavior::Math {
     };
 
     template<typename PT, typename FunctionLike>
-    constexpr PT bisection(PT lowerLimit, PT upperLimit, const FunctionLike& goalFunction){
-        PT oldValue = lowerLimit;
-        PT newValue = upperLimit;
-
+    constexpr auto bisection(PT lowerLimit, PT upperLimit, const FunctionLike& goalFunction){
+        PT newValue = 0;
         // Relative error convergence criterium
-        while (std::abs(newValue - oldValue) > 1e-10){
-            
-            oldValue = newValue;
-            newValue = 0.5*(lowerLimit + upperLimit);
-            PT functionValue = goalFunction(newValue);
+        if((goalFunction(lowerLimit)<0 && goalFunction(upperLimit) > 0) || (goalFunction(lowerLimit)>0 && goalFunction(upperLimit)>0)){ 
+            while (std::abs(upperLimit - lowerLimit) > 1e-10){
+                
+                newValue = 0.5*(lowerLimit + upperLimit);
+                PT functionValue = goalFunction(newValue);
 
-            if (functionValue>0){
-                upperLimit = newValue;
-            }else if(functionValue<0){
-                lowerLimit = newValue;
-            }else {
-                return newValue;
+                if (functionValue>0){
+                    upperLimit = newValue;
+                }else if(functionValue<0){
+                    lowerLimit = newValue;
+                }else {
+                    return std::make_optional(newValue);
+                }
             }
+            return std::make_optional(newValue);
         }
-        return newValue;
+        return std::optional<PT>();
+        
     };
 };
 

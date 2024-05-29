@@ -53,11 +53,12 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         
             auto possibleFng = Math::NewtonRaphson<NP_t>(initialGuess, divergence, objectiveFunction, derivativeFunction);
 
-            NP_t vaporMolarFraction;
+            NP_t vaporMolarFraction = 0;
             if (possibleFng){
                 vaporMolarFraction = possibleFng.value();
             }else{
-                vaporMolarFraction = Math::bisection<NP_t>(0.0, 1.0, objectiveFunction);
+                auto possibleBisectionValue = Math::bisection<NP_t>(0.0, 1.0, objectiveFunction);
+                if (possibleBisectionValue) vaporMolarFraction = possibleBisectionValue.value();
             }
 
             auto liquidMolarFraction = 1 - vaporMolarFraction;
