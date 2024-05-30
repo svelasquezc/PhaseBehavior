@@ -7,6 +7,8 @@ project(
     )
 
 include(GNUInstallDirs)
+
+option(BUILD_EXAMPLES "Builds examples for PhaseBehavior project" OFF)
 # FetchContent added in CMake 3.11, downloads during the configure step
 # FetchContent_MakeAvailable was added in CMake 3.14; simpler usage
 include(FetchContent)
@@ -26,7 +28,7 @@ if (NOT TARGET Eigen3::Eigen)
     # you should put this code in a add_subdirectory to avoid to change
     # BUILD_TESTING for your own project too since variables are directory
     # scoped
-    option(BUILD_TESTING OFF)
+    set(EIGEN_BUILD_TESTING OFF)
     set(EIGEN_BUILD_PKGCONFIG OFF)
     set( OFF)
     FetchContent_MakeAvailable(Eigen)
@@ -66,20 +68,27 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
         message(STATUS "Doxygen not found, not building docs")
     endif()
 
+
+
     # Testing only available if this is the main app
     # Note this needs to be done in the main CMakeLists
     # since it calls enable_testing, which must be in the
     # main CMakeLists.
     include(CTest)
 
-    add_subdirectory(src)
+    set(BUILD_EXAMPLES ON CACHE BOOL "Builds examples for PhaseBehavior project" FORCE)
 
+endif()
+
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
 
 if (BUILD_TESTING)
     add_subdirectory(tests)
-    add_subdirectory(Data)
 endif()
+
+add_subdirectory(Data)
 
 install(TARGETS PhaseBehavior
         EXPORT ${PROJECT_NAME}_Targets
