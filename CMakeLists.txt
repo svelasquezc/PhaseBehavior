@@ -62,8 +62,8 @@ add_subdirectory(src)
 
 if (BUILD_TESTING)
     add_subdirectory(tests)
+    add_subdirectory(Data)
 endif()
-add_subdirectory(Data)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
