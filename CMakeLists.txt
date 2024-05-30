@@ -33,6 +33,19 @@ if (NOT TARGET Eigen3::Eigen)
 
 endif (NOT TARGET Eigen3::Eigen)
 
+file(GLOB HEADERS CMAKE_CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/*.hpp")
+
+add_library(PhaseBehavior INTERFACE)
+
+# We need this directory, and users of our library will need it too
+target_include_directories(PhaseBehavior INTERFACE ../include)
+
+# All users of this library will need at least C++17
+target_compile_features(PhaseBehavior INTERFACE cxx_std_17)
+
+#
+target_link_libraries(PhaseBehavior INTERFACE Eigen3::Eigen)
+
 # Only do these if this is the main project, and not if it is included through add_subdirectory
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
@@ -56,9 +69,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     # main CMakeLists.
     include(CTest)
 
-endif()
+    add_subdirectory(src)
 
-add_subdirectory(src)
+endif()
 
 if (BUILD_TESTING)
     add_subdirectory(tests)
