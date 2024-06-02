@@ -21,20 +21,20 @@ void densityCalculation(PhaseBehavior::Component component1, PhaseBehavior::Comp
     
     std::stringstream iss;
 
-    iss << "Density"<<"-"<< eos.name() <<"-"<<component1.name() << "+" << component2.name() << "-" << static_cast<int>(temperature) <<"R"<< ".csv";
+    iss << "Density"<<"-"<< eos.name() <<"-"<< composition1*100 << "%" << component1.name() << "+" << composition2*100 << "%" << component2.name() << "-" << static_cast<int>(temperature/1.8) <<"K"<< ".csv";
 
     std::ofstream file(iss.str());
 
     file << "Pressure;Density"<<std::endl;
 
-    for (int pressure=0; pressure<= 2900; pressure+=5){
+    for (int pressure=0; pressure<= 2901; pressure+=5){
         eos(mixture, static_cast<double>(pressure), temperature);
         mixture.compressibility("global", eos.selectedCompressibility());
 
         auto gas = PhaseBehavior::Phase::VaporLikePhase(mixture, "global");
         gas.molarVolume(mixture.compressibility("global"), pressure, temperature);
         auto density = gas.density();
-        file << pressure << ";" << density << std::endl;
+        file << pressure*0.00689476 << ";" << density*16.01846 << std::endl;
     }
     file.close();
 }
