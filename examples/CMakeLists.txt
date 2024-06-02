@@ -7,6 +7,8 @@ add_executable(BlackOilEstimation BlackOilEstimation.cpp)
 # Tests need to be added as executables first
 add_executable(OffendingComposition OffendingComposition.cpp)
 
+find_package (Threads)
+
 # Tests need to be added as executables first
 add_executable(DensityValidation DensityValidation.cpp)
 
@@ -20,7 +22,7 @@ target_compile_features(DensityValidation PRIVATE cxx_std_17)
 target_link_libraries(PhaseEnvelope PRIVATE PhaseBehavior)
 target_link_libraries(BlackOilEstimation PRIVATE PhaseBehavior)
 target_link_libraries(OffendingComposition PRIVATE PhaseBehavior)
-target_link_libraries(DensityValidation PRIVATE PhaseBehavior)
+target_link_libraries(DensityValidation PRIVATE PhaseBehavior Threads::Threads)
 
 # IDEs should put the headers in a nice place
 source_group(

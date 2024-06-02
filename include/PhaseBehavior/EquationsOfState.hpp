@@ -52,6 +52,10 @@ namespace PhaseBehavior::EoS {
                 return 0.379642 + 1.48503*accentricFactor 
                 - 0.164423*std::pow(accentricFactor,2) + 0.016666*std::pow(accentricFactor,3);
             }
+
+            const static std::string name(){
+                return "PengRobinson";
+            }
         };
     }
 
@@ -73,6 +77,10 @@ namespace PhaseBehavior::EoS {
 
             constexpr static NP_t mParameter(NP_t accentricFactor){
                 return 0.48 + 1.574*accentricFactor - 0.176*std::pow(accentricFactor,2);
+            }
+
+            const static std::string name(){
+                return "SoaveRedlichKwong";
             }
         };
     }
