@@ -118,12 +118,22 @@ namespace PhaseBehavior {
         }
 
         /**
+         * @brief Getter for critical density as a function of critical volume.
+         * @return Critical density property.
+         */
+        NP_t criticalDensity() const {
+            return 1.0/criticalVolume_;
+        }
+
+        /**
          * @brief Getter for shift (EoS Dependent) value of the component.
          * @return Accentric factor property.
          */
         NP_t shift() const {
             return shift_;
         }
+
+
 
         NP_t equilibriumCoefficient(NP_t const& absolutePressure, NP_t const& absoluteTemperature) const {
             return std::exp(5.37*(1+accentricFactor_)*(1-(1/reducedTemperature(absoluteTemperature))))/reducedPressure(absolutePressure);
