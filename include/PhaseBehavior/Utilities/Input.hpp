@@ -15,7 +15,7 @@ namespace PhaseBehavior::Input {
     using MixComp = std::pair<PhaseBehavior::Component, Precision_t>;
 
     template<bool hasShift=false>
-    Mixture createMixtureFromFile(std::string const& pvtFilename, std::string const& interactionsFilename){
+    Mixture createMixtureFromFile(std::string const& pvtFilename, std::string const& interactionsFilename = ""){
         std::vector<MixComp> components;
 
         {
@@ -38,7 +38,7 @@ namespace PhaseBehavior::Input {
             pvtFile.close();
         }
         PhaseBehavior::Mixture mixture(components);
-        {
+        if (!interactionsFilename.empty()){
             auto interactionCoefficientsFile = std::ifstream(interactionsFilename);
             std::string line;
 

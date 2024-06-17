@@ -126,6 +126,14 @@ namespace PhaseBehavior {
         }
 
         /**
+         * @brief Getter for molar critical density as a function of critical volume and molar weight.
+         * @return Molar critical density property.
+         */
+        NP_t molarCriticalDensity() const {
+            return (1.0/criticalVolume_)/molarWeight_;
+        }
+
+        /**
          * @brief Getter for shift (EoS Dependent) value of the component.
          * @return Accentric factor property.
          */

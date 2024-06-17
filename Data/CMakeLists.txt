@@ -11,7 +11,7 @@ if (BUILD_EXAMPLES)
 endif()
 
 
-if(ENABLE_TESTING)
+if(BUILD_TESTING)
 
     add_custom_target(CopyDataTest ALL DEPENDS TestMixture)
     # Copy the PVT File to the same folder as the executable file.
