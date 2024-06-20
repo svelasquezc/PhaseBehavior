@@ -6,8 +6,7 @@
 #include "Constants.hpp"
 #include "../Mixture.hpp"
 
-#include "PureIdealHelmholtzCoefficients.hpp"
-#include "PureResidualHelmholtzCoefficients.hpp"
+#include "PureFluidHelmholtzCoefficients.hpp"
 
 using NP_t = PhaseBehavior::Types::NumericalPrecision;
 
@@ -17,14 +16,13 @@ namespace PhaseBehavior::EoS::GERG{
     using PhaseBehavior::Mixture;
 
     class GERG2008{
-        private:
 
         public:
 
         inline NP_t idealReducedHelmholtzFreeEnergy(Component const& component, NP_t const& mixtureDensity, NP_t const& temperature) const {
 
-            using Coefficients::Ideal::idealCoefficient;
-            using Coefficients::Ideal::hyperbolicCoefficient;
+            using Coefficients::PureFluid::Ideal::idealCoefficient;
+            using Coefficients::PureFluid::Ideal::hyperbolicCoefficient;
 
             return std::log(mixtureDensity/component.molarCriticalDensity()) + Constants::gasConstantRatio * (
                 idealCoefficient.at(component.name())[0] + 
@@ -46,8 +44,29 @@ namespace PhaseBehavior::EoS::GERG{
             return idealMixtureReducedFreeEnergy;
         }
 
-        inline NP_t residualHelmholtzFreeEnergy(Component const& component, NP_t const& mixtureReducedDensity, NP_t const& inverseReducedTemperature){
+        inline NP_t residualHelmholtzFreeEnergy(Component const& component, NP_t const& mixtureReducedDensity, NP_t const& inverseReducedTemperature) const {
+            using namespace Coefficients::PureFluid::Residual;
 
+            NP_t pureFluidResidualHelmholtzFreeEnergy = 0;
+
+            const auto kPol = polynomialExponent.at(component.name()).size();
+
+            for (unsigned int term = 0; term < kPol; ++term){
+                pureFluidResidualHelmholtzFreeEnergy += 
+                    residualCoefficient.at(component.name())[term]*
+                    std::pow(mixtureReducedDensity, std::get<reducedDensityExponent>(polynomialExponent.at(component.name())[term]))*
+                    std::pow(inverseReducedTemperature, std::get<reducedTemperatureExponent>(polynomialExponent.at(component.name())[term]));
+            }
+
+            const auto kExp = exponentialExponent.at(component.name()).size();
+
+            for (unsigned int term = 0; term < kExp; ++term){
+                pureFluidResidualHelmholtzFreeEnergy += 
+                    residualCoefficient.at(component.name())[kPol + term]*
+                    std::pow(mixtureReducedDensity, std::get<reducedDensityExponent>(exponentialExponent.at(component.name())[term]))*
+                    std::pow(inverseReducedTemperature, std::get<reducedTemperatureExponent>(exponentialExponent.at(component.name())[term]))*
+                    std::exp(-std::pow(mixtureReducedDensity, std::get<exponentialReducedDensityExponent>(exponentialExponent.at(component.name())[term])));
+            }
         };
 
     };
