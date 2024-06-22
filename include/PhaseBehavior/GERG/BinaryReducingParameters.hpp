@@ -1,8 +1,11 @@
 #ifndef BINARYREDUCINGPARAMETERS_HPP
 #define BINARYREDUCINGPARAMETERS_HPP
 
-#include <map>
+#include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <vector>
+#include <functional>
 #include <string_view>
 #include "../Utilities/Types.hpp"
 
@@ -11,10 +14,41 @@ using NP_t = PhaseBehavior::Types::NumericalPrecision;
 
 namespace PhaseBehavior::EoS::GERG::Coefficients::ReducingParameters {
 
-    using BinaryReducingParameter = std::map<std::unordered_set<std::string_view, std::string_view>, NP_t>;
+    
+    constexpr std::pair<std::string_view, std::string_view> pairSort(std::pair<std::string_view, std::string_view> pair) {
+        auto [first, second] = pair;
+        if (first > second) std::swap(first, second);
+
+        return {first, second};
+    }
+    
+    // Custom hash function for a pair of strings
+    struct PairHash {
+        std::size_t operator()(std::pair<std::string_view, std::string_view> keyPair) const {
+            // Create a vector of the two strings and sort it
+            auto [firstKey, secondKey] = pairSort(keyPair);
+
+            // Combine the hashes of the sorted keys
+            return std::hash<std::string_view>()(firstKey) ^ std::hash<std::string_view>()(secondKey);
+        }
+    };
+
+    // Custom equality function for a pair of strings
+    struct PairEqual {
+        bool operator()(const std::pair<std::string_view, std::string_view>& a, const std::pair<std::string_view, std::string_view>& b) const {
+            // Create sorted vectors of the pairs
+            auto sorted_a = pairSort(a);
+            auto sorted_b = pairSort(b);
+
+            // Compare the sorted vectors
+            return sorted_a == sorted_b;
+        }
+    };
+
+    using BinaryReducingParameter = std::unordered_map<std::pair<std::string_view, std::string_view>, NP_t, PairHash, PairEqual>;
     
     namespace Density {
-        BinaryReducingParameter const beta = {
+        static BinaryReducingParameter const beta = {
             {{"CH4", "N2"}, 0.998721377}, {{"CH4", "CO2"}, 0.999518072}, {{"CH4", "C2H6"}, 0.997547866}, {{"CH4", "C3H8"}, 1.004827070}, {{"CH4", "n-C4H10"}, 0.979105972}, {{"CH4", "i-C4H10"}, 1.011240388}, {{"CH4", "n-C5H12"}, 0.948330120}, {{"CH4", "i-C5H12"}, 1.0}, {{"CH4", "n-C6H14"}, 0.958015294}, {{"CH4", "n-C7H16"}, 0.962050831}, {{"CH4", "n-C8H18"}, 0.994740603}, {{"CH4", "n-C9H20"}, 1.002852287}, {{"CH4", "n-C10H22"}, 1.033086292}, {{"CH4", "H2"}, 1.0}, {{"CH4", "O2"}, 1.0}, {{"CH4", "CO"}, 0.997340772}, {{"CH4", "H2O"}, 1.012783169}, {{"CH4", "H2S"}, 1.012599087}, {{"CH4", "He"}, 1.0}, {{"CH4", "Ar"}, 1.034630259}, 
             {{"N2", "CO2"}, 0.977794634}, {{"N2", "C2H6"}, 0.978880168}, {{"N2", "C3H8"}, 0.974424681}, {{"N2", "n-C4H10"}, 0.996082610}, {{"N2", "i-C4H10"}, 0.986415830}, {{"N2", "n-C5H12"}, 1.0}, {{"N2", "i-C5H12"}, 1.0}, {{"N2", "n-C6H14"}, 1.0}, {{"N2", "n-C7H16"}, 1.0}, {{"N2", "n-C8H18"}, 1.0}, {{"N2", "n-C9H20"}, 1.0}, {{"N2", "n-C10H22"}, 1.0}, {{"N2", "H2"}, 0.972532065}, {{"N2", "O2"}, 0.999521770}, {{"N2", "CO"}, 1.0}, {{"N2", "H2O"}, 1.0}, {{"N2", "H2S"}, 0.910394249}, {{"N2", "He"}, 0.969501055}, {{"N2", "Ar"}, 1.004166412}, 
             {{"CO2", "C2H6"}, 1.002525718}, {{"CO2", "C3H8"}, 0.996898004}, {{"CO2", "n-C4H10"}, 1.174760923}, {{"CO2", "i-C4H10"}, 1.076551882}, {{"CO2", "n-C5H12"}, 1.024311498}, {{"CO2", "i-C5H12"}, 1.060793104}, {{"CO2", "n-C6H14"}, 1.0}, {{"CO2", "n-C7H16"}, 1.205469976}, {{"CO2", "n-C8H18"}, 1.026169373}, {{"CO2", "n-C9H20"}, 1.0}, {{"CO2", "n-C10H22"}, 1.000151132}, {{"CO2", "H2"}, 0.904142159}, {{"CO2", "O2"}, 1.0}, {{"CO2", "CO"}, 1.0}, {{"CO2", "H2O"}, 0.949055959}, {{"CO2", "H2S"}, 0.906630564}, {{"CO2", "He"}, 0.846647561}, {{"CO2", "Ar"}, 1.008392428}, 
@@ -37,7 +71,7 @@ namespace PhaseBehavior::EoS::GERG::Coefficients::ReducingParameters {
             {{"He", "Ar"}, 1.0}, 
 
         };
-        BinaryReducingParameter const gamma = {
+        static BinaryReducingParameter const gamma = {
             {{"CH4", "N2"}, 1.013950311}, {{"CH4", "CO2"}, 1.002806594}, {{"CH4", "C2H6"}, 1.006617867}, {{"CH4", "C3H8"}, 1.038470657}, {{"CH4", "n-C4H10"}, 1.045375122}, {{"CH4", "i-C4H10"}, 1.054319053}, {{"CH4", "n-C5H12"}, 1.124508039}, {{"CH4", "i-C5H12"}, 1.343685343}, {{"CH4", "n-C6H14"}, 1.052643846}, {{"CH4", "n-C7H16"}, 1.156655935}, {{"CH4", "n-C8H18"}, 1.116549372}, {{"CH4", "n-C9H20"}, 1.141895355}, {{"CH4", "n-C10H22"}, 1.146089637}, {{"CH4", "H2"}, 1.018702573}, {{"CH4", "O2"}, 1.0}, {{"CH4", "CO"}, 1.006102927}, {{"CH4", "H2O"}, 1.585018334}, {{"CH4", "H2S"}, 1.040161207}, {{"CH4", "He"}, 0.881405683}, {{"CH4", "Ar"}, 1.014678542}, 
             {{"N2", "CO2"}, 1.047578256}, {{"N2", "C2H6"}, 1.042352891}, {{"N2", "C3H8"}, 1.081025408}, {{"N2", "n-C4H10"}, 1.146949309}, {{"N2", "i-C4H10"}, 1.100576129}, {{"N2", "n-C5H12"}, 1.078877166}, {{"N2", "i-C5H12"}, 1.154135439}, {{"N2", "n-C6H14"}, 1.195952177}, {{"N2", "n-C7H16"}, 1.404554090}, {{"N2", "n-C8H18"}, 1.186067025}, {{"N2", "n-C9H20"}, 1.100405929}, {{"N2", "n-C10H22"}, 1.0}, {{"N2", "H2"}, 0.970115357}, {{"N2", "O2"}, 0.997082328}, {{"N2", "CO"}, 1.008690943}, {{"N2", "H2O"}, 1.094749685}, {{"N2", "H2S"}, 1.256844157}, {{"N2", "He"}, 0.932629867}, {{"N2", "Ar"}, 1.002212182}, 
             {{"CO2", "C2H6"}, 1.032876701}, {{"CO2", "C3H8"}, 1.047596298}, {{"CO2", "n-C4H10"}, 1.222437324}, {{"CO2", "i-C4H10"}, 1.081909003}, {{"CO2", "n-C5H12"}, 1.068406078}, {{"CO2", "i-C5H12"}, 1.116793198}, {{"CO2", "n-C6H14"}, 0.851343711}, {{"CO2", "n-C7H16"}, 1.164585914}, {{"CO2", "n-C8H18"}, 1.104043935}, {{"CO2", "n-C9H20"}, 0.973386152}, {{"CO2", "n-C10H22"}, 1.183394668}, {{"CO2", "H2"}, 1.152792550}, {{"CO2", "O2"}, 1.0}, {{"CO2", "CO"}, 1.0}, {{"CO2", "H2O"}, 1.542328793}, {{"CO2", "H2S"}, 1.024085837}, {{"CO2", "He"}, 0.864141549}, {{"CO2", "Ar"}, 1.029205465}, 
@@ -63,7 +97,7 @@ namespace PhaseBehavior::EoS::GERG::Coefficients::ReducingParameters {
     }
 
     namespace Temperature {
-        BinaryReducingParameter const beta = {
+        static BinaryReducingParameter const beta = {
             {{"CH4", "N2"}, 0.998098830}, {{"CH4", "CO2"}, 1.022624490}, {{"CH4", "C2H6"}, 0.996336508}, {{"CH4", "C3H8"}, 0.989680305}, {{"CH4", "n-C4H10"}, 0.994174910}, {{"CH4", "i-C4H10"}, 0.980315756}, {{"CH4", "n-C5H12"}, 0.992127525}, {{"CH4", "i-C5H12"}, 1.0}, {{"CH4", "n-C6H14"}, 0.981844797}, {{"CH4", "n-C7H16"}, 0.977431529}, {{"CH4", "n-C8H18"}, 0.957473785}, {{"CH4", "n-C9H20"}, 0.947716769}, {{"CH4", "n-C10H22"}, 0.937777823}, {{"CH4", "H2"}, 1.0}, {{"CH4", "O2"}, 1.0}, {{"CH4", "CO"}, 0.987411732}, {{"CH4", "H2O"}, 1.063333913}, {{"CH4", "H2S"}, 1.011090031}, {{"CH4", "He"}, 1.0}, {{"CH4", "Ar"}, 0.990954281}, 
             {{"N2", "CO2"}, 1.005894529}, {{"N2", "C2H6"}, 1.007671428}, {{"N2", "C3H8"}, 1.002677329}, {{"N2", "n-C4H10"}, 0.994515234}, {{"N2", "i-C4H10"}, 0.992868130}, {{"N2", "n-C5H12"}, 1.0}, {{"N2", "i-C5H12"}, 1.0}, {{"N2", "n-C6H14"}, 1.0}, {{"N2", "n-C7H16"}, 1.0}, {{"N2", "n-C8H18"}, 1.0}, {{"N2", "n-C9H20"}, 0.956379450}, {{"N2", "n-C10H22"}, 0.957934447}, {{"N2", "H2"}, 0.946134337}, {{"N2", "O2"}, 0.997190589}, {{"N2", "CO"}, 1.0}, {{"N2", "H2O"}, 1.0}, {{"N2", "H2S"}, 1.004692366}, {{"N2", "He"}, 0.692868765}, {{"N2", "Ar"}, 0.999069843}, 
             {{"CO2", "C2H6"}, 1.013871147}, {{"CO2", "C3H8"}, 1.033620538}, {{"CO2", "n-C4H10"}, 1.018171004}, {{"CO2", "i-C4H10"}, 1.023339824}, {{"CO2", "n-C5H12"}, 1.027000795}, {{"CO2", "i-C5H12"}, 1.019180957}, {{"CO2", "n-C6H14"}, 1.0}, {{"CO2", "n-C7H16"}, 1.011806317}, {{"CO2", "n-C8H18"}, 1.029690780}, {{"CO2", "n-C9H20"}, 1.007688620}, {{"CO2", "n-C10H22"}, 1.020028790}, {{"CO2", "H2"}, 0.942320195}, {{"CO2", "O2"}, 1.0}, {{"CO2", "CO"}, 1.0}, {{"CO2", "H2O"}, 0.997372205}, {{"CO2", "H2S"}, 1.016034583}, {{"CO2", "He"}, 0.768377630}, {{"CO2", "Ar"}, 0.996512863}, 
@@ -85,7 +119,7 @@ namespace PhaseBehavior::EoS::GERG::Coefficients::ReducingParameters {
             {{"H2S", "He"}, 1.0}, {{"H2S", "Ar"}, 1.0}, 
             {{"He", "Ar"}, 1.0}, 
         };
-        BinaryReducingParameter const gamma = {
+        static BinaryReducingParameter const gamma = {
             {{"CH4", "N2"}, 0.979273013}, {{"CH4", "CO2"}, 0.975665369}, {{"CH4", "C2H6"}, 1.049707697}, {{"CH4", "C3H8"}, 1.098655531}, {{"CH4", "n-C4H10"}, 1.171607691}, {{"CH4", "i-C4H10"}, 1.161117729}, {{"CH4", "n-C5H12"}, 1.249173968}, {{"CH4", "i-C5H12"}, 1.188899743}, {{"CH4", "n-C6H14"}, 1.330570181}, {{"CH4", "n-C7H16"}, 1.379850328}, {{"CH4", "n-C8H18"}, 1.449245409}, {{"CH4", "n-C9H20"}, 1.528532478}, {{"CH4", "n-C10H22"}, 1.568231489}, {{"CH4", "H2"}, 1.352643115}, {{"CH4", "O2"}, 0.950000000}, {{"CH4", "CO"}, 0.987473033}, {{"CH4", "H2O"}, 0.775810513}, {{"CH4", "H2S"}, 0.961155729}, {{"CH4", "He"}, 3.159776855}, {{"CH4", "Ar"}, 0.989843388}, 
             {{"N2", "CO2"}, 1.107654104}, {{"N2", "C2H6"}, 1.098650964}, {{"N2", "C3H8"}, 1.201264026}, {{"N2", "n-C4H10"}, 1.304886838}, {{"N2", "i-C4H10"}, 1.284462634}, {{"N2", "n-C5H12"}, 1.419029041}, {{"N2", "i-C5H12"}, 1.381770770}, {{"N2", "n-C6H14"}, 1.472607971}, {{"N2", "n-C7H16"}, 1.520975334}, {{"N2", "n-C8H18"}, 1.733280051}, {{"N2", "n-C9H20"}, 1.749119996}, {{"N2", "n-C10H22"}, 1.822157123}, {{"N2", "H2"}, 1.175696583}, {{"N2", "O2"}, 0.995157044}, {{"N2", "CO"}, 0.993425388}, {{"N2", "H2O"}, 0.968808467}, {{"N2", "H2S"}, 0.960174200}, {{"N2", "He"}, 1.471831580}, {{"N2", "Ar"}, 0.990034831}, 
             {{"CO2", "C2H6"}, 0.900949530}, {{"CO2", "C3H8"}, 0.908772477}, {{"CO2", "n-C4H10"}, 0.911498231}, {{"CO2", "i-C4H10"}, 0.929982936}, {{"CO2", "n-C5H12"}, 0.979217302}, {{"CO2", "i-C5H12"}, 0.961218039}, {{"CO2", "n-C6H14"}, 1.038675574}, {{"CO2", "n-C7H16"}, 1.046169823}, {{"CO2", "n-C8H18"}, 1.074455386}, {{"CO2", "n-C9H20"}, 1.140671202}, {{"CO2", "n-C10H22"}, 1.145512213}, {{"CO2", "H2"}, 1.782924792}, {{"CO2", "O2"}, 1.0}, {{"CO2", "CO"}, 1.0}, {{"CO2", "H2O"}, 0.775453996}, {{"CO2", "H2S"}, 0.926018880}, {{"CO2", "He"}, 3.207456948}, {{"CO2", "Ar"}, 1.050971635}, 
