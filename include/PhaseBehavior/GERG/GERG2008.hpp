@@ -7,6 +7,7 @@
 #include "../Mixture.hpp"
 
 #include "PureFluidHelmholtzCoefficients.hpp"
+#include "BinaryReducingParameters.hpp"
 
 using NP_t = PhaseBehavior::Types::NumericalPrecision;
 
@@ -16,6 +17,61 @@ namespace PhaseBehavior::EoS::GERG{
     using PhaseBehavior::Mixture;
 
     class GERG2008{
+
+        private:
+            NP_t reducingMixtureDensity_, reducingMixtureTemperature_;
+
+
+            inline NP_t reducingDensity(Mixture const& mixture, std::string compositionType = "global"){
+
+                using Coefficients::ReducingParameters::Density::beta, Coefficients::ReducingParameters::Density::gamma;
+
+                reducingMixtureDensity_ = 0;
+
+                for(auto const& component: mixture){
+                    reducingMixtureDensity_ += std::pow(component.composition(compositionType),2)/component->criticalDensity();
+                }
+
+                for(unsigned int i=0; i<mixture.size()-1; ++i){
+                    for (unsigned int j=i+1; j<mixture.size(); ++j){
+                        reducingMixtureDensity_ += 2*mixture[i].composition(compositionType)*mixture[j].composition(compositionType)*
+                        beta.at({mixture[i]->name(), mixture[j]->name()})*gamma.at({mixture[i]->name(), mixture[j]->name()})*
+                        (mixture[i].composition(compositionType) + mixture[j].composition(compositionType))/
+                        (std::pow(beta.at({mixture[i]->name(), mixture[j]->name()}),2)*mixture[i].composition(compositionType) + mixture[j].composition(compositionType))*
+                        (1.0/8.0)*std::pow(1/std::cbrt(mixture[i]->criticalDensity()) + 1/std::cbrt(mixture[j]->criticalDensity()),3);
+                    }
+                }
+            }
+
+            inline NP_t reducingTemperature(Mixture const& mixture, std::string compositionType = "global"){
+
+                using Coefficients::ReducingParameters::Temperature::beta, Coefficients::ReducingParameters::Temperature::gamma;
+
+                reducingMixtureTemperature_ = 0;
+
+                for(auto const& component: mixture){
+                    reducingMixtureTemperature_ += std::pow(component.composition(compositionType),2)*component->criticalTemperature();
+                }
+
+                for(unsigned int i=0; i<mixture.size()-1; ++i){
+                    for (unsigned int j=i+1; j<mixture.size(); ++j){
+                        reducingMixtureTemperature_ += 2*mixture[i].composition(compositionType)*mixture[j].composition(compositionType)*
+                        beta.at({mixture[i]->name(), mixture[j]->name()})*gamma.at({mixture[i]->name(), mixture[j]->name()})*
+                        (mixture[i].composition(compositionType) + mixture[j].composition(compositionType))/
+                        (std::pow(beta.at({mixture[i]->name(), mixture[j]->name()}),2)*mixture[i].composition(compositionType) + mixture[j].composition(compositionType))*
+                        std::sqrt(mixture[i]->criticalTemperature()*mixture[j]->criticalTemperature());
+                    }
+                }
+            }
+
+            inline NP_t reducedTemperatureInverse(NP_t const& temperature){
+                return reducingMixtureTemperature_/temperature;
+            }
+
+
+            inline NP_t reducedMixtureDensity(NP_t const& density) const{
+                return density*reducingMixtureDensity_;
+            }
 
         public:
 
@@ -44,7 +100,7 @@ namespace PhaseBehavior::EoS::GERG{
             return idealMixtureReducedFreeEnergy;
         }
 
-        inline NP_t residualHelmholtzFreeEnergy(Component const& component, NP_t const& mixtureReducedDensity, NP_t const& inverseReducedTemperature) const {
+        inline NP_t residualHelmholtzFreeEnergy(Component const& component, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse) const {
             using namespace Coefficients::PureFluid::Residual;
 
             NP_t pureFluidResidualHelmholtzFreeEnergy = 0;
@@ -54,8 +110,8 @@ namespace PhaseBehavior::EoS::GERG{
             for (unsigned int term = 0; term < kPol; ++term){
                 pureFluidResidualHelmholtzFreeEnergy += 
                     residualCoefficient.at(component.name())[term]*
-                    std::pow(mixtureReducedDensity, std::get<reducedDensityExponent>(polynomialExponent.at(component.name())[term]))*
-                    std::pow(inverseReducedTemperature, std::get<reducedTemperatureExponent>(polynomialExponent.at(component.name())[term]));
+                    std::pow(reducedMixtureDensity, std::get<reducedDensityExponent>(polynomialExponent.at(component.name())[term]))*
+                    std::pow(reducedTemperatureInverse, std::get<reducedTemperatureExponent>(polynomialExponent.at(component.name())[term]));
             }
 
             const auto kExp = exponentialExponent.at(component.name()).size();
@@ -63,9 +119,9 @@ namespace PhaseBehavior::EoS::GERG{
             for (unsigned int term = 0; term < kExp; ++term){
                 pureFluidResidualHelmholtzFreeEnergy += 
                     residualCoefficient.at(component.name())[kPol + term]*
-                    std::pow(mixtureReducedDensity, std::get<reducedDensityExponent>(exponentialExponent.at(component.name())[term]))*
-                    std::pow(inverseReducedTemperature, std::get<reducedTemperatureExponent>(exponentialExponent.at(component.name())[term]))*
-                    std::exp(-std::pow(mixtureReducedDensity, std::get<exponentialReducedDensityExponent>(exponentialExponent.at(component.name())[term])));
+                    std::pow(reducedMixtureDensity, std::get<reducedDensityExponent>(exponentialExponent.at(component.name())[term]))*
+                    std::pow(reducedTemperatureInverse, std::get<reducedTemperatureExponent>(exponentialExponent.at(component.name())[term]))*
+                    std::exp(-std::pow(reducedMixtureDensity, std::get<exponentialReducedDensityExponent>(exponentialExponent.at(component.name())[term])));
             }
         };
 

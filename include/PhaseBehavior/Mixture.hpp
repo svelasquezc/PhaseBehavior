@@ -103,6 +103,10 @@ namespace PhaseBehavior {
                 return pure().name().compare(rhs.pure().name()) == 0;
             }
 
+            auto operator->() const {
+                return pureComponent_;
+            }
+
         };
 
         unsigned int mutable numberOfComponents_;
