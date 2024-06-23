@@ -125,6 +125,10 @@ namespace PhaseBehavior::EoS::GERG{
             }
         };
 
+        inline NP_t residualDeparture(Component const& component1, Component const& component2, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse){
+            
+        }
+
     };
 
 }
