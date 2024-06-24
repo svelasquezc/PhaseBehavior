@@ -29,7 +29,7 @@ namespace PhaseBehavior::EoS::GERG::Types{
 
     // Custom equality function for a pair of strings
     struct PairEqual {
-        bool operator()(const std::pair<std::string_view, std::string_view>& a, const std::pair<std::string_view, std::string_view>& b) const {
+        constexpr bool operator()(const std::pair<std::string_view, std::string_view>& a, const std::pair<std::string_view, std::string_view>& b) const {
             // Create sorted vectors of the pairs
             auto sorted_a = pairSort(a);
             auto sorted_b = pairSort(b);
