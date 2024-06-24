@@ -51,7 +51,7 @@ namespace PhaseBehavior::EoS::GERG::Coefficients::Departure {
 
     using BinaryDeparture = GERG::Types::BinaryParameter<DepartureFunction const>;
 
-    static BinaryDeparture binaryDeparture = {
+    static const BinaryDeparture binaryDeparture = {
         {
             {"CH4", "N2"}, {
                /* Departure coefficients n_ij */ 

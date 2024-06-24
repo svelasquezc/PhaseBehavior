@@ -118,7 +118,7 @@ namespace PhaseBehavior::EoS::GERG{
                     std::pow(reducedTemperatureInverse, std::get<reducedTemperatureExponent>(coefficients.polynomialExponent[term]));
             }
 
-            const auto kExp = exponentialExponent.at(component.name()).size();
+            const auto kExp = coefficients.exponentialExponent.size();
 
             for (unsigned int term = 0; term < kExp; ++term){
                 pureFluidResidualHelmholtzFreeEnergy += 
