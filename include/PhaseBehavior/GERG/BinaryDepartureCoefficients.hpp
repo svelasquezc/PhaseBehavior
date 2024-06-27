@@ -13,14 +13,6 @@ using NP_t = PhaseBehavior::Types::NumericalPrecision;
 
 namespace PhaseBehavior::EoS::GERG::Coefficients::Departure {
 
-    static constexpr unsigned int reducedDensityExponent = 0;  
-    static constexpr unsigned int reducedTemperatureExponent = 1;
-    static constexpr unsigned int exponentialReducedDensityExponent = 2;
-    static constexpr unsigned int eta = 2;
-    static constexpr unsigned int varepsilon = 3;
-    static constexpr unsigned int beta = 4;
-    static constexpr unsigned int gamma = 5;
-
     using BinaryFParameter = GERG::Types::BinaryParameter<NP_t>;
 
     BinaryFParameter const f = {
