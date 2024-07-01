@@ -29,6 +29,7 @@ namespace PhaseBehavior::EoS::GERG{
 
         NP_t reducingMixtureDensity_, reducingMixtureTemperature_;
         NP_t idealReducedHelmholtzEnergy_ = 0, residualReducedHelmholtzEnergy_ = 0;
+        NP_t compressibilityFactor_ = 1;
 
         inline NP_t reducingDensity(Mixture const& mixture, std::string compositionType = "global"){
 
@@ -507,10 +508,28 @@ namespace PhaseBehavior::EoS::GERG{
             return F*residualDepartureDerivative_;
         }
 
+        inline std::tuple<NP_t, NP_t> pressure(Mixture const& mixture, NP_t const& mixtureDensity, NP_t const& temperature, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse){
+            compressibilityFactor_ = 1 + reducedMixtureDensity*residualReducedHelmholtzFreeEnergyDerivative<WRT::reducedMixtureDensity>(mixture, reducedMixtureDensity, reducedTemperatureInverse);
+
+            auto newPressure = mixtureDensity*Constants::universalGasesConstant*temperature*compressibilityFactor_;
+
+        }
+
         public:
 
-        inline NP_t operator()(){
-            // aaaaaaaaaaaaaaaaaaa
+        inline NP_t operator()(Mixture const& mixture, NP_t const& pressure, NP_t const& temperature){
+
+            auto pseudoCriticalDensity = mixture.pseudoCriticalDensity();
+            auto pseudoCriticalTemperature = mixture.pseudoCriticalTemperature();
+
+            reducingDensity(mixture);
+            reducingTemperature(mixture);
+
+            NP_t densityFirstGuess = pressure/(Constants::universalGasesConstant*temperature);
+
+            NP_t reducedDensity = reducedMixtureDensity(densityFirstGuess);
+            NP_t reducedTemperature = reducedTemperatureInverse(temperature);
+
         }
 
     };

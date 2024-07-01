@@ -271,6 +271,12 @@ namespace PhaseBehavior {
                 return previous + element.composition(composititionType)*element.pure().criticalVolume()*element.pure().molarWeight();
             });
         }
+
+        NP_t pseudoCriticalDensity(std::string composititionType = "global") const {
+            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [&composititionType](auto previous, auto& element){
+                return previous + element.composition(composititionType)*element.pure().criticalDensity()*element.pure().molarWeight();
+            });
+        }
     };
 }
 
