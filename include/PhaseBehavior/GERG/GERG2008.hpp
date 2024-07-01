@@ -504,7 +504,7 @@ namespace PhaseBehavior::EoS::GERG{
                 }
             }
 
-            return F*residualDeparture;
+            return F*residualDepartureDerivative_;
         }
 
         public:
