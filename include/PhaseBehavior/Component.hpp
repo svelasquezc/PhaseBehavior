@@ -42,12 +42,12 @@ namespace PhaseBehavior {
         {}
 
         /// Default copy constructor
-        Component(Component& rhs) = default;
+        Component(Component const& rhs) = default;
         /// Default move constructor
         Component(Component&& rhs) = default;
         
         /// Default copy assignment
-        Component& operator=(Component& rhs) = default;
+        Component& operator=(Component const& rhs) = default;
         /// Default move assignment
         Component& operator=(Component&& rhs) = default;
 

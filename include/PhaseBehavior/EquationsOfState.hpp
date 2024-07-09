@@ -2,6 +2,7 @@
 #define PENG_ROBINSON_EOS_HPP
 
 #include <cmath>
+#include <string_view>
 
 #include "GeneralizedCubicEoS.hpp" 
 #include "Utilities/Types.hpp"
@@ -53,7 +54,7 @@ namespace PhaseBehavior::EoS {
                 - 0.164423*std::pow(accentricFactor,2) + 0.016666*std::pow(accentricFactor,3);
             }
 
-            const static std::string name(){
+            constexpr static std::string_view name(){
                 return "PengRobinson";
             }
         };
@@ -79,7 +80,7 @@ namespace PhaseBehavior::EoS {
                 return 0.48 + 1.574*accentricFactor - 0.176*std::pow(accentricFactor,2);
             }
 
-            const static std::string name(){
+            constexpr static std::string_view name(){
                 return "SoaveRedlichKwong";
             }
         };

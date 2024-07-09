@@ -38,7 +38,7 @@ namespace PhaseBehavior::EoS::GERG{
             reducingMixtureDensity_ = 0;
 
             for(auto const& component: mixture){
-                reducingMixtureDensity_ += std::pow(component.composition(compositionType),2)/component->criticalDensity();
+                reducingMixtureDensity_ += std::pow(component.composition(compositionType),2)/component->molarCriticalDensity();
             }
 
             for(unsigned int i=0; i<mixture.size()-1; ++i){
@@ -47,7 +47,7 @@ namespace PhaseBehavior::EoS::GERG{
                     beta.at({mixture[i]->name(), mixture[j]->name()})*gamma.at({mixture[i]->name(), mixture[j]->name()})*
                     (mixture[i].composition(compositionType) + mixture[j].composition(compositionType))/
                     (std::pow(beta.at({mixture[i]->name(), mixture[j]->name()}),2)*mixture[i].composition(compositionType) + mixture[j].composition(compositionType))*
-                    (1.0/8.0)*std::pow(1/std::cbrt(mixture[i]->criticalDensity()) + 1/std::cbrt(mixture[j]->criticalDensity()),3);
+                    (1.0/8.0)*std::pow(1/std::cbrt(mixture[i]->molarCriticalDensity()) + 1/std::cbrt(mixture[j]->molarCriticalDensity()),3);
                 }
             }
 
@@ -88,7 +88,7 @@ namespace PhaseBehavior::EoS::GERG{
             return density/reducingMixtureDensity_;
         }
 
-        inline NP_t idealReducedHelmholtzFreeEnergy(Component const& component, NP_t const& mixtureDensity, NP_t const& temperature) const {
+        inline NP_t const idealReducedHelmholtzFreeEnergy(Component const& component, NP_t const& mixtureDensity, NP_t const& temperature) const {
 
             using Coefficients::PureFluid::Ideal::pureFluid;
 
@@ -114,7 +114,7 @@ namespace PhaseBehavior::EoS::GERG{
             return idealReducedHelmholtzEnergy_;
         }
 
-        inline NP_t residualReducedHelmholtzFreeEnergy(Component const& component, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse) const {
+        inline NP_t const residualReducedHelmholtzFreeEnergy(Component const& component, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse) const {
             using namespace Coefficients::PureFluid::Residual;
 
             NP_t pureFluidResidualHelmholtzFreeEnergy = 0;
@@ -142,6 +142,8 @@ namespace PhaseBehavior::EoS::GERG{
                     std::pow(reducedMixtureDensity, d_oi)*std::pow(reducedTemperatureInverse, t_oi)*
                     std::exp(-std::pow(reducedMixtureDensity, c_oi));
             }
+
+            return pureFluidResidualHelmholtzFreeEnergy;
         };
 
         inline NP_t residualDeparture(Component const& component1, Component const& component2, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse) const{
@@ -195,6 +197,8 @@ namespace PhaseBehavior::EoS::GERG{
                                                         residualDeparture(mixture[i].pure(), mixture[j].pure(), reducedMixtureDensity, reducedTemperatureInverse);
                 }
             }
+
+            return residualReducedHelmholtzEnergy_;
         }
 
         // WRT::None means first order derivative
@@ -215,7 +219,7 @@ namespace PhaseBehavior::EoS::GERG{
 
                     for (auto const& component : mixture){
                     
-                        auto const& coefficients = pureFluid.at(component.name());
+                        auto const& coefficients = pureFluid.at(component->name());
 
                         idealReducedHelmholtzFreeEnergyDerivativeValue += 
                             component.composition(compositionType)*component->criticalTemperature()/reducingMixtureTemperature_*
@@ -240,7 +244,7 @@ namespace PhaseBehavior::EoS::GERG{
 
                 for (auto const& component : mixture){
                 
-                    auto const& coefficients = pureFluid.at(component.name());
+                    auto const& coefficients = pureFluid.at(component->name());
 
                     idealReducedHelmholtzFreeEnergyDerivativeValue += 
                         component.composition(compositionType)*std::pow(component->criticalTemperature()/reducingMixtureTemperature_,2)*
@@ -256,7 +260,7 @@ namespace PhaseBehavior::EoS::GERG{
             // First-Order Derivatives
             if constexpr (wrt2 == WRT::None){
                 if constexpr (wrt1 == WRT::reducedMixtureDensity){
-                    return component.criticalDensity()/mixtureDensity;
+                    return component.molarCriticalDensity()/mixtureDensity;
                 }
 
                 if constexpr (wrt1 == WRT::reducedTemperatureInverse){
@@ -279,7 +283,7 @@ namespace PhaseBehavior::EoS::GERG{
             // Second-Order Derivatives $\partial \delta^2$, $\partial \delta \partial \tau$
             if constexpr (wrt2 == WRT::reducedMixtureDensity){
                 if constexpr (wrt1 == wrt2) {
-                    return -std::pow(component.criticalDensity()/mixtureDensity,2);
+                    return -std::pow(component.molarCriticalDensity()/mixtureDensity,2);
                 }
 
                 if constexpr (wrt1 == WRT::reducedTemperatureInverse) return 0;
@@ -287,6 +291,8 @@ namespace PhaseBehavior::EoS::GERG{
 
             if constexpr (wrt2 == WRT::reducedTemperatureInverse && wrt1 == wrt2){
                 using Coefficients::PureFluid::Ideal::pureFluid; 
+
+                auto const& coefficients = pureFluid.at(component.name());
 
                 return 
                     Constants::gasConstantRatio*(
@@ -395,7 +401,7 @@ namespace PhaseBehavior::EoS::GERG{
                 // First-Order w.r.t tau
                 if constexpr (wrt1 == WRT::reducedTemperatureInverse && wrt2 == WRT::None){
                     residualReducedHelmholtzFreeEnergyDerivative_ += 
-                        coefficients.residualCoefficient[kPol + term]*t_oi
+                        coefficients.residualCoefficient[kPol + term]*t_oi*
                         std::pow(reducedMixtureDensity, d_oi)*std::pow(reducedTemperatureInverse, t_oi-1)*
                         std::exp(-std::pow(reducedMixtureDensity, c_oi));
                 }
@@ -508,28 +514,68 @@ namespace PhaseBehavior::EoS::GERG{
             return F*residualDepartureDerivative_;
         }
 
-        inline std::tuple<NP_t, NP_t> pressure(Mixture const& mixture, NP_t const& mixtureDensity, NP_t const& temperature, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse){
-            compressibilityFactor_ = 1 + reducedMixtureDensity*residualReducedHelmholtzFreeEnergyDerivative<WRT::reducedMixtureDensity>(mixture, reducedMixtureDensity, reducedTemperatureInverse);
+        inline std::tuple<NP_t, NP_t> pressure(Mixture const& mixture, NP_t const& mixtureDensity, NP_t const& temperature){
+
+            NP_t const delta = reducedMixtureDensity(mixtureDensity);
+            NP_t const tau = reducedTemperatureInverse(temperature);
+
+            auto const partialHelmholtzPartialDelta = residualReducedHelmholtzFreeEnergyDerivative<WRT::reducedMixtureDensity>(mixture, delta, tau);
+            auto const partial2HelmholtzPartialDelta2 = residualReducedHelmholtzFreeEnergyDerivative<WRT::reducedMixtureDensity, WRT::reducedMixtureDensity>(mixture, delta, tau);
+
+            compressibilityFactor_ = 1 + delta*partialHelmholtzPartialDelta;
 
             auto newPressure = mixtureDensity*Constants::universalGasesConstant*temperature*compressibilityFactor_;
+
+            auto pressureDerivativeVSDensity = temperature*Constants::universalGasesConstant*(
+                1 + 2*delta*partialHelmholtzPartialDelta + std::pow(delta, 2)*partial2HelmholtzPartialDelta2
+            );
+
+            return {newPressure, pressureDerivativeVSDensity};
 
         }
 
         public:
 
-        inline NP_t operator()(Mixture const& mixture, NP_t const& pressure, NP_t const& temperature){
+        constexpr inline std::string_view name(){
+            return "GERG2008";
+        }
 
-            auto pseudoCriticalDensity = mixture.pseudoCriticalDensity();
-            auto pseudoCriticalTemperature = mixture.pseudoCriticalTemperature();
+        inline NP_t operator()(Mixture const& mixture, NP_t const& specifiedPressure, NP_t const& temperature){
+
+            NP_t pseudoCriticalDensity = mixture.pseudoCriticalDensity();
+            NP_t pseudoCriticalTemperature = mixture.pseudoCriticalTemperature();
 
             reducingDensity(mixture);
             reducingTemperature(mixture);
 
-            NP_t densityFirstGuess = pressure/(Constants::universalGasesConstant*temperature);
+            NP_t idealDensity = specifiedPressure/(Constants::universalGasesConstant*temperature); // Vapor density estimation based in ideal gas
 
-            NP_t reducedDensity = reducedMixtureDensity(densityFirstGuess);
-            NP_t reducedTemperature = reducedTemperatureInverse(temperature);
+            NP_t logVolume = -std::log(idealDensity);
+            NP_t logSpecifiedPressure = std::log(specifiedPressure);
 
+            NP_t tolerance = 1e-7;
+
+            bool error = false;
+
+            //Translation from AGA 8 NIST code
+            for (unsigned int it = 0; it < 50; ++it){
+                NP_t density = std::exp(-logVolume);
+                auto [calculatedPressure, pressureDerivative] = pressure(mixture, density, temperature);
+                NP_t pressureDerivativeAgainstLogVolume = -density * pressureDerivative;
+                NP_t logVolumeDifference = (std::log(calculatedPressure) - logSpecifiedPressure)*calculatedPressure/pressureDerivativeAgainstLogVolume;
+                logVolume -= logVolumeDifference;
+                if(std::abs(logVolumeDifference) < tolerance){
+                    if (pressureDerivative > 0){
+                        return std::exp(-logVolume);
+                    }
+                }
+            }
+            std::cerr << "Error in GERG2008 at pressure: " << specifiedPressure << ". Ideal gas density returned." << std::endl;
+            return idealDensity;
+        }
+
+        inline NP_t selectedCompressibility() const {
+            return compressibilityFactor_;
         }
 
     };

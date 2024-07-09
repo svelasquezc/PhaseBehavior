@@ -67,7 +67,7 @@ namespace PhaseBehavior::Math {
     }
 
     template<typename PT, typename FunctionLike>
-    constexpr auto NewtonRaphson(const PT& initialGuess, const FunctionLike& goalFunction){
+    constexpr auto NewtonRaphson(PT const& initialGuess, FunctionLike const& goalFunction){
         PT newValue = initialGuess;
         PT oldValue = 0;
         PT scaledEpsilon = std::abs(initialGuess)*std::sqrt(std::numeric_limits<PT>::epsilon());
@@ -85,13 +85,13 @@ namespace PhaseBehavior::Math {
     };
 
     template<typename PT, typename Predicate, typename FunctionLike>
-    constexpr auto NewtonRaphson(const PT& initialGuess, const Predicate& divergenceCriterium, const FunctionLike& goalFunction){
+    constexpr auto NewtonRaphson(PT const& initialGuess, Predicate const& divergenceCriterium, FunctionLike const& goalFunction, PT const& tolerance = 1e-12){
         PT newValue = initialGuess;
         PT oldValue = 0;
         PT scaledEpsilon = std::abs(initialGuess)*std::sqrt(std::numeric_limits<PT>::epsilon());
 
         // Relative error convergence criterium
-        while (std::abs(newValue - oldValue) > 1e-10){
+        while (std::abs(newValue - oldValue) > tolerance){
             // Centered first-order derivative
             PT goalDerivativeValue = (goalFunction(newValue + scaledEpsilon) - goalFunction(newValue - scaledEpsilon))/(2*scaledEpsilon);
             oldValue = newValue;
@@ -103,12 +103,12 @@ namespace PhaseBehavior::Math {
     };
 
     template<typename PT, typename Predicate, typename FunctionLike, typename DerivativeLike>
-    constexpr auto NewtonRaphson(const PT& initialGuess, const Predicate& divergenceCriterium, const FunctionLike& goalFunction, const DerivativeLike& derivative){
+    constexpr auto NewtonRaphson(PT const& initialGuess, Predicate const& divergenceCriterium, FunctionLike const& goalFunction, DerivativeLike const& derivative, PT const& tolerance = 1e-12){
         PT newValue = initialGuess;
         PT oldValue = 0;
 
         // Relative error convergence criterium
-        while (std::abs(newValue - oldValue) > 1e-12){
+        while (std::abs(newValue - oldValue) > tolerance){
             // Centered first-order derivative
             oldValue = newValue;
             newValue = oldValue - (goalFunction(oldValue)/derivative(oldValue));
@@ -119,11 +119,11 @@ namespace PhaseBehavior::Math {
     };
 
     template<typename PT, typename FunctionLike>
-    constexpr auto bisection(PT lowerLimit, PT upperLimit, const FunctionLike& goalFunction){
+    constexpr auto bisection(PT lowerLimit, PT upperLimit, const FunctionLike& goalFunction, PT const& tolerance = 1e-12){
         PT newValue = 0;
         // Relative error convergence criterium
         if((goalFunction(lowerLimit)<0 && goalFunction(upperLimit) > 0) || (goalFunction(lowerLimit)>0 && goalFunction(upperLimit)>0)){ 
-            while (std::abs(upperLimit - lowerLimit) > 1e-10){
+            while (std::abs(upperLimit - lowerLimit) > tolerance){
                 
                 newValue = 0.5*(lowerLimit + upperLimit);
                 PT functionValue = goalFunction(newValue);
