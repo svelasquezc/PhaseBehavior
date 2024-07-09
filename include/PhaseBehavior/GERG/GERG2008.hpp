@@ -566,7 +566,9 @@ namespace PhaseBehavior::EoS::GERG{
                 logVolume -= logVolumeDifference;
                 if(std::abs(logVolumeDifference) < tolerance){
                     if (pressureDerivative > 0){
-                        return std::exp(-logVolume);
+                        density = std::exp(-logVolume);
+                        pressure(mixture, density, temperature);
+                        return density;
                     }
                 }
             }
