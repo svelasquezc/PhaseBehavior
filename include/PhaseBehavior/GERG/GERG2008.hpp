@@ -1,5 +1,8 @@
 #ifndef GERG2008_HPP
 #define GERG2008_HPP
+
+#include <iostream>
+
 #include "../Utilities/Types.hpp"
 #include "../Utilities/Math.hpp"
 #include "../Component.hpp"
@@ -572,7 +575,7 @@ namespace PhaseBehavior::EoS::GERG{
                     }
                 }
             }
-            std::cerr << "Error in GERG2008 at pressure: " << specifiedPressure << ". Ideal gas density returned." << std::endl;
+            std::cout << "Error in GERG2008 at pressure: " << specifiedPressure << ". Ideal gas density returned." << std::endl;
             return idealDensity;
         }
 
