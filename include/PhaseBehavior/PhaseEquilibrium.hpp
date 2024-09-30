@@ -76,8 +76,13 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         }
     }
 
+    enum class SuccessiveSubstitutionResult {
+        Converged = true,
+        Diverged = false
+    };
+
     template<typename EoS>
-    std::tuple<EoS, EoS> succesiveSubstitution(Mixture& mixture, NP_t const& pressure, NP_t const& temperature, bool restartKi=true, bool useNewton=false, NP_t switchValue=1e-14){
+    std::tuple<EoS, EoS, SuccessiveSubstitutionResult> succesiveSubstitution(Mixture& mixture, NP_t const& pressure, NP_t const& temperature, bool restartKi=true, bool useNewton=false, NP_t switchValue=1e-14){
 
         static constexpr NP_t machineEpsilon = std::sqrt(std::numeric_limits<NP_t>::epsilon());
 
@@ -86,9 +91,12 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         EoS vaporEoS, liquidEoS;
         if (!useNewton) switchValue=1e-14;
 
+        unsigned int iteration = 0;
 
         NP_t fugacitiesSquaredSum = 10;
         while(fugacitiesSquaredSum >= switchValue){
+
+            if (iteration >= 1000) return {vaporEoS, liquidEoS, SuccessiveSubstitutionResult::Diverged};
 
             rachfordVLE(mixture);
 
@@ -109,6 +117,8 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
             [&pressure](auto previous, auto second){
                 return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
             });
+
+            ++iteration;
         }
 
         if (useNewton){
@@ -196,7 +206,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
             }
         }
 
-        return {vaporEoS, liquidEoS};
+        return {vaporEoS, liquidEoS, SuccessiveSubstitutionResult::Converged};
     }
 
     enum class PhaseStabilityTestResult {
@@ -289,7 +299,20 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
     template<typename EoS>
     PhaseStabilityResult isothermalTwoPhaseFlash(Mixture& mixture, NP_t const& pressure, NP_t const& temperature){
         if(phaseStability<EoS>(mixture, pressure, temperature) == PhaseStabilityResult::Unstable){
-            succesiveSubstitution<EoS>(mixture, pressure, temperature, false, true, 1e-4);
+            auto [vaporEoS, liquidEoS, ssmResult] = succesiveSubstitution<EoS>(mixture, pressure, temperature, false, true, 1e-4);
+            if (ssmResult == SuccessiveSubstitutionResult::Diverged){
+
+                auto sumOfLogsOfKiSquared = std::accumulate(mixture.begin(), mixture.end(), static_cast<NP_t>(0),
+                [](auto previous, auto const& element){
+                    return previous + std::pow(std::log(element.equilibriumCoefficient()),2.0);
+                });
+
+                if (sumOfLogsOfKiSquared < 1e-4){
+                    succesiveSubstitution<EoS>(mixture, pressure, temperature, true, true, 1e-4);
+                    return PhaseStabilityResult::Stable;        
+                };
+
+            }
             return PhaseStabilityResult::Unstable;
         }else{
             return PhaseStabilityResult::Stable;

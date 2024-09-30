@@ -30,5 +30,5 @@ int main(){
         mixture[i].composition(compVec[i]);
     }
 
-    PhaseBehavior::VaporLiquidEquilibrium::isothermalTwoPhaseFlash<PR>(mixture, 14.7, 60.0+460);
+    auto result = PhaseBehavior::VaporLiquidEquilibrium::isothermalTwoPhaseFlash<PR>(mixture, 14.7, 60.0+460);
 }
