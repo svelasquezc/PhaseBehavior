@@ -71,5 +71,6 @@
         "unordered_set": "cpp",
         "hash_map": "cpp",
         "valarray": "cpp"
-    }
+    },
+    "cmake.useCMakePresets": "auto"
 }
