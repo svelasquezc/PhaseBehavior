@@ -133,6 +133,13 @@ namespace PhaseBehavior {
         Mixture& operator= (Mixture const&) = default;
         Mixture& operator= (Mixture&&) = default;
 
+        void checkConsistency() const {
+            assert(std::accumulate(components_.begin(),components_.end(), 0,
+            [](auto previous, auto second){
+                return previous + second.composition();
+            }) - 1 <= std::numeric_limits<NP_t>::epsilon() && "The sum of the compositions must be equal to 1");
+        }
+
         template< 
             typename ContainerType,
             typename = typename std::enable_if_t<
@@ -147,13 +154,10 @@ namespace PhaseBehavior {
             assert(numberOfComponents_ >= 1 && "There should be one or more components in a mixture");
 
             for(auto&& pair : inputComponents){
-                components_.emplace_back(std::forward<Component>(pair.first), std::forward<NP_t>(pair.second));
+                components_.emplace_back(std::forward<Component>(std::get<Component>(pair)), std::forward<NP_t>(std::get<NP_t>(pair)));
             }
 
-            assert(std::accumulate(components_.begin(),components_.end(), 0,
-            [](auto previous, auto second){
-                return previous + second.composition();
-            }) - 1 <= std::numeric_limits<NP_t>::epsilon() && "The sum of the compositions must be equal to 1");
+            checkConsistency();
 
         }
 
@@ -161,7 +165,7 @@ namespace PhaseBehavior {
             typename... MixtureComponents,
             typename = typename std::enable_if_t<
                 std::conjunction_v<std::is_constructible<MixtureComponent, MixtureComponents>...>
-                >
+                >  
             >
         Mixture(MixtureComponents&&... args): 
         numberOfComponents_(sizeof...(args))
@@ -172,10 +176,18 @@ namespace PhaseBehavior {
                 std::forward<std::common_type_t<std::decay_t<MixtureComponents>...>>(args)
                 ),...);
 
-            assert(std::accumulate(components_.begin(),components_.end(), 0,
-            [](auto previous, auto second){
-                return previous + second.composition();
-            }) - 1 <= std::numeric_limits<NP_t>::epsilon() && "The sum of the compositions must be equal to 1");
+            checkConsistency();
+        }
+
+        Mixture(std::initializer_list<std::pair<Component, NP_t>>&& compList){
+
+            assert(compList.size() >= 1 && "There should be one or more components in a mixture");
+
+            for (auto mixComp : compList){
+                components_.emplace_back(mixComp);
+            }
+
+            checkConsistency();
         }
 
         ConstMixtureIterator operator[] (std::string const& name){

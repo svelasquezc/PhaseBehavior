@@ -11,7 +11,7 @@ namespace PhaseBehavior::Constants {
     //constexpr NP_t standardConditionsPressure = 14.7; //psia
     constexpr NP_t standardConditionsPressure = 101.3529; // kPa
     //constexpr NP_t standardConditionsTemperature = 520; //R
-    constexpr NP_t standardConditionsTemperature = 298;
+    constexpr NP_t standardConditionsTemperature = 298; //K
 
 }
 
