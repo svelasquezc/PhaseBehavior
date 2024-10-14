@@ -21,16 +21,20 @@ int main(){
 
     PhaseBehavior::Mixture C1C3C8{{C1, 1.0/3.0}, {C3, 1.0/3.0}, {C8, 1.0/3.0}};
 
-    auto result = isothermalTwoPhaseFlash<PR>(C1C3C8, 7.35e2 /*[kPa]*/, 350 /*[K]*/);
+    auto casePressure = 4.71e3 /*[kPa]*/;
+    auto caseTemperature = 350.0 /*[K]*/;
+
+
+    auto result = isothermalTwoPhaseFlash<PR>(C1C3C8, casePressure, caseTemperature);
 
 
     if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
         auto liquidPhase = PhaseBehavior::Phase::LiquidLikePhase(C1C3C8);
-        liquidPhase.molarVolume(C1C3C8.compressibility("liquid"), 7.35e2, 350);
+        liquidPhase.molarVolume(C1C3C8.compressibility("liquid"), casePressure, caseTemperature);
         auto densityL = liquidPhase.density();
         std::cout << "Liquid Density: "<< densityL << std::endl;
         auto gasPhase = PhaseBehavior::Phase::VaporLikePhase(C1C3C8);
-        gasPhase.molarVolume(C1C3C8.compressibility("vapor"), 7.35e2, 350);
+        gasPhase.molarVolume(C1C3C8.compressibility("vapor"), casePressure, caseTemperature);
         auto densityG = gasPhase.density();
         std::cout << "Gas Density: "<< densityG << std::endl;
         std::cout << "liquid Composition: (";
