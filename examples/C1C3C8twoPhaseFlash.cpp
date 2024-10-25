@@ -21,7 +21,7 @@ int main(){
 
     PhaseBehavior::Mixture C1C3C8{{C1, 1.0/3.0}, {C3, 1.0/3.0}, {C8, 1.0/3.0}};
 
-    auto casePressure = 4.71e3 /*[kPa]*/;
+    auto casePressure = 8.7e3 /*[kPa]*/;
     auto caseTemperature = 350.0 /*[K]*/;
 
 
@@ -51,8 +51,22 @@ int main(){
         }
         std::cout <<")"<< std::endl;
 
-        std::cout << "Gas Molar Density: " << densityG/pseudoMolarWG << std::endl;
-        std::cout << "Liquid Molar Density: " << densityL/pseudoMolarWL << std::endl;
+        auto gasMolarDensity = densityG/pseudoMolarWG;
+        auto liquidMolarDensity = densityL/pseudoMolarWL;
+
+        auto liquidVolumeFraction = 1/(1 + (C1C3C8.molarFraction("vapor")/C1C3C8.molarFraction("liquid"))*(liquidMolarDensity/gasMolarDensity));
+    
+        double COMSOLInitialDensityL = 13000.0;
+        double COMSOLInitialDensityV = 100.0;
+
+
+        double COMSOLInitialFractionL = (liquidMolarDensity*liquidVolumeFraction + gasMolarDensity*(1-liquidVolumeFraction) - COMSOLInitialDensityV)/(COMSOLInitialDensityL - COMSOLInitialDensityV);
+
+
+        std::cout << "Gas Molar Density: " << gasMolarDensity << std::endl;
+        std::cout << "Liquid Molar Density: " << liquidMolarDensity << std::endl;
+        std::cout << "Liquid Volume Fraction: " << liquidVolumeFraction << std::endl;
+        std::cout << "COMSOL Initial Liquid Fraction: " << COMSOLInitialFractionL << std::endl;
     };
     return 0;
 }
