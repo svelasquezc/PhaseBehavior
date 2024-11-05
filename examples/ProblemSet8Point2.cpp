@@ -15,6 +15,13 @@ int main(){
 
     auto mixture = PhaseBehavior::Mixture(std::pair(CO2, 0.9),std::pair(nC4, 0.05), std::pair(nC7, 0.03), std::pair(nC10, 0.02));
 
+    mixture.interactionCoefficient(CO2.name(), nC4.name(), 0.1471);
+    mixture.interactionCoefficient(nC4.name(), CO2.name(), 0.1471);
+    mixture.interactionCoefficient(CO2.name(), nC7.name(), 0.1136);
+    mixture.interactionCoefficient(nC7.name(), CO2.name(), 0.1136);
+    mixture.interactionCoefficient(CO2.name(), nC10.name(), 0.1377);
+    mixture.interactionCoefficient(nC10.name(),CO2.name(), 0.1377);
+
     eos(mixture, 1500 /*psia*/, 100 + 459.67 /* R */);
     mixture.compressibility("global", eos.selectedCompressibility());
     eos.fugacities(mixture, "global");
