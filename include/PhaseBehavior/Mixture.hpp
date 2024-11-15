@@ -190,7 +190,7 @@ namespace PhaseBehavior {
             checkConsistency();
         }
 
-        ConstMixtureIterator operator[] (std::string const& name){
+        MixtureIterator operator[] (std::string const& name){
             return std::find_if(begin(), end(), [&name](auto& component){
                 return component.pure().name() == name;
             });

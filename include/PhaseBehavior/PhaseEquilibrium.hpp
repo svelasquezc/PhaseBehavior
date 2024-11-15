@@ -88,7 +88,9 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
 
 
         NP_t fugacitiesSquaredSum = 10;
-        while(fugacitiesSquaredSum >= switchValue){
+        size_t it = 0;
+
+        while(fugacitiesSquaredSum >= switchValue and it < 1000){
 
             rachfordVLE(mixture);
 
@@ -109,6 +111,8 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
             [&pressure](auto previous, auto second){
                 return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
             });
+
+            ++it;
         }
 
         if (useNewton){
@@ -121,8 +125,10 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
             residual.setZero();
             solutionDelta.setZero();
 
+            it = 0;
+
             //**************************************************** NEWTON PROCEDURE ************************************************************
-            while (fugacitiesSquaredSum >= 1e-14){
+            while (fugacitiesSquaredSum >= 1e-14 and it < 300){
 
                 //************************************************ RESIDUAL CALCULATION ********************************************************
                 rachfordVLE(mixture);
@@ -193,6 +199,8 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
                 [&pressure](auto previous, auto second){
                     return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
                 });
+
+                ++it;
             }
         }
 
@@ -241,7 +249,9 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
 
             NP_t correctionSquaredValues = 10; 
 
-            while(correctionSquaredValues >= 1e-10){
+            std::size_t it = 0;
+
+            while(correctionSquaredValues >= 1e-10 && it < 500){
                 auto totalMoles = std::accumulate(mixture.begin(), mixture.end(), static_cast<NP_t>(0),
                 [&phaseName, &molesCalculation](auto previous, auto const& element){
                     return previous + molesCalculation(element.composition(), element.equilibriumCoefficient());
@@ -270,6 +280,8 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
                 });
 
                 if (sumOfLogsOfKiSquared < 1e-4) return PhaseStabilityTestResult::TrivialSolution;
+
+                ++it;
             }
             auto totalMoles = std::accumulate(mixture.begin(), mixture.end(), static_cast<NP_t>(0),
                 [&phaseName, &molesCalculation](auto previous, auto const& element){

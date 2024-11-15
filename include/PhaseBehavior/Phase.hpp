@@ -13,6 +13,8 @@ using NP_t = PhaseBehavior::Types::NumericalPrecision;
 
 namespace PhaseBehavior::Phase{
 
+    using namespace PhaseBehavior::Constants::Field;
+
     class FluidPhase {
     protected:
         std::string phaseName_;
@@ -31,7 +33,7 @@ namespace PhaseBehavior::Phase{
 
         NP_t density(NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature){
             compressibility_ = compressibility;
-            density_ = pressure*(molecularWeight_/compressibility_)/(Constants::universalGasesConstant*temperature);
+            density_ = pressure*(molecularWeight_/compressibility_)/(universalGasesConstant*temperature);
             return density_;
         }
 
@@ -40,13 +42,13 @@ namespace PhaseBehavior::Phase{
         template<typename EoS>
         NP_t molarVolume(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos, std::string compositionType = ""){
             if(compositionType == "") compositionType = phaseName_;
-            molarVolume_ = Constants::universalGasesConstant*(temperature*compressibility/pressure - eos.volumeShift(mixture, compositionType));
+            molarVolume_ = universalGasesConstant*(temperature*compressibility/pressure - eos.volumeShift(mixture, compositionType));
             return molarVolume_;
         }
 
         
         NP_t molarVolume(NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature){
-            molarVolume_ = Constants::universalGasesConstant*temperature*compressibility/pressure;
+            molarVolume_ = universalGasesConstant*temperature*compressibility/pressure;
             return molarVolume_;
         }
 

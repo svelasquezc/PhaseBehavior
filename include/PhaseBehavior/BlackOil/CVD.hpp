@@ -14,6 +14,8 @@ using NP_t = PhaseBehavior::Types::NumericalPrecision;
 
 namespace PhaseBehavior::BlackOil {
 
+    using namespace Constants::Field;
+
     template<typename EoS>
     class BlackOilPropertiesEstimation {
         private:
@@ -56,8 +58,8 @@ namespace PhaseBehavior::BlackOil {
             std::cout << "Dew Pressure: " << dewPressure;
 
             NP_t initialGasEquivalentVolume = 1e6;
-            auto totalMoles = Constants::standardConditionsPressure * initialGasEquivalentVolume/
-                                (Constants::universalGasesConstant * Constants::standardConditionsTemperature);
+            auto totalMoles = standardConditionsPressure * initialGasEquivalentVolume/
+                                (universalGasesConstant * standardConditionsTemperature);
             
             eos(mixture, dewPressure, reservoirTemperature);
             mixture.compressibility("global", eos.selectedCompressibility());
