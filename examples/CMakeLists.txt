@@ -12,6 +12,7 @@ create_phase_behavior_exe(OffendingComposition OffendingComposition.cpp)
 create_phase_behavior_exe(DensityValidation DensityValidation.cpp)
 create_phase_behavior_exe(C1C3C8twoPhaseFlash C1C3C8twoPhaseFlash.cpp)
 create_phase_behavior_exe(BinaryMixturesPXPlot BinaryMixturesPXPlot.cpp)
+create_phase_behavior_exe(GibbsFreeEnergyBinary GibbsFreeEnergyBinary.cpp)
 
 find_package (Threads)
 

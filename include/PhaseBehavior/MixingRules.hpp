@@ -64,6 +64,17 @@ namespace PhaseBehavior::EoS::MixingRules{
             return {mixtureAttraction, mixtureCovolume};
         }
 
+        std::tuple<NP_t, NP_t> operator() (Component const& component, NP_t const& pressure, NP_t const& temperature){
+
+            auto componentAttraction = attractionParameter()*
+            EoS::componentAttraction(component, pressure, temperature);
+
+            auto componentCovolume = covolumeParameter()*
+            component.reducedPressure(pressure)/component.reducedTemperature(temperature);
+
+            return {componentAttraction, componentCovolume};
+        }
+
         NP_t componentAttraction(Component const& component) const{
             return componentAttraction_.at(component);
         }

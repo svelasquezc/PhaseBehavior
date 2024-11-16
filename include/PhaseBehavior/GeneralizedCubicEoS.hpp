@@ -27,6 +27,34 @@ namespace PhaseBehavior::EoS {
         NP_t mixtureAttraction_, mixtureCovolume_;
         public:
         
+        NP_t operator() (Component const& component, NP_t const& pressure, NP_t const& temperature){
+            auto [componentAttraction, componentCovolume] = mixingRule(component, pressure, temperature);
+
+            NP_t cuadraticTerm = (m1 + m2 - 1)*componentCovolume - 1;
+            NP_t linearTerm = componentAttraction + m1*m2*std::pow(componentCovolume,2) - (m1 + m2)*componentCovolume*(componentCovolume + 1);
+            NP_t constantTerm = -1*(componentAttraction*componentCovolume + m1*m2*std::pow(componentCovolume,2)*(componentCovolume + 1));
+
+            auto roots = Math::cubicRootsFind(cuadraticTerm, linearTerm, constantTerm);
+
+            if (roots.size()==1){
+                return {roots[0]};
+            }
+
+            auto [min, max] = std::minmax_element(roots.begin(), roots.end());
+            auto zMin = *min, zMax = *max;
+
+            // Root selection process
+            if(zMin < componentCovolume) {
+                return zMax;
+            }else{
+                NP_t gibbsEnergyDerivativeWrtT = (zMax - zMin) + std::log((zMin - componentCovolume)/(zMax - componentCovolume)) 
+                                            - (componentAttraction/(componentCovolume*(m2-m1)))*std::log(
+                                                ((zMin + m1*componentCovolume)*(zMax + m2*componentCovolume))/((zMin + m2*componentCovolume)*(zMax + m1*componentCovolume))
+                                                );
+                return gibbsEnergyDerivativeWrtT > 0 ? zMin : zMax;
+            }
+        }
+
         std::vector<NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature, std::string phaseName = "global"){
             auto [mixtureAttraction, mixtureCovolume] = mixingRule(mixture, pressure, temperature, phaseName);
             mixtureAttraction_ = mixtureAttraction;
@@ -61,6 +89,15 @@ namespace PhaseBehavior::EoS {
 
         NP_t selectedCompressibility() const {
             return selectedCompressibility_;
+        }
+
+        NP_t fugacity(Component const& component, NP_t const& compressibilityFactor, NP_t const& pressure, NP_t const& temperature){
+            auto const Z = compressibilityFactor;
+            auto [componentAttraction, componentCovolume] = mixingRule(component, pressure, temperature);
+            auto A = componentAttraction;
+            auto B = componentCovolume;
+
+            return pressure*std::exp(Z - 1 - std::log(Z - B) - (A/((m1-m2)*B))*std::log((Z + m1*B)/(Z + m2*B)));
         }
 
         void fugacities(Mixture& mixture, std::string const& phaseName){
