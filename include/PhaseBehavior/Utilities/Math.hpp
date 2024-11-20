@@ -122,8 +122,9 @@ namespace PhaseBehavior::Math {
     constexpr auto bisection(PT lowerLimit, PT upperLimit, const FunctionLike& goalFunction, PT const& tolerance = 1e-12){
         PT newValue = 0;
         // Relative error convergence criterium
+        std::size_t it = 0;
         if((goalFunction(lowerLimit)<0 && goalFunction(upperLimit) > 0) || (goalFunction(lowerLimit)>0 && goalFunction(upperLimit)>0)){ 
-            while (std::abs(upperLimit - lowerLimit) > tolerance){
+            while (std::abs(upperLimit - lowerLimit) > tolerance && it < 1000){
                 
                 newValue = 0.5*(lowerLimit + upperLimit);
                 PT functionValue = goalFunction(newValue);
@@ -135,6 +136,7 @@ namespace PhaseBehavior::Math {
                 }else {
                     return std::make_optional(newValue);
                 }
+                ++it;
             }
             return std::make_optional(newValue);
         }

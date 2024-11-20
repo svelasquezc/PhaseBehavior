@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <tuple>
+#include <iostream>
 
 #include <Eigen/Dense>
 
@@ -90,7 +91,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         NP_t fugacitiesSquaredSum = 10;
         size_t it = 0;
 
-        while(fugacitiesSquaredSum >= switchValue and it < 1000){
+        while(fugacitiesSquaredSum >= switchValue && it < 1000){
 
             rachfordVLE(mixture);
 
@@ -128,7 +129,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
             it = 0;
 
             //**************************************************** NEWTON PROCEDURE ************************************************************
-            while (fugacitiesSquaredSum >= 1e-14 and it < 300){
+            while (fugacitiesSquaredSum >= 1e-14 && it < 300){
 
                 //************************************************ RESIDUAL CALCULATION ********************************************************
                 rachfordVLE(mixture);
@@ -243,7 +244,10 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         mixture.compressibility("global", eos.selectedCompressibility());
         eos.fugacities(mixture, "global");
 
-        auto test = [&mixture, &pressure, &temperature](std::string const& phaseName, EoS& eos, auto const& molesCalculation, auto const& correctionFunction){
+        std::vector<NP_t> equilibriumCoefficients(mixture.size(), 1);
+
+        auto test = [&mixture, &pressure, &temperature, &equilibriumCoefficients]
+        (std::string const& phaseName, EoS& eos, auto const& molesCalculation, auto const& correctionFunction){
 
             mixture.initializeEquilibriumCoefficients(pressure, temperature); //Wilson Correlation
 
@@ -283,18 +287,31 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
 
                 ++it;
             }
+
             auto totalMoles = std::accumulate(mixture.begin(), mixture.end(), static_cast<NP_t>(0),
                 [&phaseName, &molesCalculation](auto previous, auto const& element){
                     return previous + molesCalculation(element.composition(), element.equilibriumCoefficient());
                 });
 
-            return totalMoles > 1 ? PhaseStabilityTestResult::GreaterThanOne : PhaseStabilityTestResult::LessThanOne;
+            if(totalMoles > 1){
+                for (std::size_t i=0; i<mixture.size(); ++i){
+                    equilibriumCoefficients[i]*=mixture[i].equilibriumCoefficient();
+                }
+                return PhaseStabilityTestResult::GreaterThanOne;
+            }
+            return PhaseStabilityTestResult::LessThanOne;
         };
 
         auto vaporTestResult = test("vapor", eos, vaporMolesCalculation, vaporCorrectionFunction);
-        if(vaporTestResult == PhaseStabilityTestResult::GreaterThanOne) return PhaseStabilityResult::Unstable;
-        auto liquidTestResult = test("liquid", eos, liquidMolesCalculation, liquidCorrectionFunction);
-        if (liquidTestResult == PhaseStabilityTestResult::GreaterThanOne) return PhaseStabilityResult::Unstable;
+        auto liquidTestResult = test("liquid", eos, liquidMolesCalculation, liquidCorrectionFunction);        
+
+        for (std::size_t i=0; i<mixture.size(); ++i){
+            mixture[i].equilibriumCoefficient(equilibriumCoefficients[i]);
+        }
+
+        if (vaporTestResult == PhaseStabilityTestResult::GreaterThanOne || liquidTestResult == PhaseStabilityTestResult::GreaterThanOne)
+            return PhaseStabilityResult::Unstable;
+
         return PhaseStabilityResult::Stable;
     }
 
