@@ -49,8 +49,15 @@ int main(){
     molarGFile.open("molarG.csv");
     deltaMolarGMixFile.open("DeltaG.csv");
 
+    std::ofstream muCH4File, munC5File;
+
+    muCH4File.open("mu-CH4.csv");
+    munC5File.open("mu-nC5.csv");
+
     molarGFile <<"xnC5;molarG"<<std::endl;
     deltaMolarGMixFile <<"xnC5;deltaGMix"<<std::endl;
+    muCH4File <<"xCH4;mu_CH4"<<std::endl;
+    munC5File <<"xCH4;mu_nC5"<<std::endl;
 
     std::cout << mix[0].pure().name() <<std::endl;
 
@@ -65,6 +72,11 @@ int main(){
         auto MolarG = mix[0].composition()*pureGibbsCH4 + mix[1].composition()*pureGibbsnC5 + DeltaMolarGMix;
         molarGFile <<compnC5<<";"<< MolarG<<std::endl;
 
+        auto mu_CH4 = RT*std::log(mix[0].fugacity("global", pressure));
+        auto mu_nC5 = RT*std::log(mix[1].fugacity("global", pressure));
+        muCH4File << compCH4 << ";" << mu_CH4 << std::endl;
+        munC5File << compCH4 << ";" << mu_nC5 << std::endl;
+
         compnC5 += deltaComp;
         compCH4 = 1 - compnC5;
         mix[0].composition(compCH4);
@@ -72,13 +84,17 @@ int main(){
     }
     molarGFile.close();
     deltaMolarGMixFile.close();
+
+    muCH4File.close();
+    munC5File.close();
     
     mix = {{CH4, 0.5}, {nC5, 0.5}};
     mix.interactionCoefficient("CH4", "n-C5H12", 0.0236);
     mix.interactionCoefficient("n-C5H12", "CH4", 0.0236);
     auto result = isothermalTwoPhaseFlash<PengRobinson>(mix, pressure, temperature);
     if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
-        std::cout <<"x_i: " << mix[1].composition("liquid") <<", y_i: "<< mix[1].composition("vapor") <<std::endl;
+        std::cout <<"CH4 x_i: " << mix[0].composition("liquid") <<", y_i: "<< mix[0].composition("vapor") <<std::endl;
+        std::cout <<"nC5 x_i: " << mix[1].composition("liquid") <<", y_i: "<< mix[1].composition("vapor") <<std::endl;
     }
 
 }
