@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <tuple>
 #include <vector>
+#include <fstream>
 
 #include <Eigen/Dense>
 
@@ -90,6 +91,13 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
 
 
         NP_t fugacitiesSquaredSum = 10;
+
+        std::ofstream flashLog("isothermalFlash.log");
+        flashLog << "Switch Value:\t\t" << switchValue;
+        flashLog << "Iteration,FugacitiesSquaredSum" <<std::endl;
+
+        std::size_t it=0;
+
         while(fugacitiesSquaredSum >= switchValue){
 
             rachfordVLE(mixture);
@@ -111,6 +119,9 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
             [&pressure](auto previous, auto second){
                 return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
             });
+
+            flashLog << it << "," << fugacitiesSquaredSum;
+            ++it;
         }
 
         if (useNewton){
@@ -195,8 +206,13 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
                 [&pressure](auto previous, auto second){
                     return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
                 });
+
+                flashLog << it << "," << fugacitiesSquaredSum;
+                ++it;
             }
+
         }
+        flashLog.close();
 
         return {vaporEoS, liquidEoS};
     }
