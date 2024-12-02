@@ -305,11 +305,11 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
     }
 
     template<typename EoS>
-    auto isothermalTwoPhaseFlash(Mixture& mixture, NP_t const& pressure, NP_t const& temperature){
+    auto isothermalTwoPhaseFlash(Mixture& mixture, NP_t const& pressure, NP_t const& temperature, bool restartKi=false, bool useNewton=true, NP_t switchValue=1e-4){
         using Phase::phaseIdentification;
         using Phase = Phase::FluidPhase;
         if(phaseStability<EoS>(mixture, pressure, temperature) == PhaseStabilityResult::Unstable){
-            auto [vaporEoS, liquidEoS] = succesiveSubstitution<EoS>(mixture, pressure, temperature, false, true, 1e-4);
+            auto [vaporEoS, liquidEoS] = succesiveSubstitution<EoS>(mixture, pressure, temperature, restartKi, useNewton, switchValue);
             return std::tuple{PhaseStabilityResult::Unstable, std::vector<std::shared_ptr<Phase>>{
                 phaseIdentification<EoS>(mixture, mixture.compressibility("vapor"),pressure, temperature, vaporEoS, "vapor"),
                 phaseIdentification<EoS>(mixture, mixture.compressibility("liquid"), pressure, temperature, liquidEoS, "liquid")
