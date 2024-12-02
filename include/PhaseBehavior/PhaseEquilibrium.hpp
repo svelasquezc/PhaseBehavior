@@ -120,7 +120,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
                 return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
             });
 
-            flashLog << it << "," << fugacitiesSquaredSum;
+            flashLog << it << "," << fugacitiesSquaredSum << "\n";
             ++it;
         }
 
@@ -207,7 +207,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
                     return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
                 });
 
-                flashLog << it << "," << fugacitiesSquaredSum;
+                flashLog << it << "," << fugacitiesSquaredSum << "\n";
                 ++it;
             }
 
