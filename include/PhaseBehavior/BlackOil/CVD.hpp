@@ -61,7 +61,7 @@ namespace PhaseBehavior::BlackOil {
             
             eos(mixture, dewPressure, reservoirTemperature);
             mixture.compressibility("global", eos.selectedCompressibility());
-            auto fluid = Phase::singlePhaseIdentification(mixture, mixture.compressibility("global"), dewPressure, reservoirTemperature, eos);
+            auto fluid = Phase::phaseIdentification(mixture, mixture.compressibility("global"), dewPressure, reservoirTemperature, eos);
 
             auto pvtMolecularWeight = fluid->molecularWeight();
             auto pvtDensity = fluid->density();

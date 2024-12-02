@@ -171,14 +171,17 @@ namespace PhaseBehavior::Phase{
     };
 
     template<typename EoS>
-    std::unique_ptr<FluidPhase> singlePhaseIdentification(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos){
-        std::unique_ptr<FluidPhase> liquidLike = std::make_unique<LiquidLikePhase>(mixture, "global");
-        std::unique_ptr<FluidPhase> vaporLike = std::make_unique<VaporLikePhase>(mixture, "global");
+    std::shared_ptr<FluidPhase> phaseIdentification(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos, std::string const& phaseName = "global"){
+        std::shared_ptr<FluidPhase> liquidLike = std::make_unique<LiquidLikePhase>(mixture, phaseName);
+        std::shared_ptr<FluidPhase> vaporLike = std::make_unique<VaporLikePhase>(mixture, phaseName);
 
-        auto molarVolume = liquidLike->molarVolume(mixture, compressibility, pressure, temperature, eos, "global");
-        vaporLike->molarVolume(mixture, compressibility, pressure, temperature, eos, "global");
+        auto molarVolume = liquidLike->molarVolume(mixture, compressibility, pressure, temperature, eos, phaseName);
+        vaporLike->molarVolume(mixture, compressibility, pressure, temperature, eos, phaseName);
         auto mixtureCovolume = eos.mixtureCovolume();
-        if(molarVolume/mixtureCovolume < 1.75) return liquidLike;
+
+        if(molarVolume/mixtureCovolume < 1.75){
+            return liquidLike;
+        } 
         return vaporLike;
     };
 };

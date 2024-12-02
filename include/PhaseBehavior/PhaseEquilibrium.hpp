@@ -3,11 +3,13 @@
 
 #include <algorithm>
 #include <tuple>
+#include <vector>
 
 #include <Eigen/Dense>
 
 #include "Utilities/Math.hpp"
 #include "Mixture.hpp"
+#include "Phase.hpp"
 
 using NP_t = PhaseBehavior::Types::NumericalPrecision;
 
@@ -287,12 +289,22 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
     }
 
     template<typename EoS>
-    PhaseStabilityResult isothermalTwoPhaseFlash(Mixture& mixture, NP_t const& pressure, NP_t const& temperature){
+    auto isothermalTwoPhaseFlash(Mixture& mixture, NP_t const& pressure, NP_t const& temperature){
+        using Phase::phaseIdentification;
+        using Phase = Phase::FluidPhase;
         if(phaseStability<EoS>(mixture, pressure, temperature) == PhaseStabilityResult::Unstable){
-            succesiveSubstitution<EoS>(mixture, pressure, temperature, false, true, 1e-4);
-            return PhaseStabilityResult::Unstable;
+            auto [vaporEoS, liquidEoS] = succesiveSubstitution<EoS>(mixture, pressure, temperature, false, true, 1e-4);
+            return PhaseStabilityResult::Unstable, std::vector<std::shared_ptr<Phase>>{
+                phaseIdentification<EoS>(mixture, mixture.compressibility("vapor"),pressure, temperature, vaporEoS, "vapor"),
+                phaseIdentification<EoS>(mixture, mixture.compressibility("liquid"), pressure, temperature, liquidEoS, "liquid")
+            };
         }else{
-            return PhaseStabilityResult::Stable;
+            EoS eos;
+            eos(mixture, pressure, temperature);
+            mixture.compressibility("global", eos.selectedCompressibility());
+            return PhaseStabilityResult::Stable, std::vector<std::shared_ptr<Phase>>{
+                phaseIdentification<EoS>(mixture, mixture.compressibility("global"), pressure, temperature, eos)
+            };
         }
     }
 }
