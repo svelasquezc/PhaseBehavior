@@ -179,6 +179,9 @@ namespace PhaseBehavior::Phase{
         vaporLike->molarVolume(mixture, compressibility, pressure, temperature, eos, phaseName);
         auto mixtureCovolume = eos.mixtureCovolume();
 
+        liquidLike->viscosity(mixture, compressibility, pressure, temperature);
+        vaporLike->viscosity(mixture, compressibility, pressure, temperature);
+
         if(molarVolume/mixtureCovolume < 1.75){
             return liquidLike;
         } 
