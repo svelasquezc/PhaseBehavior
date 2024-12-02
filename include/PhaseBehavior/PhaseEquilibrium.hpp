@@ -93,7 +93,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         NP_t fugacitiesSquaredSum = 10;
 
         std::ofstream flashLog("isothermalFlash.log");
-        flashLog << "Switch Value:\t\t" << switchValue;
+        flashLog << "Switch Value:\t\t" << switchValue << "\n\n";
         flashLog << "Iteration,FugacitiesSquaredSum" <<std::endl;
 
         std::size_t it=0;
