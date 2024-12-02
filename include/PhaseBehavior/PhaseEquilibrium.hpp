@@ -294,17 +294,17 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
         using Phase = Phase::FluidPhase;
         if(phaseStability<EoS>(mixture, pressure, temperature) == PhaseStabilityResult::Unstable){
             auto [vaporEoS, liquidEoS] = succesiveSubstitution<EoS>(mixture, pressure, temperature, false, true, 1e-4);
-            return PhaseStabilityResult::Unstable, std::vector<std::shared_ptr<Phase>>{
+            return std::tuple{PhaseStabilityResult::Unstable, std::vector<std::shared_ptr<Phase>>{
                 phaseIdentification<EoS>(mixture, mixture.compressibility("vapor"),pressure, temperature, vaporEoS, "vapor"),
                 phaseIdentification<EoS>(mixture, mixture.compressibility("liquid"), pressure, temperature, liquidEoS, "liquid")
-            };
+            }};
         }else{
             EoS eos;
             eos(mixture, pressure, temperature);
             mixture.compressibility("global", eos.selectedCompressibility());
-            return PhaseStabilityResult::Stable, std::vector<std::shared_ptr<Phase>>{
+            return std::tuple{PhaseStabilityResult::Stable, std::vector<std::shared_ptr<Phase>>{
                 phaseIdentification<EoS>(mixture, mixture.compressibility("global"), pressure, temperature, eos)
-            };
+            }};
         }
     }
 }
