@@ -23,6 +23,7 @@ create_phase_behavior_exe(C2C3PXPlot C2C3PXPlot.cpp)
 create_phase_behavior_exe(C2C3PhaseEnvelope C2C3PhaseEnvelope.cpp)
 create_phase_behavior_exe(C3nC4PXPlot C3nC4PXPlot.cpp)
 create_phase_behavior_exe(C3nC4PhaseEnvelope C3nC4PhaseEnvelope.cpp)
+create_phase_behavior_exe(C2nC5PhaseEnvelope C2nC5PhaseEnvelope.cpp)
 
 find_package (Threads)
 

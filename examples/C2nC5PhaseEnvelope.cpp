@@ -11,17 +11,17 @@
 
 
 int main(){
-    auto C3 = PhaseBehavior::Component {"C3",        4251.3,    369.89,   4.5355587810e-3, 44.097, 0.1521};
-    auto C4 = PhaseBehavior::Component {"C4",        3796.3,    425.34,   4.3890449440e-3, 58.12,  0.1995};
+    auto C2 = PhaseBehavior::Component {"C2",        4872.2,    305.32,   14.58, 30.07, 0.0990};
+    auto C5 = PhaseBehavior::Component {"C5",        3368.8,    469.89,   31.10, 72.15, 0.2514};
 
-    PhaseBehavior::Mixture mixture{{C3, 0.5}, {C4, 0.5}};
+    PhaseBehavior::Mixture mixture{{C2, 0.5}, {C5, 0.5}};
 
     auto start = std::chrono::system_clock::now();
     auto envelope = PhaseBehavior::PhaseEnvelope<PhaseBehavior::EoS::PR::PengRobinson>(mixture);
     auto points = envelope.bruteForce(100, 1000.0, 101.3529, 250);
     auto end = std::chrono::system_clock::now();
     std::ofstream envelopeFile;
-    envelopeFile.open("C3C4-envelope.csv");
+    envelopeFile.open("C2C5-envelope.csv");
     envelopeFile << "Pressure,BubbleTemperature,DewTemperature"<<std::endl;
     for (auto [pressure, bubbleTemp, dewTemp] : points){
         envelopeFile << pressure << "," << bubbleTemp << "," << dewTemp << std::endl;
