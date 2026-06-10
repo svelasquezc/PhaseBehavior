@@ -193,13 +193,13 @@ namespace PhaseBehavior{
             return {0,0};
         }
 
-        EnvelopePoints bruteForce(NP_t const maxPressure, std::size_t const& numberOfPoints){
+        EnvelopePoints bruteForce(std::size_t const& numberOfPoints, NP_t const maxPressure, NP_t const minPressure = 14.7, NP_t const minTemperature = 77 + 460){
 
             using VaporLiquidEquilibrium::phaseStability;
             using VaporLiquidEquilibrium::PhaseStabilityResult;
 
-            NP_t standardConditionsPressure = 14.7; //psia
-            NP_t standardConditionsTemperature = 77 + 460; //Rankine
+            NP_t standardConditionsPressure = minPressure; //psia or kPa, as long as it's consistent with the critical pressures of the components
+            NP_t standardConditionsTemperature = minTemperature; //Kelvin or Rankine, as long as it's consistent with the critical temperatures of the components
             
             currentPressure_ = standardConditionsPressure;
 
