@@ -15,6 +15,8 @@ create_phase_behavior_exe(C1C3C8twoPhaseFlashGraph C1C3C8twoPhaseFlashGraph.cpp)
 create_phase_behavior_exe(BinaryMixturesPXPlot BinaryMixturesPXPlot.cpp)
 create_phase_behavior_exe(GibbsFreeEnergyBinary GibbsFreeEnergyBinary.cpp)
 create_phase_behavior_exe(FlashSPE3 FlashSPE3.cpp)
+create_phase_behavior_exe(FlashSPE3SI FlashSPE3SI.cpp)
+create_phase_behavior_exe(CO2H2OtwoPhaseFlash CO2H2OtwoPhaseFlash.cpp)
 
 find_package (Threads)
 
