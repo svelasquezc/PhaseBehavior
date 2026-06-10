@@ -25,7 +25,7 @@ create_phase_behavior_exe(C3nC4PXPlot C3nC4PXPlot.cpp)
 create_phase_behavior_exe(C3nC4PhaseEnvelope C3nC4PhaseEnvelope.cpp)
 create_phase_behavior_exe(FlashSPE3SI FlashSPE3SI.cpp)
 create_phase_behavior_exe(CO2H2OtwoPhaseFlash CO2H2OtwoPhaseFlash.cpp)
-
+create_phase_behavior_exe(C1C3C8PhaseEnvelope C1C3C8PhaseEnvelope.cpp)
 find_package (Threads)
 
 target_link_libraries(DensityValidation PRIVATE PhaseBehavior Threads::Threads)
