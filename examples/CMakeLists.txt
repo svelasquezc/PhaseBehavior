@@ -7,6 +7,7 @@ function(create_phase_behavior_exe executable_name sources)
 endfunction(create_phase_behavior_exe)
 
 create_phase_behavior_exe(PhaseEnvelope PhaseEnvelope.cpp)
+create_phase_behavior_exe(PhaseEnvelopeSPE3SI PhaseEnvelopeSPE3SI.cpp)
 create_phase_behavior_exe(BlackOilEstimation BlackOilEstimation.cpp)
 create_phase_behavior_exe(OffendingComposition OffendingComposition.cpp)
 create_phase_behavior_exe(DensityValidation DensityValidation.cpp)
