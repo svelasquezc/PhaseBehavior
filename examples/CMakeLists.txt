@@ -31,10 +31,14 @@ create_phase_behavior_exe(FlashSPE3SI FlashSPE3SI.cpp)
 create_phase_behavior_exe(CO2H2OtwoPhaseFlash CO2H2OtwoPhaseFlash.cpp)
 create_phase_behavior_exe(C1C3C8PhaseEnvelope C1C3C8PhaseEnvelope.cpp)
 create_phase_behavior_exe(C2nC5PhaseEnvelope C2nC5PhaseEnvelope.cpp)
+create_phase_behavior_exe(SPE3TimeEnvelope SPE3TimeEnvelope.cpp)
 
 find_package (Threads)
 
 target_link_libraries(DensityValidation PRIVATE PhaseBehavior Threads::Threads)
+
+target_include_directories(SPE3TimeEnvelope PRIVATE ${CMAKE_SOURCE_DIR}/external)
+target_link_libraries(SPE3TimeEnvelope PRIVATE PhaseBehavior Threads::Threads)
 
 # IDEs should put the headers in a nice place
 source_group(
@@ -42,3 +46,9 @@ source_group(
   PREFIX "Header Files"
   FILES ${HEADERS}
   )
+
+source_group(
+  TREE "${PROJECT_SOURCE_DIR}/external"
+  PREFIX "Header Files"
+  FILES "${PROJECT_SOURCE_DIR}/external/rapidcsv.h"
+)

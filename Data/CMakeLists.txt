@@ -8,6 +8,13 @@ if (BUILD_EXAMPLES)
     "${CMAKE_CURRENT_SOURCE_DIR}/PVTSRK.csv"           # <--this is also in-file
     "${CMAKE_CURRENT_SOURCE_DIR}/InteractionCoefficients.csv"           # <--this is also in-file
     $<TARGET_FILE_DIR:PhaseEnvelope>)                 # <--this is out-file path
+
+    add_custom_target(CopySPE3TimeEnvelope ALL DEPENDS SPE3TimeEnvelope)
+    # Copy the PVT File to the same folder as the executable file.
+    add_custom_command(TARGET CopySPE3TimeEnvelope POST_BUILD    # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different   # which executes "cmake - E copy_if_different..."
+    "${CMAKE_CURRENT_SOURCE_DIR}/SPE3_UpscaledProps_th90.csv"           # <--this is also in-file
+    $<TARGET_FILE_DIR:SPE3TimeEnvelope>)                 # <--this is out-file path
 endif()
 
 
