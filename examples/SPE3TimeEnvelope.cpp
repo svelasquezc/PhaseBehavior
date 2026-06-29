@@ -73,7 +73,7 @@ int main(){
     std::vector<double> xC5 = doc.GetColumn<double>("C5 Composition (1)");
     std::vector<double> xC6 = doc.GetColumn<double>("C6 Composition (1)");
 
-    auto envelopeGen = [&](std::size_t pos){
+    auto envelopeGen = [=](std::size_t pos){
 
         PhaseBehavior::Mixture mixture {{C1, xC1[pos]}, {C2, xC2[pos]}, {C3, xC3[pos]}, {n_C4, xC4[pos]}, {n_C5, xC5[pos]}, {n_C6, xC6[pos]}};        
         auto envelope = PhaseBehavior::PhaseEnvelope<PhaseBehavior::EoS::PR::PengRobinson>(mixture);
