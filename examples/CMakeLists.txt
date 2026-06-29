@@ -32,12 +32,14 @@ create_phase_behavior_exe(CO2H2OtwoPhaseFlash CO2H2OtwoPhaseFlash.cpp)
 create_phase_behavior_exe(C1C3C8PhaseEnvelope C1C3C8PhaseEnvelope.cpp)
 create_phase_behavior_exe(C2nC5PhaseEnvelope C2nC5PhaseEnvelope.cpp)
 create_phase_behavior_exe(SPE3TimeEnvelope SPE3TimeEnvelope.cpp)
+create_phase_behavior_exe(SPE3UpscaledLiqFraqPlot SPE3UpscaledLiqFraqPlot.cpp)
 
 find_package (Threads)
 
 target_link_libraries(DensityValidation PRIVATE PhaseBehavior Threads::Threads)
 
 target_include_directories(SPE3TimeEnvelope PRIVATE ${CMAKE_SOURCE_DIR}/external)
+target_include_directories(SPE3UpscaledLiqFraqPlot PRIVATE ${CMAKE_SOURCE_DIR}/external)
 target_link_libraries(SPE3TimeEnvelope PRIVATE PhaseBehavior Threads::Threads)
 
 # IDEs should put the headers in a nice place
