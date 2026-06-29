@@ -48,7 +48,7 @@ void run_batched_unrolled_threads(F&& f) {
 int main(){
 
     constexpr int numberOfComponents = 6;
-    constexpr std::size_t NTHREADS = 8;
+    constexpr std::size_t NTHREADS = 16;
 
     PhaseBehavior::Component CO2   = {"CO2",      7384.3,    304.39,   2.1385799828e-3,  44.01,   0.2667};
     PhaseBehavior::Component C1    = {"CH4",      4594.7,    190.74,   6.1477929425e-3,  16.043,  0.0104};
@@ -73,7 +73,7 @@ int main(){
     std::vector<double> xC5 = doc.GetColumn<double>("C5 Composition (1)");
     std::vector<double> xC6 = doc.GetColumn<double>("C6 Composition (1)");
 
-    auto envelopeGen = [&](std::size_t pos){
+    auto envelopeGen = [=](std::size_t pos){
 
         PhaseBehavior::Mixture mixture {{C1, xC1[pos]}, {C2, xC2[pos]}, {C3, xC3[pos]}, {n_C4, xC4[pos]}, {n_C5, xC5[pos]}, {n_C6, xC6[pos]}};        
         auto envelope = PhaseBehavior::PhaseEnvelope<PhaseBehavior::EoS::PR::PengRobinson>(mixture);
@@ -90,7 +90,7 @@ int main(){
 
     auto start = std::chrono::system_clock::now();
     
-    run_batched_unrolled_threads<51, NTHREADS>(envelopeGen);
+    run_batched_unrolled_threads<79, NTHREADS>(envelopeGen);
 
     auto end = std::chrono::system_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(end - start);
