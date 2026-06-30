@@ -48,7 +48,7 @@ void run_batched_unrolled_threads(F&& f) {
 int main(){
 
     constexpr int numberOfComponents = 6;
-    constexpr std::size_t NTHREADS = 16;
+    constexpr std::size_t NTHREADS = 32;
 
     PhaseBehavior::Component CO2   = {"CO2",      7384.3,    304.39,   2.1385799828e-3,  44.01,   0.2667};
     PhaseBehavior::Component C1    = {"CH4",      4594.7,    190.74,   6.1477929425e-3,  16.043,  0.0104};
