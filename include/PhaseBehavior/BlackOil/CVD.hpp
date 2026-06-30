@@ -63,7 +63,7 @@ namespace PhaseBehavior::BlackOil {
             
             eos(mixture, dewPressure, reservoirTemperature);
             mixture.compressibility("global", eos.selectedCompressibility());
-            auto fluid = Phase::singlePhaseIdentification(mixture, mixture.compressibility("global"), dewPressure, reservoirTemperature, eos);
+            auto fluid = Phase::singlePhaseIdentification(mixture, mixture.compressibility(PhaseBehavior::PhaseName::global), dewPressure, reservoirTemperature, eos);
 
             auto pvtMolecularWeight = fluid->molecularWeight();
             auto pvtDensity = fluid->density();
@@ -92,10 +92,10 @@ namespace PhaseBehavior::BlackOil {
 
             while(pressure >= abandonmentPressure){
                 VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(mixture, pressure, reservoirTemperature);
-                auto gasPhase = Phase::VaporLikePhase(mixture, mixture.compressibility("vapor"), pressure, reservoirTemperature, eos);
-                auto oilPhase = Phase::LiquidLikePhase(mixture, mixture.compressibility("liquid"), pressure, reservoirTemperature, eos);
-                reservoirOilMoles = totalMoles*(1-mixture.molarFraction("vapor"));
-                gasAndExcessGasMoles = totalMoles*mixture.molarFraction("vapor");
+                auto gasPhase = Phase::VaporLikePhase(mixture, mixture.compressibility(PhaseBehavior::PhaseName::vapor), pressure, reservoirTemperature, eos);
+                auto oilPhase = Phase::LiquidLikePhase(mixture, mixture.compressibility(PhaseBehavior::PhaseName::liquid), pressure, reservoirTemperature, eos);
+                reservoirOilMoles = totalMoles*(1-mixture.molarFraction(PhaseBehavior::PhaseName::vapor));
+                gasAndExcessGasMoles = totalMoles*mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
 
                 gasAndExcessGasVolume = gasAndExcessGasMoles*gasPhase.molecularWeight()/(gasPhase.density()*5.615);
                 reservoirOilVolume = reservoirOilMoles*oilPhase.molecularWeight()/(oilPhase.density()*5.615);
@@ -134,7 +134,7 @@ namespace PhaseBehavior::BlackOil {
                 totalMoles -= excessGasMoles;
                 
                 for (auto& mixtureComponent : mixture){
-                    mixtureComponent.composition((mixtureComponent.composition()*pastTotalMoles - mixtureComponent.composition("vapor")*excessGasMoles)/totalMoles);
+                    mixtureComponent.composition((mixtureComponent.composition()*pastTotalMoles - mixtureComponent.composition(PhaseBehavior::PhaseName::vapor)*excessGasMoles)/totalMoles);
                 }
                 pressure -= 1;
             }
@@ -154,22 +154,22 @@ namespace PhaseBehavior::BlackOil {
             auto secondStageMixture = firstStageMixture;
 
             for (std::size_t i = 0; i < mixture.size(); ++i){
-                secondStageMixture[i].composition("global", firstStageMixture[i].composition("liquid"));
+                secondStageMixture[i].composition("global", firstStageMixture[i].composition(PhaseBehavior::PhaseName::liquid));
             }
 
             VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(secondStageMixture, stage2Pressure, stage2Temperature);
             auto stockTankMixture = secondStageMixture;
 
             for (std::size_t i = 0; i < mixture.size(); ++i){
-                stockTankMixture[i].composition("global", secondStageMixture[i].composition("liquid"));
+                stockTankMixture[i].composition("global", secondStageMixture[i].composition(PhaseBehavior::PhaseName::liquid));
             }
 
             VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(stockTankMixture, stockTankPressure, stockTankTemperature);
 
-            auto oilFraction = firstStageMixture.molarFraction("liquid")*secondStageMixture.molarFraction("liquid")*stockTankMixture.molarFraction("liquid");
+            auto oilFraction = firstStageMixture.molarFraction(PhaseBehavior::PhaseName::liquid)*secondStageMixture.molarFraction(PhaseBehavior::PhaseName::liquid)*stockTankMixture.molarFraction(PhaseBehavior::PhaseName::liquid);
             auto gasFraction = 1 - oilFraction;
 
-            auto oilPhase = Phase::LiquidLikePhase(stockTankMixture, mixture.compressibility("liquid"), stockTankPressure, stockTankTemperature, eos);
+            auto oilPhase = Phase::LiquidLikePhase(stockTankMixture, mixture.compressibility(PhaseBehavior::PhaseName::liquid), stockTankPressure, stockTankTemperature, eos);
 
             auto molecularWeight = oilPhase.molecularWeight();
             auto density = oilPhase.density();

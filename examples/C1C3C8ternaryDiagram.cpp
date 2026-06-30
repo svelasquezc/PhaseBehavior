@@ -53,25 +53,25 @@ int main(){
         if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
 
             auto liquidPhase = PhaseBehavior::Phase::LiquidLikePhase(C1C3C8);
-            liquidPhase.molarVolume(C1C3C8.compressibility("liquid"), casePressure, caseTemperature);
+            liquidPhase.molarVolume(C1C3C8.compressibility(PhaseBehavior::PhaseName::liquid), casePressure, caseTemperature);
             auto densityL = liquidPhase.density();
             file << densityL << ";";
             auto gasPhase = PhaseBehavior::Phase::VaporLikePhase(C1C3C8);
-            gasPhase.molarVolume(C1C3C8.compressibility("vapor"), casePressure, caseTemperature);
+            gasPhase.molarVolume(C1C3C8.compressibility(PhaseBehavior::PhaseName::vapor), casePressure, caseTemperature);
             auto densityG = gasPhase.density();
             file << densityG << ";";
             double pseudoMolarWL = 0.0;
             std::array<double, 3> x, y;
             std::size_t i = 0;
             for (auto c : C1C3C8){
-                x[i] = c.composition("liquid");
+                x[i] = c.composition(PhaseBehavior::PhaseName::liquid);
                 file << x[i]<<";";
                 ++i;
             }
             double pseudoMolarWG = 0.0;
             i=0;
             for (auto c : C1C3C8){
-                y[i] = c.composition("vapor");
+                y[i] = c.composition(PhaseBehavior::PhaseName::vapor);
                 file << y[i]<<";";
                 ++i;
             }

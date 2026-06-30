@@ -35,7 +35,7 @@ void densityCalculation(PhaseBehavior::Component component1, PhaseBehavior::Comp
         mixture.compressibility("global", eos.selectedCompressibility());
 
         auto gas = PhaseBehavior::Phase::VaporLikePhase(mixture, "global");
-        gas.molarVolume(mixture.compressibility("global"), pressure, temperature);
+        gas.molarVolume(mixture.compressibility(PhaseBehavior::PhaseName::global), pressure, temperature);
         auto density = gas.density();
         file << static_cast<double>(pressure)/1000.0 << ";" << density << std::endl;
     }

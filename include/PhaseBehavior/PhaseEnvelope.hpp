@@ -78,8 +78,8 @@ namespace PhaseBehavior{
                     auto ki = mixture_[i].equilibriumCoefficient();
                     auto xi = mixture_[i].composition()/(1+vaporMolarFraction*(ki - 1));
                     auto yi = ki*mixture_[i].composition()/(1+vaporMolarFraction*(ki - 1));
-                    mixture_[i].composition("vapor", yi);
-                    mixture_[i].composition("liquid", xi);
+                    mixture_[i].composition(PhaseName::vapor, yi);
+                    mixture_[i].composition(PhaseName::liquid, xi);
                 }
 
                 vaporEoS(mixture_,currentPressure_, currentTemperature_, "vapor");
@@ -89,8 +89,8 @@ namespace PhaseBehavior{
 
                 for (std::size_t i = 0; i < mixture_.size(); ++i){
 
-                    residualVector_[i] = std::log(mixture_[i].equilibriumCoefficient()) + std::log(mixture_[i].fugacityCoefficient("vapor")) -
-                                            std::log(mixture_[i].fugacityCoefficient("liquid"));
+                    residualVector_[i] = std::log(mixture_[i].equilibriumCoefficient()) + std::log(mixture_[i].fugacityCoefficient(PhaseName::vapor)) -
+                                            std::log(mixture_[i].fugacityCoefficient(PhaseName::liquid));
                 }
 
                 residualVector_[size_-1] = std::accumulate(mixture_.begin(), mixture_.end(), static_cast<NP_t>(0), 
@@ -106,8 +106,8 @@ namespace PhaseBehavior{
                 //************************************************ Component Derivatives *******************************************************
                 for (std::size_t i=0; i<mixture_.size(); ++i){
                     const auto originalki = mixture_[i].equilibriumCoefficient();
-                    const auto originalyi = mixture_[i].composition("vapor");
-                    const auto originalxi = mixture_[i].composition("liquid");
+                    const auto originalyi = mixture_[i].composition(PhaseName::vapor);
+                    const auto originalxi = mixture_[i].composition(PhaseName::liquid);
 
                     auto scaledEpsilon = machineEpsilon*originalki;
                     auto ki = originalki+scaledEpsilon;
@@ -115,16 +115,16 @@ namespace PhaseBehavior{
 
                     auto xi = mixture_[i].composition()/(1+vaporMolarFraction*(ki - 1));
                     auto yi = ki*mixture_[i].composition()/(1+vaporMolarFraction*(ki - 1));
-                    mixture_[i].composition("vapor", yi);
-                    mixture_[i].composition("liquid", xi);
+                    mixture_[i].composition(PhaseName::vapor, yi);
+                    mixture_[i].composition(PhaseName::liquid, xi);
 
                     vaporEoS(mixture_,currentPressure_, currentTemperature_, "vapor");
                     vaporEoS.fugacities(mixture_,currentPressure_, currentTemperature_, "vapor");
                     liquidEoS(mixture_,currentPressure_, currentTemperature_, "liquid");
                     liquidEoS.fugacities(mixture_,currentPressure_, currentTemperature_, "liquid");
 
-                    auto residual = std::log(mixture_[i].equilibriumCoefficient()) + std::log(mixture_[i].fugacityCoefficient("vapor")) -
-                                            std::log(mixture_[i].fugacityCoefficient("liquid"));
+                    auto residual = std::log(mixture_[i].equilibriumCoefficient()) + std::log(mixture_[i].fugacityCoefficient(PhaseName::vapor)) -
+                                            std::log(mixture_[i].fugacityCoefficient(PhaseName::liquid));
                     
                     nonZeros_.push_back({i,i,(residual - residualVector_[i])/scaledEpsilon});
 
@@ -136,8 +136,8 @@ namespace PhaseBehavior{
                                             }) - residualVector_[size_-1])/scaledEpsilon});
 
                     mixture_[i].equilibriumCoefficient(originalki);
-                    mixture_[i].composition("vapor", originalyi);
-                    mixture_[i].composition("liquid", originalxi);
+                    mixture_[i].composition(PhaseName::vapor, originalyi);
+                    mixture_[i].composition(PhaseName::liquid, originalxi);
                 }
                 //************************************************ End of Component Derivatives ************************************************
 
@@ -155,8 +155,8 @@ namespace PhaseBehavior{
 
                 for (std::size_t i = 0; i < mixture_.size(); ++i){
 
-                    auto residual = std::log(mixture_[i].equilibriumCoefficient()) + std::log(mixture_[i].fugacityCoefficient("vapor")) -
-                                            std::log(mixture_[i].fugacityCoefficient("liquid"));
+                    auto residual = std::log(mixture_[i].equilibriumCoefficient()) + std::log(mixture_[i].fugacityCoefficient(PhaseName::vapor)) -
+                                            std::log(mixture_[i].fugacityCoefficient(PhaseName::liquid));
 
                     nonZeros_.push_back({i, size_ - 1, (residual - residualVector_[i])/scaledEpsilon});
                 }

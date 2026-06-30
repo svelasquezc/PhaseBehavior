@@ -36,8 +36,8 @@ int main(){
         {
             auto result = isothermalTwoPhaseFlash<PengRobinson>(binaryC3C4, pressure, temperature);
             if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
-                binaryC3C4File << pressure << ";" << binaryC3C4[0].composition("liquid") << ";" << binaryC3C4[0].composition("vapor") << std::endl;
-                auto newZ = (binaryC3C4[0].composition("liquid") + binaryC3C4[0].composition("vapor"))/2;
+                binaryC3C4File << pressure << ";" << binaryC3C4[0].composition(PhaseBehavior::PhaseName::liquid) << ";" << binaryC3C4[0].composition(PhaseBehavior::PhaseName::vapor) << std::endl;
+                auto newZ = (binaryC3C4[0].composition(PhaseBehavior::PhaseName::liquid) + binaryC3C4[0].composition(PhaseBehavior::PhaseName::vapor))/2;
                 binaryC3C4[0].composition(newZ);
                 binaryC3C4[1].composition(1 - newZ);
 

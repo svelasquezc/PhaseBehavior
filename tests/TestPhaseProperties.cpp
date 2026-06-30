@@ -21,9 +21,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7233);
 
@@ -61,9 +61,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7521);
 
@@ -101,9 +101,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7831);
 
@@ -140,9 +140,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7941);
 
@@ -179,9 +179,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.8155);
 
@@ -219,9 +219,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.8383);
 
@@ -258,9 +258,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7245);
 
@@ -297,9 +297,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7530);
 
@@ -336,9 +336,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7836);
 
@@ -375,9 +375,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7942);
 
@@ -414,9 +414,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.8156);
 
@@ -453,9 +453,9 @@ TEST_CASE("Can calculate Phase properties using different EoS", "[Phase]"){
         PhaseBehavior::Phase::VaporLikePhase vaporPhase(mixture);
         PhaseBehavior::Phase::LiquidLikePhase liquidPhase(mixture);
 
-        auto fng = mixture.molarFraction("vapor");
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
 
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.8384);
 

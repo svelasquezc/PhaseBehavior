@@ -30,31 +30,31 @@ int main(){
 
     if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
         auto liquidPhase = PhaseBehavior::Phase::LiquidLikePhase(CO2H2O);
-        liquidPhase.molarVolume(CO2H2O.compressibility("liquid"), casePressure, caseTemperature);
+        liquidPhase.molarVolume(CO2H2O.compressibility(PhaseBehavior::PhaseName::liquid), casePressure, caseTemperature);
         auto densityL = liquidPhase.density();
         std::cout << "Liquid Density: "<< densityL << std::endl;
         auto gasPhase = PhaseBehavior::Phase::VaporLikePhase(CO2H2O);
-        gasPhase.molarVolume(CO2H2O.compressibility("vapor"), casePressure, caseTemperature);
+        gasPhase.molarVolume(CO2H2O.compressibility(PhaseBehavior::PhaseName::vapor), casePressure, caseTemperature);
         auto densityG = gasPhase.density();
         std::cout << "Gas Density: "<< densityG << std::endl;
         std::cout << "liquid Composition: (";
         double pseudoMolarWL = 0.0;
         for (auto c : CO2H2O){
-            std::cout << c.composition("liquid")<<",";
-            pseudoMolarWL += c.composition("liquid")*c->molarWeight()/1000;
+            std::cout << c.composition(PhaseBehavior::PhaseName::liquid)<<",";
+            pseudoMolarWL += c.composition(PhaseBehavior::PhaseName::liquid)*c->molarWeight()/1000;
         }
         std::cout << ")"<<std::endl << "gas Composition: (";
         double pseudoMolarWG = 0.0;
         for (auto c : CO2H2O){
-            std::cout << c.composition("vapor")<<",";
-            pseudoMolarWG += c.composition("vapor")*c->molarWeight()/1000;
+            std::cout << c.composition(PhaseBehavior::PhaseName::vapor)<<",";
+            pseudoMolarWG += c.composition(PhaseBehavior::PhaseName::vapor)*c->molarWeight()/1000;
         }
         std::cout <<")"<< std::endl;
 
         auto gasMolarDensity = densityG/pseudoMolarWG;
         auto liquidMolarDensity = densityL/pseudoMolarWL;
 
-        auto liquidVolumeFraction = 1/(1 + (CO2H2O.molarFraction("vapor")/CO2H2O.molarFraction("liquid"))*(liquidMolarDensity/gasMolarDensity));
+        auto liquidVolumeFraction = 1/(1 + (CO2H2O.molarFraction(PhaseBehavior::PhaseName::vapor)/CO2H2O.molarFraction(PhaseBehavior::PhaseName::liquid))*(liquidMolarDensity/gasMolarDensity));
     
         double COMSOLInitialDensityL = 45000.0;
         double COMSOLInitialDensityV = 10.0;

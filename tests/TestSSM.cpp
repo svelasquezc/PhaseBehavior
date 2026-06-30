@@ -19,9 +19,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         {
             PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
 
-            auto Z_liq = mixture.compressibility("liquid");
-            auto Z_vap = mixture.compressibility("vapor");
-            auto fng = mixture.molarFraction("vapor");
+            auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+            auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+            auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7233);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1636);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.8555);
@@ -46,9 +46,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
     
         PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 50 + 460 /*R*/);
 
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
-        auto fng = mixture.molarFraction("vapor");
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7245);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1847);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.8759);
@@ -73,9 +73,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         {
             PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
 
-            auto Z_liq = mixture.compressibility("liquid");
-            auto Z_vap = mixture.compressibility("vapor");
-            auto fng = mixture.molarFraction("vapor");
+            auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+            auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+            auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7521);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1373);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.8805);
@@ -100,9 +100,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
     
         PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 50 + 460 /*R*/);
 
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
-        auto fng = mixture.molarFraction("vapor");
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7530);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1550);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.8973);
@@ -127,9 +127,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         {
             PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
 
-            auto Z_liq = mixture.compressibility("liquid");
-            auto Z_vap = mixture.compressibility("vapor");
-            auto fng = mixture.molarFraction("vapor");
+            auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+            auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+            auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7831);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1093);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.9065);
@@ -154,9 +154,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
     
         PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 50 + 460 /*R*/);
 
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
-        auto fng = mixture.molarFraction("vapor");
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7836);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1233);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.9195);
@@ -181,9 +181,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         {
             PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
 
-            auto Z_liq = mixture.compressibility("liquid");
-            auto Z_vap = mixture.compressibility("vapor");
-            auto fng = mixture.molarFraction("vapor");
+            auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+            auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+            auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.8383);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1155);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.9206);
@@ -208,9 +208,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
     
         PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 300 /*psia*/, 100 + 460 /*R*/);
 
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
-        auto fng = mixture.molarFraction("vapor");
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.8384);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1302);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.9330);
@@ -235,9 +235,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         {
             PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
 
-            auto Z_liq = mixture.compressibility("liquid");
-            auto Z_vap = mixture.compressibility("vapor");
-            auto fng = mixture.molarFraction("vapor");
+            auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+            auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+            auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.8155);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1452);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.8985);
@@ -262,9 +262,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
     
         PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 400 /*psia*/, 100 + 460 /*R*/);
 
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
-        auto fng = mixture.molarFraction("vapor");
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.8156);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1638);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.9145);
@@ -289,9 +289,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
         {
             PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::PR::PengRobinson>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
 
-            auto Z_liq = mixture.compressibility("liquid");
-            auto Z_vap = mixture.compressibility("vapor");
-            auto fng = mixture.molarFraction("vapor");
+            auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+            auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+            auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7941);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1730);
             CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.8777);
@@ -316,9 +316,9 @@ TEST_CASE("Can converge to the correct equilibrium coefficients", "[SussesiveSub
     
         PhaseBehavior::VaporLiquidEquilibrium::succesiveSubstitution<PhaseBehavior::EoS::SRK::SoaveRedlichKwong>(mixture, 500 /*psia*/, 100 + 460 /*R*/);
 
-        auto Z_liq = mixture.compressibility("liquid");
-        auto Z_vap = mixture.compressibility("vapor");
-        auto fng = mixture.molarFraction("vapor");
+        auto Z_liq = mixture.compressibility(PhaseBehavior::PhaseName::liquid);
+        auto Z_vap = mixture.compressibility(PhaseBehavior::PhaseName::vapor);
+        auto fng = mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(fng,4))==0.7942);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_liq,4))==0.1951);
         CHECK(Catch::Approx(PhaseBehavior::Math::roundUp(Z_vap,4))==0.8969);

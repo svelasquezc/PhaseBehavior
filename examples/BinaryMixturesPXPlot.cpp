@@ -44,8 +44,8 @@ int main(){
         {
             auto result = isothermalTwoPhaseFlash<PengRobinson>(binaryCO2, pressure, temperature);
             if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
-                binaryCO2File << pressure*0.145038 << ";" << binaryCO2[0].composition("liquid") << ";" << binaryCO2[0].composition("vapor") << std::endl;
-                auto newZ = (binaryCO2[0].composition("liquid") + binaryCO2[0].composition("vapor"))/2;
+                binaryCO2File << pressure*0.145038 << ";" << binaryCO2[0].composition(PhaseBehavior::PhaseName::liquid) << ";" << binaryCO2[0].composition(PhaseBehavior::PhaseName::vapor) << std::endl;
+                auto newZ = (binaryCO2[0].composition(PhaseBehavior::PhaseName::liquid) + binaryCO2[0].composition(PhaseBehavior::PhaseName::vapor))/2;
                 binaryCO2[0].composition(newZ);
                 binaryCO2[1].composition(1 - newZ);
 
@@ -55,8 +55,8 @@ int main(){
         {
             auto result = isothermalTwoPhaseFlash<PengRobinson>(binaryCH4, pressure, temperature);
             if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
-                binaryCH4File << pressure*0.145038 << ";" << binaryCH4[0].composition("liquid") << ";" << binaryCH4[0].composition("vapor") << std::endl;
-                auto newZ = (binaryCH4[0].composition("liquid") + binaryCH4[0].composition("vapor"))/2;
+                binaryCH4File << pressure*0.145038 << ";" << binaryCH4[0].composition(PhaseBehavior::PhaseName::liquid) << ";" << binaryCH4[0].composition(PhaseBehavior::PhaseName::vapor) << std::endl;
+                auto newZ = (binaryCH4[0].composition(PhaseBehavior::PhaseName::liquid) + binaryCH4[0].composition(PhaseBehavior::PhaseName::vapor))/2;
                 binaryCH4[0].composition(newZ);
                 binaryCH4[1].composition(1 - newZ);
             }
@@ -66,8 +66,8 @@ int main(){
         {
             auto result = isothermalTwoPhaseFlash<PengRobinson>(binaryN2,  pressure, temperature);
             if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
-                binaryN2File << pressure*0.145038 << ";" << binaryN2[0].composition("liquid") << ";" << binaryN2[0].composition("vapor") << std::endl;
-                auto newZ = (binaryCH4[0].composition("liquid") + binaryCH4[0].composition("vapor"))/2;
+                binaryN2File << pressure*0.145038 << ";" << binaryN2[0].composition(PhaseBehavior::PhaseName::liquid) << ";" << binaryN2[0].composition(PhaseBehavior::PhaseName::vapor) << std::endl;
+                auto newZ = (binaryCH4[0].composition(PhaseBehavior::PhaseName::liquid) + binaryCH4[0].composition(PhaseBehavior::PhaseName::vapor))/2;
                 binaryN2[0].composition(newZ);
                 binaryN2[1].composition(1 - newZ);
             }

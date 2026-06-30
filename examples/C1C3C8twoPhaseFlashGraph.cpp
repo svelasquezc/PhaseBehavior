@@ -45,20 +45,20 @@ int main(){
             file << casePressure <<";";
 
             auto liquidPhase = PhaseBehavior::Phase::LiquidLikePhase(C1C3C8);
-            liquidPhase.molarVolume(C1C3C8.compressibility("liquid"), casePressure, caseTemperature);
+            liquidPhase.molarVolume(C1C3C8.compressibility(PhaseBehavior::PhaseName::liquid), casePressure, caseTemperature);
             auto densityL = liquidPhase.density();
             file << densityL << ";";
             auto gasPhase = PhaseBehavior::Phase::VaporLikePhase(C1C3C8);
-            gasPhase.molarVolume(C1C3C8.compressibility("vapor"), casePressure, caseTemperature);
+            gasPhase.molarVolume(C1C3C8.compressibility(PhaseBehavior::PhaseName::vapor), casePressure, caseTemperature);
             auto densityG = gasPhase.density();
             file << densityG << ";";
             double pseudoMolarWL = 0.0;
             for (auto c : C1C3C8){
-                file << c.composition("liquid")<<";";
+                file << c.composition(PhaseBehavior::PhaseName::liquid)<<";";
             }
             double pseudoMolarWG = 0.0;
             for (auto c : C1C3C8){
-                file << c.composition("vapor")<<";";
+                file << c.composition(PhaseBehavior::PhaseName::vapor)<<";";
             }
             file << std::endl;
         };

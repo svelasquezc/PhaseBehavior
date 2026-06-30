@@ -93,8 +93,8 @@ int main(){
     mix.interactionCoefficient("n-C5H12", "CH4", 0.0236);
     auto result = isothermalTwoPhaseFlash<PengRobinson>(mix, pressure, temperature);
     if (result == PhaseBehavior::VaporLiquidEquilibrium::PhaseStabilityResult::Unstable){
-        std::cout <<"CH4 x_i: " << mix[0].composition("liquid") <<", y_i: "<< mix[0].composition("vapor") <<std::endl;
-        std::cout <<"nC5 x_i: " << mix[1].composition("liquid") <<", y_i: "<< mix[1].composition("vapor") <<std::endl;
+        std::cout <<"CH4 x_i: " << mix[0].composition(PhaseBehavior::PhaseName::liquid) <<", y_i: "<< mix[0].composition(PhaseBehavior::PhaseName::vapor) <<std::endl;
+        std::cout <<"nC5 x_i: " << mix[1].composition(PhaseBehavior::PhaseName::liquid) <<", y_i: "<< mix[1].composition(PhaseBehavior::PhaseName::vapor) <<std::endl;
     }
 
 }

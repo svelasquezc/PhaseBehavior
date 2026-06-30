@@ -1,6 +1,7 @@
 #ifndef MIXTURE_HPP
 #define MIXTURE_HPP
 
+#include <array>
 #include <vector>
 #include <memory>
 #include <type_traits>
@@ -17,6 +18,24 @@
 
 namespace PhaseBehavior {
 
+    enum class PhaseName : std::size_t { global = 0, vapor = 1, liquid = 2 };
+
+    static PhaseName phaseNameFromString(std::string const& phaseName);
+
+    static constexpr std::size_t phaseIndex(PhaseName phaseName) noexcept {
+        return static_cast<std::size_t>(phaseName);
+    }
+
+    static std::size_t phaseIndex(std::string const& phaseName) noexcept {
+        return phaseIndex(phaseNameFromString(phaseName));
+    }
+
+    static PhaseName phaseNameFromString(std::string const& phaseName){
+        if (phaseName == "vapor") return PhaseName::vapor;
+        if (phaseName == "liquid") return PhaseName::liquid;
+        return PhaseName::global;
+    }
+
     class Mixture {
     private: 
 
@@ -25,8 +44,8 @@ namespace PhaseBehavior {
         class MixtureComponent {
         private:
             std::shared_ptr<Component> mutable pureComponent_;
-            std::map<std::string, NP_t> molarComposition_;
-            std::map<std::string, NP_t> fugacityCoefficient_;
+            std::array<NP_t, 3> molarComposition_{};
+            std::array<NP_t, 3> fugacityCoefficient_{};
             NP_t equilibriumCoefficient_;
         public:
 
@@ -46,41 +65,61 @@ namespace PhaseBehavior {
             {
 
                 pureComponent_ = std::make_shared<Component>(std::forward<Component>(std::get<0>(componentWithComposition)));
-                molarComposition_["global"]  = std::forward<NP_t>(std::get<1>(componentWithComposition));
+                molarComposition_[phaseIndex(PhaseName::global)] = std::forward<NP_t>(std::get<1>(componentWithComposition));
             }
 
             MixtureComponent(Component&& pureComponent, NP_t&& molarComposition):
             pureComponent_(std::make_shared<Component>(std::forward<Component>(pureComponent)))
             {
-                molarComposition_["global"] = std::move(molarComposition);
+                molarComposition_[phaseIndex(PhaseName::global)] = std::move(molarComposition);
             }
 
             void composition(NP_t const& molarComposition){
-                molarComposition_["global"] = molarComposition;
+                molarComposition_[phaseIndex(PhaseName::global)] = molarComposition;
             }
 
             const NP_t composition() const noexcept{
-                return molarComposition_.at("global");
+                return molarComposition_[phaseIndex(PhaseName::global)];
+            }
+
+            const NP_t composition(PhaseName phaseName) const noexcept {
+                return molarComposition_[phaseIndex(phaseName)];
             }
 
             const NP_t composition(std::string const& phaseName) const noexcept {
-                return molarComposition_.at(phaseName);
+                return composition(phaseNameFromString(phaseName));
             }
 
-            void composition (std::string const& phaseName,  NP_t const& composition){
-                molarComposition_[phaseName] = composition;
+            void composition(PhaseName phaseName, NP_t const& composition){
+                molarComposition_[phaseIndex(phaseName)] = composition;
+            }
+
+            void composition(std::string const& phaseName, NP_t const& compositionValue){
+                composition(phaseNameFromString(phaseName), compositionValue);
+            }
+
+            const NP_t fugacityCoefficient(PhaseName phaseName) const noexcept{
+                return fugacityCoefficient_[phaseIndex(phaseName)];
             }
 
             const NP_t fugacityCoefficient(std::string const& phaseName) const noexcept{
-                return fugacityCoefficient_.at(phaseName);
+                return fugacityCoefficient(phaseNameFromString(phaseName));
             }
 
-            void fugacityCoefficient (std::string const& phaseName,  NP_t const& fugacityCoefficient){
-                fugacityCoefficient_[phaseName] = fugacityCoefficient;
+            void fugacityCoefficient(PhaseName phaseName, NP_t const& fugacityCoefficient){
+                fugacityCoefficient_[phaseIndex(phaseName)] = fugacityCoefficient;
+            }
+
+            void fugacityCoefficient(std::string const& phaseName, NP_t const& fugacityCoefficientValue){
+                fugacityCoefficient(phaseNameFromString(phaseName), fugacityCoefficientValue);
+            }
+
+            const NP_t fugacity(PhaseName phaseName, NP_t const& absolutePressure) const noexcept{
+                return composition(phaseName)*fugacityCoefficient(phaseName)*absolutePressure;
             }
 
             const NP_t fugacity(std::string const& phaseName, NP_t const& absolutePressure) const noexcept{
-                return composition(phaseName)*fugacityCoefficient(phaseName)*absolutePressure;
+                return fugacity(phaseNameFromString(phaseName), absolutePressure);
             }
 
             const decltype(*pureComponent_) pure () const{
@@ -120,8 +159,8 @@ namespace PhaseBehavior {
         using MixtureIterator = decltype(components_)::iterator;
         using ConstMixtureIterator = decltype(components_)::const_iterator;
 
-        std::map<std::string, NP_t> phaseMolarFraction_;
-        std::map<std::string, NP_t> phaseCompressibility_;
+        std::array<NP_t, 3> phaseMolarFraction_{};
+        std::array<NP_t, 3> phaseCompressibility_{};
 
     public:
 
@@ -244,20 +283,36 @@ namespace PhaseBehavior {
             }
         }
 
-        NP_t molarFraction(std::string const& phaseName) const {
-            return phaseMolarFraction_.at(phaseName);
+        NP_t molarFraction(PhaseName phaseName) const {
+            return phaseMolarFraction_[phaseIndex(phaseName)];
         }
 
-        void molarFraction(std::string const& phaseName, NP_t const& molarFraction) {
-            phaseMolarFraction_[phaseName] = molarFraction;
+        NP_t molarFraction(std::string const& phaseName) const {
+            return molarFraction(phaseNameFromString(phaseName));
+        }
+
+        void molarFraction(PhaseName phaseName, NP_t const& molarFractionValue) {
+            phaseMolarFraction_[phaseIndex(phaseName)] = molarFractionValue;
+        }
+
+        void molarFraction(std::string const& phaseName, NP_t const& molarFractionValue) {
+            molarFraction(phaseNameFromString(phaseName), molarFractionValue);
+        }
+
+        NP_t compressibility(PhaseName phaseName) const {
+            return phaseCompressibility_[phaseIndex(phaseName)];
         }
 
         NP_t compressibility(std::string const& phaseName) const {
-            return phaseCompressibility_.at(phaseName);
+            return compressibility(phaseNameFromString(phaseName));
         }
 
-        void compressibility(std::string const& phaseName, NP_t const& compressibility) {
-            phaseCompressibility_[phaseName] = compressibility;
+        void compressibility(PhaseName phaseName, NP_t const& compressibilityValue) {
+            phaseCompressibility_[phaseIndex(phaseName)] = compressibilityValue;
+        }
+
+        void compressibility(std::string const& phaseName, NP_t const& compressibilityValue) {
+            compressibility(phaseNameFromString(phaseName), compressibilityValue);
         }
 
         void initializeEquilibriumCoefficients(NP_t const& pressure, NP_t const& temperature){

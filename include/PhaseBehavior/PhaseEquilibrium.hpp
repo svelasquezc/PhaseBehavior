@@ -64,15 +64,15 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
 
             auto liquidMolarFraction = 1 - vaporMolarFraction;
 
-            mixture.molarFraction("vapor", vaporMolarFraction);
-            mixture.molarFraction("liquid", liquidMolarFraction);
+            mixture.molarFraction(PhaseName::vapor, vaporMolarFraction);
+            mixture.molarFraction(PhaseName::liquid, liquidMolarFraction);
 
             for (auto& mixComp : mixture){
                 auto Ki = mixComp.equilibriumCoefficient();
                 auto liquidComposition = mixComp.composition()/(1.0 + vaporMolarFraction*(Ki-1));
                 auto vaporComposition  = Ki*liquidComposition;
-                mixComp.composition("liquid", liquidComposition);
-                mixComp.composition("vapor", vaporComposition);
+                mixComp.composition(PhaseName::liquid, liquidComposition);
+                mixComp.composition(PhaseName::vapor, vaporComposition);
             }
         }
     }
@@ -96,21 +96,21 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
             rachfordVLE(mixture);
 
             vaporEoS(mixture, pressure, temperature, "vapor");
-            mixture.compressibility("vapor", vaporEoS.selectedCompressibility());
+            mixture.compressibility(PhaseName::vapor, vaporEoS.selectedCompressibility());
             vaporEoS.fugacities(mixture, "vapor");
 
             liquidEoS(mixture, pressure, temperature, "liquid");
-            mixture.compressibility("liquid", liquidEoS.selectedCompressibility());
+            mixture.compressibility(PhaseName::liquid, liquidEoS.selectedCompressibility());
             liquidEoS.fugacities(mixture, "liquid");
 
             for (auto& mixComponent : mixture){
-                auto newEquilibriumCoefficient = mixComponent.equilibriumCoefficient()*(mixComponent.fugacity("liquid", pressure)/mixComponent.fugacity("vapor", pressure));
+                auto newEquilibriumCoefficient = mixComponent.equilibriumCoefficient()*(mixComponent.fugacity(PhaseName::liquid, pressure)/mixComponent.fugacity(PhaseName::vapor, pressure));
                 mixComponent.equilibriumCoefficient(newEquilibriumCoefficient);
             }
 
             fugacitiesSquaredSum = std::accumulate(mixture.begin(),mixture.end(), static_cast<NP_t>(0.0),
             [&pressure](auto previous, auto second){
-                return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
+                return previous + std::pow(second.fugacity(PhaseName::liquid, pressure)/second.fugacity(PhaseName::vapor, pressure) - 1.0, 2);
             });
 
             ++it;
@@ -144,8 +144,8 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
 
                 for (std::size_t i = 0; i < mixture.size(); ++i){
 
-                    residual[i] = (std::log(mixture[i].composition("vapor")) + std::log(mixture[i].fugacityCoefficient("vapor"))) -
-                                            (std::log(mixture[i].composition("liquid")) + std::log(mixture[i].fugacityCoefficient("liquid")));
+                    residual[i] = (std::log(mixture[i].composition(PhaseName::vapor)) + std::log(mixture[i].fugacityCoefficient(PhaseName::vapor))) -
+                                            (std::log(mixture[i].composition(PhaseName::liquid)) + std::log(mixture[i].fugacityCoefficient(PhaseName::liquid)));
                 }
 
                 //******************************************************************************************************************************
@@ -162,16 +162,16 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
                     rachfordVLE(mixture);
 
                     vaporEoS(mixture, pressure, temperature, "vapor");
-                    mixture.compressibility("vapor", vaporEoS.selectedCompressibility());
+                    mixture.compressibility(PhaseName::vapor, vaporEoS.selectedCompressibility());
                     vaporEoS.fugacities(mixture, "vapor");
 
                     liquidEoS(mixture, pressure, temperature, "liquid");
-                    mixture.compressibility("liquid", liquidEoS.selectedCompressibility());
+                    mixture.compressibility(PhaseName::liquid, liquidEoS.selectedCompressibility());
                     liquidEoS.fugacities(mixture, "liquid");
                     
                     for (std::size_t i = 0; i < mixture.size(); ++i){
-                        auto modifiedResidual = (std::log(mixture[i].composition("vapor")) + std::log(mixture[i].fugacityCoefficient("vapor"))) -
-                                            (std::log(mixture[i].composition("liquid")) + std::log(mixture[i].fugacityCoefficient("liquid")));
+                        auto modifiedResidual = (std::log(mixture[i].composition(PhaseName::vapor)) + std::log(mixture[i].fugacityCoefficient(PhaseName::vapor))) -
+                                            (std::log(mixture[i].composition(PhaseName::liquid)) + std::log(mixture[i].fugacityCoefficient(PhaseName::liquid)));
                         jacobian(i,j) = (modifiedResidual - residual[i])/scaledEpsilon;
                     }
                     mixture[j].equilibriumCoefficient(originalki);
@@ -198,7 +198,7 @@ namespace PhaseBehavior::VaporLiquidEquilibrium {
 
                 fugacitiesSquaredSum = std::accumulate(mixture.begin(),mixture.end(), static_cast<NP_t>(0.0),
                 [&pressure](auto previous, auto second){
-                    return previous + std::pow(second.fugacity("liquid", pressure)/second.fugacity("vapor", pressure) - 1.0, 2);
+                    return previous + std::pow(second.fugacity(PhaseName::liquid, pressure)/second.fugacity(PhaseName::vapor, pressure) - 1.0, 2);
                 });
 
                 ++it;
