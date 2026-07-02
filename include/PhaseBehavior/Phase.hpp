@@ -18,14 +18,14 @@ namespace PhaseBehavior::Phase{
 
     class FluidPhase {
     protected:
-        std::string phaseName_;
+        std::string_view phaseName_;
         NP_t molecularWeight_;
         NP_t compressibility_;
         NP_t density_;
         NP_t viscosity_;
         NP_t molarVolume_;
     public:
-        void molecularWeight(Mixture const& mixture, std::string const& compositionType){
+        void molecularWeight(Mixture const& mixture, std::string_view const& compositionType){
             molecularWeight_ = std::accumulate(mixture.begin(), mixture.end(),
              static_cast<NP_t>(0.0), [phaseName_=this->phaseName_, &compositionType](auto previous, auto& element){
                 return previous + element.composition(compositionType)*element.pure().molarWeight();
@@ -41,7 +41,7 @@ namespace PhaseBehavior::Phase{
         virtual NP_t viscosity(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature) = 0;
 
         template<typename EoS>
-        NP_t molarVolume(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos, std::string compositionType = ""){
+        NP_t molarVolume(Mixture const& mixture, NP_t const& compressibility, NP_t const& pressure, NP_t const& temperature, EoS const& eos, std::string_view compositionType = ""){
             if(compositionType == "") compositionType = phaseName_;
             molarVolume_ = universalGasesConstant*(temperature*compressibility/pressure - eos.volumeShift(mixture, compositionType));
             return molarVolume_;
@@ -83,7 +83,7 @@ namespace PhaseBehavior::Phase{
     class VaporLikePhase : public Traits::phase_traits<VaporLikePhase> {
         public:
 
-        VaporLikePhase(Mixture const& mixture, std::string compositionType = ""){
+        VaporLikePhase(Mixture const& mixture, std::string_view compositionType = ""){
             phaseName_ = "vapor";
             if (compositionType == "") compositionType = phaseName_;
             molecularWeight(mixture, compositionType);
@@ -115,7 +115,7 @@ namespace PhaseBehavior::Phase{
 
         public:
 
-        LiquidLikePhase(Mixture const& mixture, std::string compositionType = ""){
+        LiquidLikePhase(Mixture const& mixture, std::string_view compositionType = ""){
             phaseName_ = "liquid";
             if (compositionType == "") compositionType = phaseName_;
             molecularWeight(mixture, compositionType);
@@ -146,7 +146,7 @@ namespace PhaseBehavior::Phase{
                 
             };
 
-            auto reducedDensity = density_*mixture.pseudoCriticalVolume("liquid")/molecularWeight_;
+            auto reducedDensity = density_*mixture.pseudoCriticalVolume(PhaseName::liquid)/molecularWeight_;
 
             NP_t numerator = 0;
             NP_t denominator = 0;
@@ -159,7 +159,7 @@ namespace PhaseBehavior::Phase{
             
             auto mixtureReferenceViscosity = numerator/denominator;
 
-            auto mixtureViscosityParameter = 5.4402*std::pow(mixture.pseudoCriticalTemperature("liquid"),1.0/6.0)/(std::sqrt(molecularWeight())*std::pow(mixture.pseudoCriticalPressure("liquid"),2.0/3.0));
+            auto mixtureViscosityParameter = 5.4402*std::pow(mixture.pseudoCriticalTemperature(PhaseName::liquid),1.0/6.0)/(std::sqrt(molecularWeight())*std::pow(mixture.pseudoCriticalPressure(PhaseName::liquid),2.0/3.0));
 
             // LBC Correlation
             viscosity_ = mixtureReferenceViscosity + (std::pow(0.1023 + 0.023364*reducedDensity + 0.058533*std::pow(reducedDensity,2.0) - 

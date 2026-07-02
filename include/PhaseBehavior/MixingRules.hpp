@@ -30,7 +30,7 @@ namespace PhaseBehavior::EoS::MixingRules{
         BinaryAttractionType binaryAttraction_;
 
     public:
-        std::tuple<NP_t, NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature, std::string const& phaseName = "global"){
+        std::tuple<NP_t, NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature, std::string_view const& phaseName = "global"){
 
             for(auto const& mixComponent : mixture){
 

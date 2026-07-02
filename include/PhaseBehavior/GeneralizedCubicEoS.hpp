@@ -55,7 +55,7 @@ namespace PhaseBehavior::EoS {
             }
         }
 
-        std::vector<NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature, std::string phaseName = "global"){
+        std::vector<NP_t> operator() (Mixture const& mixture, NP_t const& pressure, NP_t const& temperature, std::string_view phaseName = "global"){
             auto [mixtureAttraction, mixtureCovolume] = mixingRule(mixture, pressure, temperature, phaseName);
             mixtureAttraction_ = mixtureAttraction;
             mixtureCovolume_ = mixtureCovolume;
@@ -100,7 +100,7 @@ namespace PhaseBehavior::EoS {
             return pressure*std::exp(Z - 1 - std::log(Z - B) - (A/((m1-m2)*B))*std::log((Z + m1*B)/(Z + m2*B)));
         }
 
-        void fugacities(Mixture& mixture, std::string const& phaseName){
+        void fugacities(Mixture& mixture, std::string_view const& phaseName){
             const auto Z = selectedCompressibility_;
             const auto A = mixtureAttraction_;
             const auto B = mixtureCovolume_;
@@ -119,7 +119,7 @@ namespace PhaseBehavior::EoS {
             }
         }
 
-        NP_t volumeShift(Mixture const& mixture, std::string const& phaseName) const{
+        NP_t volumeShift(Mixture const& mixture, std::string_view const& phaseName) const{
             NP_t volumeShift = 0;
             for (auto const& mixtureComponent : mixture){
                 const auto B_i = mixingRule.componentShiftCovolume(mixtureComponent.pure());

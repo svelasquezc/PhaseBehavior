@@ -62,8 +62,8 @@ namespace PhaseBehavior::BlackOil {
                                 (universalGasesConstant * standardConditionsTemperature);
             
             eos(mixture, dewPressure, reservoirTemperature);
-            mixture.compressibility("global", eos.selectedCompressibility());
-            auto fluid = Phase::singlePhaseIdentification(mixture, mixture.compressibility(PhaseBehavior::PhaseName::global), dewPressure, reservoirTemperature, eos);
+            mixture.compressibility(PhaseName::global, eos.selectedCompressibility());
+            auto fluid = Phase::singlePhaseIdentification(mixture, mixture.compressibility(PhaseName::global), dewPressure, reservoirTemperature, eos);
 
             auto pvtMolecularWeight = fluid->molecularWeight();
             auto pvtDensity = fluid->density();
@@ -92,10 +92,10 @@ namespace PhaseBehavior::BlackOil {
 
             while(pressure >= abandonmentPressure){
                 VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(mixture, pressure, reservoirTemperature);
-                auto gasPhase = Phase::VaporLikePhase(mixture, mixture.compressibility(PhaseBehavior::PhaseName::vapor), pressure, reservoirTemperature, eos);
-                auto oilPhase = Phase::LiquidLikePhase(mixture, mixture.compressibility(PhaseBehavior::PhaseName::liquid), pressure, reservoirTemperature, eos);
-                reservoirOilMoles = totalMoles*(1-mixture.molarFraction(PhaseBehavior::PhaseName::vapor));
-                gasAndExcessGasMoles = totalMoles*mixture.molarFraction(PhaseBehavior::PhaseName::vapor);
+                auto gasPhase = Phase::VaporLikePhase(mixture, mixture.compressibility(PhaseName::vapor), pressure, reservoirTemperature, eos);
+                auto oilPhase = Phase::LiquidLikePhase(mixture, mixture.compressibility(PhaseName::liquid), pressure, reservoirTemperature, eos);
+                reservoirOilMoles = totalMoles*(1-mixture.molarFraction(PhaseName::vapor));
+                gasAndExcessGasMoles = totalMoles*mixture.molarFraction(PhaseName::vapor);
 
                 gasAndExcessGasVolume = gasAndExcessGasMoles*gasPhase.molecularWeight()/(gasPhase.density()*5.615);
                 reservoirOilVolume = reservoirOilMoles*oilPhase.molecularWeight()/(oilPhase.density()*5.615);
@@ -107,7 +107,7 @@ namespace PhaseBehavior::BlackOil {
                 auto [surfaceGasInGasMolarFraction, stockTankOilInGasMolarFraction,
                         stockTankOilInGasMolWeight, stockTankOilInGasDensity] = separator(mixture, stage1Pressure, stage1Temperature,
                                                                             stage2Pressure, stage2Temperature, stockTankPressure,
-                                                                                stockTankTemperature, eos, "vapor");
+                                                                                stockTankTemperature, eos, PhaseName::vapor);
 
                 auto standardConditionsGasInGasVolume = surfaceGasInGasMolarFraction*reservoirGasMoles*379.56;
                 auto stockTankOilInGasVolume = stockTankOilInGasMolarFraction*reservoirOilMoles*stockTankOilInGasMolWeight/(stockTankOilInGasDensity*5.615);
@@ -115,7 +115,7 @@ namespace PhaseBehavior::BlackOil {
                 auto [surfaceGasInOilMolarFraction, stockTankOilInOilMolarFraction,
                         stockTankOilInOilMolWeight, stockTankOilInOilDensity] = separator(mixture, stage1Pressure, stage1Temperature,
                                                                             stage2Pressure, stage2Temperature, stockTankPressure,
-                                                                                stockTankTemperature, eos, "liquid");
+                                                                                stockTankTemperature, eos, PhaseName::liquid);
 
                 auto standardConditionsGasInOilVolume = surfaceGasInOilMolarFraction*reservoirGasMoles*379.56;
                 auto stockTankOilInOilVolume = stockTankOilInOilMolarFraction*reservoirOilMoles*stockTankOilInOilMolWeight/(stockTankOilInOilDensity*5.615);
@@ -142,26 +142,26 @@ namespace PhaseBehavior::BlackOil {
 
         StockTankOilProperties separator(Mixture const& mixture, NP_t const& stage1Pressure, NP_t const& stage1Temperature,
                                             NP_t const& stage2Pressure, NP_t const& stage2Temperature,
-                                            NP_t const& stockTankPressure, NP_t const& stockTankTemperature, EoS& eos, std::string separationType = "global"){
+                                            NP_t const& stockTankPressure, NP_t const& stockTankTemperature, EoS& eos, PhaseName separationType = PhaseName::global){
 
             auto firstStageMixture = mixture;
 
             for (std::size_t i = 0; i < mixture.size(); ++i){
-                firstStageMixture[i].composition("global", mixture[i].composition(separationType));
+                firstStageMixture[i].composition(PhaseName::global, mixture[i].composition(separationType));
             }
 
             VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(firstStageMixture, stage1Pressure, stage1Temperature);
             auto secondStageMixture = firstStageMixture;
 
             for (std::size_t i = 0; i < mixture.size(); ++i){
-                secondStageMixture[i].composition("global", firstStageMixture[i].composition(PhaseBehavior::PhaseName::liquid));
+                secondStageMixture[i].composition(PhaseName::global, firstStageMixture[i].composition(PhaseBehavior::PhaseName::liquid));
             }
 
             VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(secondStageMixture, stage2Pressure, stage2Temperature);
             auto stockTankMixture = secondStageMixture;
 
             for (std::size_t i = 0; i < mixture.size(); ++i){
-                stockTankMixture[i].composition("global", secondStageMixture[i].composition(PhaseBehavior::PhaseName::liquid));
+                stockTankMixture[i].composition(PhaseName::global, secondStageMixture[i].composition(PhaseBehavior::PhaseName::liquid));
             }
 
             VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(stockTankMixture, stockTankPressure, stockTankTemperature);

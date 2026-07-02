@@ -34,7 +34,7 @@ namespace PhaseBehavior::EoS::GERG{
         NP_t idealReducedHelmholtzEnergy_ = 0, residualReducedHelmholtzEnergy_ = 0;
         NP_t compressibilityFactor_ = 1;
 
-        inline NP_t reducingDensity(Mixture const& mixture, std::string compositionType = "global"){
+        inline NP_t reducingDensity(Mixture const& mixture, std::string_view compositionType = "global"){
 
             using Coefficients::ReducingParameters::Density::beta, Coefficients::ReducingParameters::Density::gamma;
 
@@ -59,7 +59,7 @@ namespace PhaseBehavior::EoS::GERG{
             return reducingMixtureDensity_;
         }
 
-        inline NP_t reducingTemperature(Mixture const& mixture, std::string compositionType = "global"){
+        inline NP_t reducingTemperature(Mixture const& mixture, std::string_view compositionType = "global"){
 
             using Coefficients::ReducingParameters::Temperature::beta, Coefficients::ReducingParameters::Temperature::gamma;
 
@@ -108,7 +108,7 @@ namespace PhaseBehavior::EoS::GERG{
                 );
         }
 
-        inline NP_t idealReducedHelmholtzFreeEnergy(Mixture const& mixture, NP_t const& mixtureDensity, NP_t const& temperature, std::string compositionType = "global"){
+        inline NP_t idealReducedHelmholtzFreeEnergy(Mixture const& mixture, NP_t const& mixtureDensity, NP_t const& temperature, std::string_view compositionType = "global"){
             idealReducedHelmholtzEnergy_ = 0;
             for (auto const& component : mixture){
                 idealReducedHelmholtzEnergy_ += component.composition(compositionType)*idealReducedHelmholtzFreeEnergy(component.pure(), mixtureDensity, temperature) +
@@ -187,7 +187,7 @@ namespace PhaseBehavior::EoS::GERG{
             return F*residualDeparture;
         }
 
-        inline NP_t residualReducedHelmholtzFreeEnergy(Mixture const& mixture, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse, std::string compositionType = "global"){
+        inline NP_t residualReducedHelmholtzFreeEnergy(Mixture const& mixture, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse, std::string_view compositionType = "global"){
             residualReducedHelmholtzEnergy_ = 0;
             for (auto const& component : mixture){
                 residualReducedHelmholtzEnergy_ += component.composition(compositionType)*
@@ -207,7 +207,7 @@ namespace PhaseBehavior::EoS::GERG{
         // WRT::None means first order derivative
         // This templated function accounts for derivatives with respect to delta and tau 
         template <WRT wrt1, WRT wrt2 = WRT::None>
-        inline NP_t idealReducedHelmholtzFreeEnergyDerivative(Mixture const& mixture, NP_t const& mixtureDensity, NP_t const& temperature, std::string compositionType = "global"){
+        inline NP_t idealReducedHelmholtzFreeEnergyDerivative(Mixture const& mixture, NP_t const& mixtureDensity, NP_t const& temperature, std::string_view compositionType = "global"){
             // First-Order Derivatives
             if constexpr (wrt2 == WRT::None){
                 if constexpr (wrt1 == WRT::reducedMixtureDensity){
@@ -312,7 +312,7 @@ namespace PhaseBehavior::EoS::GERG{
         // WRT::None means first order derivative
         // This templated function accounts for derivatives with respect to delta and tau 
         template <WRT wrt1, WRT wrt2 = WRT::None>
-        inline NP_t residualReducedHelmholtzFreeEnergyDerivative(Mixture const& mixture, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse, std::string compositionType = "global"){
+        inline NP_t residualReducedHelmholtzFreeEnergyDerivative(Mixture const& mixture, NP_t const& reducedMixtureDensity, NP_t const& reducedTemperatureInverse, std::string_view compositionType = "global"){
             NP_t residualReducedHelmholtzEnergyDerivative_ = 0;
             for (auto const& component : mixture){
                 residualReducedHelmholtzEnergyDerivative_ += component.composition(compositionType)*

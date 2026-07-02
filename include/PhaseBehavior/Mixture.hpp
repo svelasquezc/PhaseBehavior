@@ -20,20 +20,19 @@ namespace PhaseBehavior {
 
     enum class PhaseName : std::size_t { global = 0, vapor = 1, liquid = 2 };
 
-    static PhaseName phaseNameFromString(std::string const& phaseName);
-
-    static constexpr std::size_t phaseIndex(PhaseName phaseName) noexcept {
+    static inline constexpr std::size_t phaseIndex(PhaseName phaseName) noexcept {
         return static_cast<std::size_t>(phaseName);
     }
 
-    static std::size_t phaseIndex(std::string const& phaseName) noexcept {
-        return phaseIndex(phaseNameFromString(phaseName));
-    }
-
-    static PhaseName phaseNameFromString(std::string const& phaseName){
+    static inline constexpr PhaseName phaseNameFromString(std::string_view phaseName){
         if (phaseName == "vapor") return PhaseName::vapor;
         if (phaseName == "liquid") return PhaseName::liquid;
-        return PhaseName::global;
+        if (phaseName == "global") return PhaseName::global;
+        throw std::invalid_argument("Invalid phase name");
+    }
+
+    static inline constexpr std::size_t phaseIndex(std::string_view const& phaseName) noexcept {
+        return phaseIndex(phaseNameFromString(phaseName));
     }
 
     class Mixture {
@@ -78,31 +77,31 @@ namespace PhaseBehavior {
                 molarComposition_[phaseIndex(PhaseName::global)] = molarComposition;
             }
 
-            const NP_t composition() const noexcept{
+            constexpr NP_t composition() const noexcept{
                 return molarComposition_[phaseIndex(PhaseName::global)];
             }
 
-            const NP_t composition(PhaseName phaseName) const noexcept {
+            constexpr NP_t composition(PhaseName phaseName) const noexcept {
                 return molarComposition_[phaseIndex(phaseName)];
             }
 
-            const NP_t composition(std::string const& phaseName) const noexcept {
+            constexpr NP_t composition(std::string_view const& phaseName) const noexcept {
                 return composition(phaseNameFromString(phaseName));
             }
 
-            void composition(PhaseName phaseName, NP_t const& composition){
+            constexpr void composition(PhaseName phaseName, NP_t const& composition){
                 molarComposition_[phaseIndex(phaseName)] = composition;
             }
 
-            void composition(std::string const& phaseName, NP_t const& compositionValue){
+            constexpr void composition(std::string_view const& phaseName, NP_t const& compositionValue){
                 composition(phaseNameFromString(phaseName), compositionValue);
             }
 
-            const NP_t fugacityCoefficient(PhaseName phaseName) const noexcept{
+            constexpr NP_t fugacityCoefficient(PhaseName phaseName) const noexcept{
                 return fugacityCoefficient_[phaseIndex(phaseName)];
             }
 
-            const NP_t fugacityCoefficient(std::string const& phaseName) const noexcept{
+            constexpr NP_t fugacityCoefficient(std::string_view const& phaseName) const noexcept{
                 return fugacityCoefficient(phaseNameFromString(phaseName));
             }
 
@@ -110,15 +109,15 @@ namespace PhaseBehavior {
                 fugacityCoefficient_[phaseIndex(phaseName)] = fugacityCoefficient;
             }
 
-            void fugacityCoefficient(std::string const& phaseName, NP_t const& fugacityCoefficientValue){
+            void fugacityCoefficient(std::string_view const& phaseName, NP_t const& fugacityCoefficientValue){
                 fugacityCoefficient(phaseNameFromString(phaseName), fugacityCoefficientValue);
             }
 
-            const NP_t fugacity(PhaseName phaseName, NP_t const& absolutePressure) const noexcept{
+            constexpr NP_t fugacity(PhaseName phaseName, NP_t const& absolutePressure) const noexcept{
                 return composition(phaseName)*fugacityCoefficient(phaseName)*absolutePressure;
             }
 
-            const NP_t fugacity(std::string const& phaseName, NP_t const& absolutePressure) const noexcept{
+            constexpr NP_t fugacity(std::string_view const& phaseName, NP_t const& absolutePressure) const noexcept{
                 return fugacity(phaseNameFromString(phaseName), absolutePressure);
             }
 
@@ -152,7 +151,7 @@ namespace PhaseBehavior {
 
         std::vector<MixtureComponent> components_;
 
-        using InteractionCoefficientsType = std::map<std::pair<std::string,std::string>, NP_t>;
+        using InteractionCoefficientsType = std::map<std::pair<std::string_view,std::string_view>, NP_t>;
 
         InteractionCoefficientsType interactionCoefficients_;
 
@@ -229,7 +228,7 @@ namespace PhaseBehavior {
             checkConsistency();
         }
 
-        MixtureIterator operator[] (std::string const& name){
+        MixtureIterator operator[] (std::string_view const& name){
             return std::find_if(begin(), end(), [&name](auto& component){
                 return component.pure().name() == name;
             });
@@ -251,11 +250,11 @@ namespace PhaseBehavior {
         ConstMixtureIterator begin() const {return components_.begin();}
         ConstMixtureIterator end() const {return components_.end();}
 
-        void interactionCoefficient(std::string const& componentName1, std::string const& componentName2, NP_t value){
+        void interactionCoefficient(std::string_view const& componentName1, std::string_view const& componentName2, NP_t value){
             auto mixComp1 = (*this)[componentName1];
             auto mixComp2 = (*this)[componentName2];
-            assert(mixComp1!=this->end() && (componentName1 + " is not a component of the mixture").c_str());
-            assert(mixComp2!=this->end() && (componentName2 + " is not a component of the mixture").c_str());
+            assert(mixComp1!=this->end() && (std::string(componentName1) + " is not a component of the mixture").c_str());
+            assert(mixComp2!=this->end() && (std::string(componentName2) + " is not a component of the mixture").c_str());
             interactionCoefficients_[{componentName1, componentName2}] =  value;
         }
 
@@ -271,11 +270,11 @@ namespace PhaseBehavior {
             }
         }
 
-        NP_t interactionCoefficient(std::string const& componentName1, std::string const& componentName2){
+        NP_t interactionCoefficient(std::string_view const& componentName1, std::string_view const& componentName2){
             auto mixComp1 = (*this)[componentName1];
             auto mixComp2 = (*this)[componentName2];
-            assert(mixComp1!=this->end() && (componentName1 + " is not a component of the mixture").c_str());
-            assert(mixComp2!=this->end() && (componentName2 + " is not a component of the mixture").c_str());
+            assert(mixComp1!=this->end() && (std::string(componentName1) + " is not a component of the mixture").c_str());
+            assert(mixComp2!=this->end() && (std::string(componentName2) + " is not a component of the mixture").c_str());
             try{
                 return interactionCoefficients_.at({componentName1, componentName2});
             }catch(std::out_of_range e){
@@ -283,31 +282,31 @@ namespace PhaseBehavior {
             }
         }
 
-        NP_t molarFraction(PhaseName phaseName) const {
+        constexpr NP_t molarFraction(PhaseName phaseName) const {
             return phaseMolarFraction_[phaseIndex(phaseName)];
         }
 
-        NP_t molarFraction(std::string const& phaseName) const {
+        constexpr NP_t molarFraction(std::string_view const& phaseName) const {
             return molarFraction(phaseNameFromString(phaseName));
         }
 
-        void molarFraction(PhaseName phaseName, NP_t const& molarFractionValue) {
+        constexpr void molarFraction(PhaseName phaseName, NP_t const& molarFractionValue) {
             phaseMolarFraction_[phaseIndex(phaseName)] = molarFractionValue;
         }
 
-        void molarFraction(std::string const& phaseName, NP_t const& molarFractionValue) {
+        constexpr void molarFraction(std::string_view const& phaseName, NP_t const& molarFractionValue) {
             molarFraction(phaseNameFromString(phaseName), molarFractionValue);
         }
 
-        NP_t compressibility(PhaseName phaseName) const {
+        constexpr NP_t compressibility(PhaseName phaseName) const {
             return phaseCompressibility_[phaseIndex(phaseName)];
         }
 
-        NP_t compressibility(std::string const& phaseName) const {
+        constexpr NP_t compressibility(std::string_view const& phaseName) const {
             return compressibility(phaseNameFromString(phaseName));
         }
 
-        void compressibility(PhaseName phaseName, NP_t const& compressibilityValue) {
+        constexpr void compressibility(PhaseName phaseName, NP_t const& compressibilityValue) {
             phaseCompressibility_[phaseIndex(phaseName)] = compressibilityValue;
         }
 
@@ -321,25 +320,25 @@ namespace PhaseBehavior {
             }
         }
 
-        NP_t pseudoCriticalPressure(std::string composititionType = "global") const {
+        NP_t pseudoCriticalPressure(PhaseName composititionType = PhaseName::global) const {
             return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [&composititionType](auto previous, auto& element){
                 return previous + element.composition(composititionType)*element.pure().criticalPressure();
             });
         }
 
-        NP_t pseudoCriticalTemperature(std::string composititionType = "global") const {
+        NP_t pseudoCriticalTemperature(PhaseName composititionType = PhaseName::global) const {
             return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [&composititionType](auto previous, auto& element){
                 return previous + element.composition(composititionType)*element.pure().criticalTemperature();
             });
         }
 
-        NP_t pseudoCriticalVolume(std::string composititionType = "global") const {
+        NP_t pseudoCriticalVolume(PhaseName composititionType = PhaseName::global) const {
             return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [&composititionType](auto previous, auto& element){
                 return previous + element.composition(composititionType)*element.pure().criticalVolume()*element.pure().molarWeight();
             });
         }
 
-        NP_t pseudoCriticalDensity(std::string composititionType = "global") const {
+        NP_t pseudoCriticalDensity(PhaseName composititionType = PhaseName::global) const {
             return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [&composititionType](auto previous, auto& element){
                 return previous + element.composition(composititionType)*element.pure().criticalDensity()*element.pure().molarWeight();
             });
