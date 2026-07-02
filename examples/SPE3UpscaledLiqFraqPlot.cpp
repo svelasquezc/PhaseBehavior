@@ -25,8 +25,6 @@ int main(){
     auto C5 = Component {"C5",      3368.8,    469.89,   4.3103448281e-3, 72.15,  0.2514};
     auto C6 = Component {"C6",      3012.3,    507.56,   4.2885324643e-3, 86.18, 0.2994};
 
-    PhaseBehavior::Mixture mixture{{C1, 1.0/6.0}, {C2, 1.0/6.0}, {C3, 1.0/6.0}, {C4, 1.0/6.0}, {C5, 1.0/6.0}, {C6, 1.0/6.0}};
-
     auto caseTemperature = 350.0 /*[K]*/;
 
     rapidcsv::Document doc("SPE3_UpscaledProps_th90.csv");
