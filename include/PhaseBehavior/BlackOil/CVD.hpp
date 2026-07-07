@@ -70,8 +70,11 @@ namespace PhaseBehavior::BlackOil {
 
             auto associatedPVTVolume = totalMoles * pvtMolecularWeight/pvtDensity;
 
-            auto [surfaceGasMolarFraction, stockTankOilMolarFraction, stockTankOilMW, stockTankOilDensity] = separator(mixture, stage1Pressure, stage1Temperature,
-                                                                                            stage2Pressure, stage2Temperature, stockTankPressure, stockTankTemperature, eos);
+            auto [surfaceGasMolarFraction, stockTankOilMolarFraction, stockTankOilMW, stockTankOilDensity] = separator(mixture, 
+                                            stage1Pressure, stage1Temperature,
+                                            stage2Pressure, stage2Temperature, 
+                                            stockTankPressure, stockTankTemperature,
+                                            eos);
 
             auto totalSurfaceGas = surfaceGasMolarFraction * totalMoles * 379.56;
             auto totalStockTankOil = stockTankOilMolarFraction * totalMoles * stockTankOilMW/(stockTankOilDensity*5.615);
@@ -144,21 +147,21 @@ namespace PhaseBehavior::BlackOil {
                                             NP_t const& stage2Pressure, NP_t const& stage2Temperature,
                                             NP_t const& stockTankPressure, NP_t const& stockTankTemperature, EoS& eos, PhaseName separationType = PhaseName::global){
 
-            auto firstStageMixture = mixture;
+            auto firstStageMixture{mixture};
 
             for (std::size_t i = 0; i < mixture.size(); ++i){
                 firstStageMixture[i].composition(PhaseName::global, mixture[i].composition(separationType));
             }
 
             VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(firstStageMixture, stage1Pressure, stage1Temperature);
-            auto secondStageMixture = firstStageMixture;
+            auto secondStageMixture{firstStageMixture};
 
             for (std::size_t i = 0; i < mixture.size(); ++i){
                 secondStageMixture[i].composition(PhaseName::global, firstStageMixture[i].composition(PhaseBehavior::PhaseName::liquid));
             }
 
             VaporLiquidEquilibrium::isothermalTwoPhaseFlash<EoS>(secondStageMixture, stage2Pressure, stage2Temperature);
-            auto stockTankMixture = secondStageMixture;
+            auto stockTankMixture{secondStageMixture};
 
             for (std::size_t i = 0; i < mixture.size(); ++i){
                 stockTankMixture[i].composition(PhaseName::global, secondStageMixture[i].composition(PhaseBehavior::PhaseName::liquid));

@@ -31,7 +31,7 @@ int main(){
 
     double initialComposition = 1e-5;
     auto endComposition = 1 - 2e-5;
-    auto deltaComposition = (endComposition - initialComposition)/1000;
+    auto deltaComposition = (endComposition - initialComposition)/10000;
 
     file << "DensityL;DensityV;xC1;xC3;xC8;yC1;yC3;yC8;" <<std::endl;
 
