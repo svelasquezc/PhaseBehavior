@@ -282,6 +282,12 @@ namespace PhaseBehavior {
             }
         }
 
+        NP_t molarWeight(PhaseName phaseName = PhaseName::global) const {
+            return std::accumulate(components_.begin(), components_.end(), static_cast<NP_t>(0), [phaseName](auto previous, auto& element){
+                return previous + element.pure().molarWeight()*element.composition(phaseName);
+            });
+        }
+
         constexpr NP_t molarFraction(PhaseName phaseName) const {
             return phaseMolarFraction_[phaseIndex(phaseName)];
         }
